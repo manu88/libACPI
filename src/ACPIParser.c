@@ -1,0 +1,148 @@
+//
+//  ACPIParser.c
+//  KernelTaskV1
+//
+//  Created by Manuel Deneu on 25/12/2018.
+//  Copyright © 2018 Manuel Deneu. All rights reserved.
+//
+
+#include <string.h>
+#include <assert.h>
+#include "ACPIParser.h"
+
+#define MAXElements 64
+static TreeElement Elements[MAXElements] = {0};
+static int NextElementIndex = 0;
+
+
+int ACPIDocumentInit(ACPIDocument* doc)
+{
+    memset(doc , 0 , sizeof(ACPIDocument) );
+    
+    NextElementIndex = 0;
+    memset(Elements, 0, sizeof(TreeElement) *MAXElements );
+    return 1;
+}
+
+TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent)
+{
+    assert(parent || (parent == NULL &&  forObjectType == ACPIObject_Type_Root));
+    assert(parser);
+    printf("Allocate request for type %i (count %i)\n" , forObjectType , NextElementIndex);
+    
+    if (NextElementIndex >= MAXElements)
+    {
+        return NULL;
+    }
+    TreeElement* next = &Elements[NextElementIndex++];
+    return next;
+}
+
+static AMLParserError _DidReadDevice(AMLParserState* parser  ,const ACPIDevice*device)
+{
+    assert(parser);
+    assert(device);
+    
+    
+    ACPIDocument* doc = (ACPIDocument*) parser->userData;
+    assert(doc);
+    
+    //memcpy(&doc->devices[ ACPIDocumentGetDevicesCount(doc)/* doc->devicesCount*/], device, sizeof(ACPIDevice));
+    //doc->devices[doc->devicesCount] = *device;
+    //doc->devicesCount++;
+    
+    return AMLParserError_None;
+}
+
+static AMLParserError _DidReadDefBlock(AMLParserState* parser,const ACPIDefinitionBlock* desc)
+{
+    assert(parser);
+    assert(desc);
+    
+    
+    ACPIDocument* doc = (ACPIDocument*) parser->userData;
+    assert(doc);
+    doc->desc = *desc;
+    doc->hasDesc = 1;
+    return AMLParserError_None;
+}
+
+AMLParserError ACPIParseAMLByteCode(ACPIDocument* doc,const uint8_t* buffer , size_t bufferSize)
+{
+    AMLParserState parser;
+    
+    AMLParserInit(&parser);
+    parser.startBuffer = buffer;
+    parser.totalSize = bufferSize;
+    
+    parser.userData = doc;
+    
+    parser.callbacks.DidReadObject = _DidReadDevice;
+    parser.callbacks.DidReadDefBlock = _DidReadDefBlock;
+    parser.callbacks.AllocateElement = _AllocateElement;
+    
+    return AMLParserProcessBuffer(&parser , buffer , bufferSize);
+}
+
+
+int ACPIDeviceGetName( const TreeElement* element , char* outChar)
+{
+    
+    //printf("NAME:  %c %c %c %c \n" , ((const char*)element->ptr)[0] ,((const char*)element->ptr)[1] ,((const char*)element->ptr)[2], ((const char*)element->ptr)[3]);
+    strncpy(outChar, (const char*)element->ptr, 4);
+    outChar[4] = 0;
+    
+    if (outChar[3] == '_')
+    {
+        outChar[3] = 0;
+    }
+    return 1;
+}
+
+size_t ACPIDocumentGetDevicesCount(const ACPIDocument* doc)
+{
+    
+    size_t n = 0;
+    
+    for (int i = 0;i<NextElementIndex;i++)
+    {
+        TreeElement* el = &Elements[i];
+        if (el->type == ACPIObject_Type_Device)
+        {
+            assert(el->parent !=  NULL);
+            n++;
+        }
+    }
+    /*
+    while (n<MAX_DEVICES_PER_DOC)
+    {
+        if (doc->devices[n].id[0] == 0)
+        {
+            break;
+        }
+        n++;
+    }
+     */
+    
+    return n;
+}
+
+const TreeElement* ACPIDocumentGetNthDevice(const ACPIDocument* doc, size_t index)
+{
+    size_t n = 0;
+    
+    for (int i = 0;i<NextElementIndex;i++)
+    {
+        TreeElement* el = &Elements[i];
+        if (el->type == ACPIObject_Type_Device)
+        {
+            assert(el->parent !=  NULL);
+            if(n++ == index)
+            {
+                return el;
+            }
+        }
+    }
+    
+    return NULL;
+}
