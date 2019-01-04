@@ -279,15 +279,15 @@ static uint8_t test5[] =
 /*
  DefinitionBlock ("test.aml", "DSDT", 10, "IDOEM", "SOMEAID", 0x00001234)
  {
- Device (SOM_)
- {
- Name (_HID, EisaId ("PNP0A03"))
- }
- Device (PCI1)
- {
- Name (_HID, EisaId ("PNP0A01"))
- Name (_ADR, 0x4536ABEF)
- }
+     Device (SOM_)
+     {
+        Name (_HID, EisaId ("PNP0A03"))
+     }
+     Device (PCI1)
+     {
+        Name (_HID, EisaId ("PNP0A01"))
+        Name (_ADR, 0x4536ABEF)
+     }
  }
  */
 static uint8_t testName[] =
@@ -334,7 +334,9 @@ static void doTest0()
     assert(doc.desc.OEMRev == 0x0);
     assert(doc.desc.creatorID == IaslVendorID);
     
-
+    assert(ACPIDocumentGetRoot(&doc) != NULL );
+    assert(ACPIDocumentGetRoot(&doc)->parent == NULL );
+    
     assert(ACPIDocumentGetDevicesCount(&doc) == 1);
     assert(ACPIDocumentGetNthDevice(&doc,0) );
     
@@ -363,6 +365,8 @@ static void doTest1()
     assert(strncmp(doc.desc.tableId, "SOMEAID", 8) == 0);
     assert(doc.desc.OEMRev == 0x00001234);
 
+    assert(ACPIDocumentGetRoot(&doc) != NULL );
+    
     assert(ACPIDocumentGetDevicesCount(&doc) == 2);
     assert(ACPIDocumentGetNthDevice(&doc,0) );
     assert(ACPIDocumentGetNthDevice(&doc,1) );
@@ -407,7 +411,7 @@ static void doTest2()
     
     
     
-    
+    assert(ACPIDocumentGetRoot(&doc) != NULL );
     assert(ACPIDocumentGetDevicesCount(&doc) == 2);
     
     assert(ACPIDocumentGetNthDevice(&doc,0) );
@@ -449,6 +453,7 @@ static void doTest3()
     assert(strncmp(doc.desc.tableId, "SOMEAID", 8) == 0);
     assert(doc.desc.OEMRev == 0x00001234);
     
+    assert(ACPIDocumentGetRoot(&doc) != NULL );
     assert(ACPIDocumentGetDevicesCount(&doc) == 2);
     
     assert(ACPIDocumentGetNthDevice(&doc,0) );
@@ -480,7 +485,7 @@ static void doTest4()
     assert(strncmp(doc.desc.tableId, "PROUT", 8) == 0);
     assert(doc.desc.OEMRev == 0xABCF1234);
     
-    
+    assert(ACPIDocumentGetRoot(&doc) != NULL );
     assert(ACPIDocumentGetDevicesCount(&doc) == 3);
     
     assert(ACPIDocumentGetNthDevice(&doc,0) );
@@ -513,6 +518,7 @@ static void doTest5()
     assert(strncmp(doc.desc.tableId, "SOMEAID", 8) == 0);
     assert(doc.desc.OEMRev == 0x00001234);
     
+    assert(ACPIDocumentGetRoot(&doc) != NULL );
     assert(ACPIDocumentGetDevicesCount(&doc) == 1);
     
     char name[5];
@@ -541,9 +547,24 @@ static void doTestName()
     assert(strncmp(doc.desc.tableId, "SOMEAID", 8) == 0);
     assert(doc.desc.OEMRev == 0x00001234);
     
+    assert(ACPIDocumentGetDevicesCount(&doc) == 2);
+    assert(ACPIDocumentGetRoot(&doc) != NULL );
     char name[5];
-    assert(ACPIDeviceGetName(ACPIDocumentGetNthDevice(&doc,0), name));
+    const TreeElement* device0 = ACPIDocumentGetNthDevice(&doc,0);
+    assert(device0);
+    assert(device0->parent == ACPIDocumentGetRoot(&doc) );
+    assert(ACPIDeviceGetName(device0, name));
     assert(strcmp(name, "SOM") == 0);
+    
+    memset(name, 0, 5);
+    const TreeElement* device1 = ACPIDocumentGetNthDevice(&doc,1);
+    assert(device1);
+    assert(device1->parent == ACPIDocumentGetRoot(&doc) );
+    assert(ACPIDeviceGetName(device1, name));
+    assert(strcmp(name, "PCI1") == 0);
+    
+    
+    
 }
 
 /*
@@ -562,6 +583,7 @@ static void BasicTests()
     assert(ACPIDocumentInit(&doc) == 1);
     assert(doc.hasDesc == 0);
     assert(ACPIDocumentGetDevicesCount(&doc) == 0);
+    assert(ACPIDocumentGetRoot(&doc) == NULL );
     //assert(ACPIDeviceGetNamesCount(&doc.devices[0]) == 0);
     
     

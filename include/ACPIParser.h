@@ -32,6 +32,8 @@ typedef struct
     // some flags
     uint8_t hasDesc:1;
     
+    TreeElement* root;
+    
 } ACPIDocument; // FIXME : better name than document ! (scope is ambigeous..)
 
 
@@ -39,10 +41,11 @@ int ACPIDocumentInit(ACPIDocument* doc);
 
 AMLParserError ACPIParseAMLByteCode(ACPIDocument* doc,const uint8_t* buffer , size_t bufferSize);
 
-
+TreeElement* ACPIDocumentGetRoot(const ACPIDocument* doc);
 size_t ACPIDocumentGetDevicesCount(const ACPIDocument* doc);
 const TreeElement* ACPIDocumentGetNthDevice(const ACPIDocument* doc , size_t index);
 
 int ACPIDeviceGetName( const TreeElement* element , char* outChar);
 
+size_t ACPIDeviceGetNamedObjectsCount(const TreeElement* element);
 

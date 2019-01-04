@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "59459A2821DE25C800DD9396"
-               BuildableName = "Tests"
-               BlueprintName = "Tests"
+               BlueprintIdentifier = "59459A5021DE263C00DD9396"
+               BuildableName = "liblibACPI.dylib"
+               BlueprintName = "libACPI"
                ReferencedContainer = "container:libACPI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,9 +28,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "59459A5021DE263C00DD9396"
-               BuildableName = "liblibACPI.dylib"
-               BlueprintName = "libACPI"
+               BlueprintIdentifier = "59459A2821DE25C800DD9396"
+               BuildableName = "Tests"
+               BlueprintName = "Tests"
                ReferencedContainer = "container:libACPI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

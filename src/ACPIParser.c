@@ -35,15 +35,26 @@ int ACPIDocumentInit(ACPIDocument* doc)
 
 TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent)
 {
+    
+    
     assert(parent || (parent == NULL &&  forObjectType == ACPIObject_Type_Root));
     assert(parser);
-    printf("Allocate request for type %i (count %i)\n" , forObjectType , NextElementIndex);
+    //printf("Allocate request for type %i (count %i)\n" , forObjectType , NextElementIndex);
+    
+    ACPIDocument* doc = (ACPIDocument*) parser->userData;
+    assert(doc);
     
     if (NextElementIndex >= MAXElements)
     {
         return NULL;
     }
     TreeElement* next = &Elements[NextElementIndex++];
+    
+    if (forObjectType == ACPIObject_Type_Root)
+    {
+        assert(doc->root == NULL);
+        doc->root = next;
+    }
     return next;
 }
 
@@ -93,6 +104,10 @@ AMLParserError ACPIParseAMLByteCode(ACPIDocument* doc,const uint8_t* buffer , si
     return AMLParserProcessBuffer(&parser , buffer , bufferSize);
 }
 
+TreeElement* ACPIDocumentGetRoot(const ACPIDocument* doc)
+{
+    return doc->root;
+}
 
 int ACPIDeviceGetName( const TreeElement* element , char* outChar)
 {
@@ -106,6 +121,11 @@ int ACPIDeviceGetName( const TreeElement* element , char* outChar)
         outChar[3] = 0;
     }
     return 1;
+}
+
+size_t ACPIDeviceGetNamedObjectsCount(const TreeElement* element)
+{
+    return 0;
 }
 
 size_t ACPIDocumentGetDevicesCount(const ACPIDocument* doc)

@@ -258,7 +258,7 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
     size_t pos = advancedByte;
     bufSize -= advancedByte;
     
-    TreeElement* currentElement = state->callbacks.AllocateElement(state, ACPIObject_Type_Root , currentElement);
+    TreeElement* currentElement = state->callbacks.AllocateElement(state, ACPIObject_Type_Root , NULL);
     if (currentElement)
     {
         currentElement->type = ACPIObject_Type_Root;

@@ -75,6 +75,7 @@ typedef struct
     
 } ACPIName;
 
+
 #define ACPIDeviceMaxNames 6 // FIXME : this is absolutly arbitrary :)
 typedef struct
 {
@@ -82,7 +83,7 @@ typedef struct
     ACPIName names[ACPIDeviceMaxNames];
 }ACPIDevice;
 
-
+/*
 static inline size_t ACPIDeviceGetNamesCount(const ACPIDevice* dev)
 {
     size_t n = 0;
@@ -97,6 +98,7 @@ static inline size_t ACPIDeviceGetNamesCount(const ACPIDevice* dev)
     
     return n;
 }
+*/
 
 
 
