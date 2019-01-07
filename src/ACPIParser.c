@@ -18,6 +18,7 @@
 #include <string.h>
 #include <assert.h>
 #include "ACPIParser.h"
+#include "AMLHelpers.h"
 
 #define MAXElements 64
 static TreeElement Elements[MAXElements] = {0};
@@ -33,7 +34,7 @@ int ACPIDocumentInit(ACPIDocument* doc)
     return 1;
 }
 
-TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent)
+static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent , const uint8_t* bufferPos , size_t bufferSize)
 {
     
     
@@ -109,18 +110,16 @@ TreeElement* ACPIDocumentGetRoot(const ACPIDocument* doc)
     return doc->root;
 }
 
+
+
+int ACPIScopeGetLocation(const uint8_t *buff, size_t size ,char* outChar)
+{
+    return ExtractName(buff, size, outChar);
+}
+
 int ACPIDeviceGetName( const TreeElement* element , char* outChar)
 {
-    
-    //printf("NAME:  %c %c %c %c \n" , ((const char*)element->ptr)[0] ,((const char*)element->ptr)[1] ,((const char*)element->ptr)[2], ((const char*)element->ptr)[3]);
-    strncpy(outChar, (const char*)element->ptr, 4);
-    outChar[4] = 0;
-    
-    if (outChar[3] == '_')
-    {
-        outChar[3] = 0;
-    }
-    return 1;
+    return ExtractName(element->ptr, element->size, outChar);
 }
 
 size_t ACPIDeviceGetNamedObjectsCount(const TreeElement* element)

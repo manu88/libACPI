@@ -47,5 +47,7 @@ const TreeElement* ACPIDocumentGetNthDevice(const ACPIDocument* doc , size_t ind
 
 int ACPIDeviceGetName( const TreeElement* element , char* outChar);
 
+int ACPIScopeGetLocation(const uint8_t *buff, size_t size , char* outChar);
+
 size_t ACPIDeviceGetNamedObjectsCount(const TreeElement* element);
 

@@ -15,15 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include "ACPI_Tests.h"
-#include "AMLParser_Tests.h"
-#include "Decompiler_Tests.h"
+#pragma once
 
-int main(int argc, const char * argv[])
+#include <stdint.h>
+#include "AMLParser.h"
+
+typedef struct
 {
-    AMLParserTests();
-    //ACPI_Tests();
-    Decompile_Tests();
-    return 0;
-}
+    uint8_t p;
+} AMLDecompiler;
+
+
+int AMLDecompilerInit(AMLDecompiler* decomp);
+
+
+
+AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , size_t bufferSize);

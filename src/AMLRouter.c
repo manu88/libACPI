@@ -20,18 +20,62 @@
 #include "AMLRouter.h"
 #include "AMLByteCode.h"
 
+// borrowed from https://github.com/tadryanom/lux/blob/master/kernel/acpi/eval.c
+// acpins_parse_pkgsize(): Parses package size
+// Param:    uint8_t *data - pointer to package size data
+// Param:    size_t *destination - destination to store package size
+// Return:    size_t - size of package size encoding
+
+size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
+{
+    destination[0] = 0;
+    
+    uint8_t bytecount = (data[0] >> 6) & 3;
+    if(bytecount == 0)
+    {
+        destination[0] = (size_t)(data[0] & 0x3F);
+    }
+    else if(bytecount == 1)
+    {
+        destination[0] = (size_t)(data[0] & 0x0F);
+        destination[0] |= (size_t)(data[1] << 4);
+    } else if(bytecount == 2)
+    {
+        destination[0] = (size_t)(data[0] & 0x0F);
+        destination[0] |= (size_t)(data[1] << 4);
+        destination[0] |= (size_t)(data[2] << 12);
+    } else if(bytecount == 3)
+    {
+        destination[0] = (size_t)(data[0] & 0x0F);
+        destination[0] |= (size_t)(data[1] << 4);
+        destination[0] |= (size_t)(data[2] << 12);
+        destination[0] |= (size_t)(data[3] << 20);
+    }
+    
+    return (size_t)(bytecount + 1);
+}
+
 /*
  18.2.4 Package Length Encoding
  */
 size_t _GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advance ,  size_t offset)
 {
+    size_t ret = 0;
+    size_t numBytesAdvanced =  acpins_parse_pkgsize(buffer+offset, &ret);
+    
+    *advance += numBytesAdvanced;
+    
+    return  ret;
+    
+    
+    
     // The high 2 bits of the first byte reveal how many follow bytes are in the PkgLength
     
     // 00xxxxxx -> 0 (invalid?)
     // 01xxxxxx -> 1
     // 10xxxxxx -> 2
     // 11xxxxxx -> 3
-    
+    /*
     uint8_t numBytes = buffer[offset] >> 6;
     *advance+=1;
     
@@ -64,6 +108,7 @@ size_t _GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advanc
     
 
     return numBytes;
+     */
 }
 
 AMLOperation _GetNextLOPOp(/*AMLParserState* state , */const uint8_t* buffer , size_t bufSize , size_t* advance ,  size_t offset)

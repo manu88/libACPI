@@ -20,6 +20,17 @@
 #include "AMLRouter.h"
 #include "AMLHelpers.h"
 
+
+
+static void AML_PackageLengthTests()
+{
+    const uint8_t b = 0;
+    
+    size_t advanced = 0;
+    size_t ret =  _GetPackageLength(&b, 1, &advanced, 0);
+    assert( ret == 0);
+    assert( advanced == 1);
+}
 static void AML_InternalTests()
 {
     {
@@ -51,6 +62,7 @@ static void AML_InternalTests()
 void AMLParserTests()
 {
     AML_InternalTests();
+    AML_PackageLengthTests();
     
     {
         const uint8_t b1[] = {'P'};

@@ -337,7 +337,8 @@ static void doTest0()
     assert(ACPIDocumentGetRoot(&doc) != NULL );
     assert(ACPIDocumentGetRoot(&doc)->parent == NULL );
     
-    assert(ACPIDocumentGetDevicesCount(&doc) == 1);
+    const size_t numDevices = ACPIDocumentGetDevicesCount(&doc);
+    assert(numDevices == 2);
     assert(ACPIDocumentGetNthDevice(&doc,0) );
     
     
@@ -367,7 +368,8 @@ static void doTest1()
 
     assert(ACPIDocumentGetRoot(&doc) != NULL );
     
-    assert(ACPIDocumentGetDevicesCount(&doc) == 2);
+    const size_t numDevices = ACPIDocumentGetDevicesCount(&doc);
+    assert(numDevices == 2);
     assert(ACPIDocumentGetNthDevice(&doc,0) );
     assert(ACPIDocumentGetNthDevice(&doc,1) );
     
@@ -626,3 +628,31 @@ void ACPIReadAML(int argc, const char * argv[])
         //
         }
 }
+
+
+
+/*
+
+void ACPIWriteAML()
+{
+    size_t c;
+    FILE *fp;
+    
+ 
+    fp = fopen("test_file", "w");
+    if (fp == NULL) {
+        printf("Open Error\n");
+        return ;
+    }
+    
+
+    for (c=0; c < sizeof(t); c++)
+        fputc(t[c], fp);
+    
+
+    fclose(fp);
+    
+    return ;
+}
+
+*/

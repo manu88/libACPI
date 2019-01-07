@@ -40,7 +40,7 @@ typedef enum
     ACPIObject_Type_Name,
     ACPIObject_Type_OperationRegion,
     ACPIObject_Type_Scope,
-    
+    ACPIObject_Type_DWord,
     
 }ACPIObject_Type;
 

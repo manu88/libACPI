@@ -17,6 +17,14 @@
 
 #pragma once
 
+#include <stdint.h>
+#define PNP0A03  0x30ad041 //  PCI bus
+#define PNP0A01  0x10ad041 //  EISA bus
+
+
+
+int isEisaId( uint32_t val);
+
 /*
  #--Interrupt Controllers--
  PNP0000  AT programmable interrupt controller

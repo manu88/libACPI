@@ -102,6 +102,130 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
 }
 
 
+AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
+{
+    
+    // 1st step is to try to get a valid DefinitionBlock
+    //ACPIDefinitionBlock defBlk = {0};
+    
+    size_t advancedByte = 0;
+    
+    /*AMLParserError retDefBlock =*/ _ParseDefinitionBlock(state, buffer, bufSize , &advancedByte);
+    
+    size_t pos = advancedByte;
+    bufSize -= advancedByte;
+    
+    TreeElement* currentElement = state->callbacks.AllocateElement(state, ACPIObject_Type_Root , NULL , buffer+ pos , bufSize);
+    if (currentElement)
+    {
+        currentElement->type = ACPIObject_Type_Root;
+        currentElement->ptr = buffer +pos;
+        currentElement->size = bufSize;
+    }
+    else
+    {
+        return AMLParserError_ElementAllocError;
+    }
+    
+    const TreeElement* rootElement = currentElement;
+    while (bufSize)
+    {
+        
+        
+        AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
+
+        if (op == AML_DeviceOpList)
+        {
+            size_t deviceSize = _GetPackageLength(buffer + pos + advancedByte, bufSize - advancedByte, &advancedByte, 0);
+
+            const uint8_t* startDevice = buffer + pos + advancedByte;
+            assert(startDevice);
+            //assert(*sizeVal <= bufSize);
+            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Device, currentElement , startDevice , deviceSize-advancedByte);
+            if (element)
+            {
+                element->parent = currentElement;
+                element->type = ACPIObject_Type_Device;
+                element->ptr = startDevice;
+                element->size = deviceSize-advancedByte;
+            }
+            
+            advancedByte += deviceSize;
+            
+        }
+        else if (op == AML_ZeroOp)
+        {
+            printf("ZERO_OP\n");
+        }
+        else if (op == AML_DWordPrefix)
+        {
+            const uint8_t* valPosition = buffer + pos + advancedByte;
+            
+            const size_t valSize = sizeof(ACPIDWord);
+            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_DWord, currentElement , valPosition , valSize);
+            if (element)
+            {
+                element->parent = currentElement;
+                element->type = ACPIObject_Type_Device;
+                element->ptr = valPosition;
+                element->size = valSize;
+            }
+            
+            advancedByte += valSize;
+        }
+        else if (op == AML_NameOp)
+        {
+            char name[5] = {0};
+            const uint8_t* namePosition = buffer + pos + advancedByte;
+            ExtractName(namePosition, 4, name);
+            //printf("Nameop '%s'\n" , name);
+            
+            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Name, currentElement ,(const uint8_t*) name , strlen(name) );
+            if (element)
+            {
+                element->parent = currentElement;
+                element->type = ACPIObject_Type_Scope;
+                element->ptr = NULL;
+                element->size = 0;
+            }
+            
+            advancedByte +=4;
+            
+        }
+        else if (op == AML_ScopeOp)
+        {
+            size_t scopeSize = _GetPackageLength(buffer+pos+1, bufSize-1, &advancedByte, 0);
+
+            const uint8_t* startScope = buffer + pos + advancedByte;
+            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_DWord, currentElement , startScope , scopeSize);
+            if (element)
+            {
+                element->parent = currentElement;
+                element->type = ACPIObject_Type_Scope;
+                element->ptr = startScope;
+                element->size = scopeSize;
+            }
+            
+            advancedByte +=  scopeSize;
+        }
+        
+        
+        // Check if wrapped
+        if( (ssize_t)bufSize - (ssize_t)advancedByte <= 0)
+        {
+            break;
+        }
+        
+        bufSize -= advancedByte;
+        pos     += advancedByte;
+        
+        assert(_EnsureValidBuffer(state, buffer+pos, bufSize));
+        
+    }
+    
+    return 0;
+}
+
 
 static AMLParserError _ParseDeviceList(AMLParserState* state , const uint8_t* buffer , size_t bufSize)
 {
@@ -131,10 +255,10 @@ static AMLParserError _ParseDeviceList(AMLParserState* state , const uint8_t* bu
             }
         }
         /*
-        else if (op == AML_NameOp)
-        {
-            idIndex = 10; // 
-        }
+         else if (op == AML_NameOp)
+         {
+         idIndex = 10; //
+         }
          */
         else if (op == AML_DWordPrefix)
         {
@@ -245,192 +369,93 @@ static AMLParserError _ParseDeviceList(AMLParserState* state , const uint8_t* bu
     return state->callbacks.DidReadObject( state  ,&dev  );
 }
 
-AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
-{
-    
-    // 1st step is to try to get a valid DefinitionBlock
-    //ACPIDefinitionBlock defBlk = {0};
-    
-    size_t advancedByte = 0;
-    
-    /*AMLParserError retDefBlock =*/ _ParseDefinitionBlock(state, buffer, bufSize , &advancedByte);
-    
-    size_t pos = advancedByte;
-    bufSize -= advancedByte;
-    
-    TreeElement* currentElement = state->callbacks.AllocateElement(state, ACPIObject_Type_Root , NULL);
-    if (currentElement)
-    {
-        currentElement->type = ACPIObject_Type_Root;
-        currentElement->ptr = buffer +pos;
-        currentElement->size = bufSize;
-    }
-    else
-    {
-        return AMLParserError_ElementAllocError;
-    }
-    
-    const TreeElement* rootElement = currentElement;
-    while (bufSize)
-    {
-        
-        
-        AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
-
-        if (op == AML_DeviceOpList)
-        {
-            size_t size = _GetPackageLength(buffer + pos + advancedByte, bufSize - advancedByte, &advancedByte, 0);
-
-            const uint8_t* startDevice = buffer + pos + advancedByte;
-            assert(startDevice);
-            //assert(*sizeVal <= bufSize);
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Device, currentElement);
-            if (element)
-            {
-                element->parent = currentElement;
-                element->type = ACPIObject_Type_Device;
-                element->ptr = startDevice;
-                element->size = size-advancedByte;
-            }
-            /*
-            AMLParserError ret = _ParseDeviceList(state, startDevice, size-advancedByte);
-            
-            if (ret != AMLParserError_None)
-            {
-                return ret;
-            }
-             */
-            
-            //advancedByte += size;
-            
-        }
-        else if (op == AML_ScopeOp)
-        {
-            size_t scopeSize = _GetPackageLength(buffer+pos+1, bufSize-1, &advancedByte, 0);
-            /*
-            const uint8_t scopeSize = buffer[pos+1];
-             */
-            const uint8_t* startScope = buffer + pos + advancedByte;
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Scope, currentElement);
-            if (element)
-            {
-                element->parent = currentElement;
-                element->type = ACPIObject_Type_Scope;
-                element->ptr = startScope;
-                element->size = scopeSize;
-            }
-            printf("Got a scope size %zu \n" , scopeSize);
-            
-            advancedByte +=  scopeSize;
-        }
-        else if (op == AML_Char)
-        {
-            //printf("Got Char '%c'\n" ,(char)buffer[pos] );
-        }
-        else if (op == AML_Int)
-        {
-            //printf("Got Int '%c'\n" ,(char)buffer[pos] );
-        }
-        else //if (op == AML_Unknown)
-        {
-            //printf("Got Unknown 0x%02x %i\n" ,buffer[pos],buffer[pos] );
-        }
-        
-         /*
-        else if (op == AML_NameOp)
-        {
-            const uint8_t* namePosition = buffer + pos + advancedByte;
-            
-            if( strncmp( (const char*)namePosition, "_HID", 4) == 0)
-            {
-                printf("Got a nameOP _HID at %zi\n",  pos+ advancedByte );
-                advancedByte += 4;
-            }
-            else if( strncmp( (const char*)namePosition, "_ADR", 4) == 0)
-            {
-                printf("Got a nameOP _ADR at %zi\n",  pos+ advancedByte );
-                advancedByte += 4;
-            }
-            else if( strncmp( (const char*)namePosition, "_CRS", 4) == 0)
-            {
-                printf("Got a nameOP _CRS at %zi\n",  pos+ advancedByte );
-                advancedByte += 4;
-            }
-            else if( strncmp( (const char*)namePosition, "_PRW", 4) == 0)
-            {
-                printf("Got a nameOP _PRW at %zi\n",  pos+ advancedByte );
-                advancedByte += 4;
-            }
-            else
-            {
-                assert(0);
-            }
-        }
-         
-        else if (op == AML_NameChar)
-        {
-            const uint8_t* namePosition = buffer + pos + advancedByte;
-            printf("Got NameChar '%s'\n" ,namePosition);
-            
-        }
-        else if (op == AML_Unknown)
-        {
-            printf("Got Unknown 0x%02x %i\n" ,buffer[pos],buffer[pos] );   
-        }
-        else if (op == AML_TypeOp)
-        {
-            printf("TypeOp\n");
-        }
-        else if (op == AML_PackageOp)
-        {
-            printf("PackageOp\n");
-        }
-        else if (op == AML_VarPackageOp)
-        {
-            printf("VarPackageOp\n");
-        }
-        else if (op == AML_Char)
-        {
-            printf("Got Char '%c'\n" ,(char)buffer[pos] );
-        }
-        else if (op == AML_OneOp)
-        {
-            printf("1op\n");
-        }
-        else if (op == AML_ZeroOp)
-        {
-            printf("0op\n");
-        }
-        else if (op == AML_Int)
-        {
-            printf("Int '%c'\n" , (char)buffer[pos]);
-        }
-        else
-        {
-            printf("Other op %i (%x)\n",op , (char)buffer[pos]);
-        }
-         */
-        
-        //printf("advanced of %zi bytes\n" ,  advancedByte);
-        
-        // Check if wrapped
-        if( (ssize_t)bufSize - (ssize_t)advancedByte <= 0)
-        {
-            break;
-        }
-        
-        bufSize -= advancedByte;
-        pos     += advancedByte;
-        
-        assert(_EnsureValidBuffer(state, buffer+pos, bufSize));
-        
-    }
-    
-    return 0;
-}
 
 
-
+/*
+ else if (op == AML_Char)
+ {
+ }
+ else if (op == AML_Int)
+ {
+ }
+ else //if (op == AML_Unknown)
+ {
+ //printf("Got Unknown 0x%02x %i\n" ,buffer[pos],buffer[pos] );
+ }
+ 
+ else if (op == AML_NameOp)
+ {
+ const uint8_t* namePosition = buffer + pos + advancedByte;
+ 
+ if( strncmp( (const char*)namePosition, "_HID", 4) == 0)
+ {
+ printf("Got a nameOP _HID at %zi\n",  pos+ advancedByte );
+ advancedByte += 4;
+ }
+ else if( strncmp( (const char*)namePosition, "_ADR", 4) == 0)
+ {
+ printf("Got a nameOP _ADR at %zi\n",  pos+ advancedByte );
+ advancedByte += 4;
+ }
+ else if( strncmp( (const char*)namePosition, "_CRS", 4) == 0)
+ {
+ printf("Got a nameOP _CRS at %zi\n",  pos+ advancedByte );
+ advancedByte += 4;
+ }
+ else if( strncmp( (const char*)namePosition, "_PRW", 4) == 0)
+ {
+ printf("Got a nameOP _PRW at %zi\n",  pos+ advancedByte );
+ advancedByte += 4;
+ }
+ else
+ {
+ assert(0);
+ }
+ }
+ 
+ else if (op == AML_NameChar)
+ {
+ const uint8_t* namePosition = buffer + pos + advancedByte;
+ printf("Got NameChar '%s'\n" ,namePosition);
+ 
+ }
+ else if (op == AML_Unknown)
+ {
+ printf("Got Unknown 0x%02x %i\n" ,buffer[pos],buffer[pos] );
+ }
+ else if (op == AML_TypeOp)
+ {
+ printf("TypeOp\n");
+ }
+ else if (op == AML_PackageOp)
+ {
+ printf("PackageOp\n");
+ }
+ else if (op == AML_VarPackageOp)
+ {
+ printf("VarPackageOp\n");
+ }
+ else if (op == AML_Char)
+ {
+ printf("Got Char '%c'\n" ,(char)buffer[pos] );
+ }
+ else if (op == AML_OneOp)
+ {
+ printf("1op\n");
+ }
+ else if (op == AML_ZeroOp)
+ {
+ printf("0op\n");
+ }
+ else if (op == AML_Int)
+ {
+ printf("Int '%c'\n" , (char)buffer[pos]);
+ }
+ else
+ {
+ printf("Other op %i (%x)\n",op , (char)buffer[pos]);
+ }
+ */
 
 
 

@@ -16,3 +16,20 @@
  */
 
 #include "EISAID.h"
+
+
+int isEisaId( uint32_t val)
+{
+    switch (val)
+    {
+        case PNP0A01:
+        case PNP0A03:
+            return 1;
+            
+            
+        default:
+            break;
+    }
+    
+    return 0;
+}

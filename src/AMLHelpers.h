@@ -21,5 +21,7 @@
 #include <stdint.h>
 
 int GetDWord(const uint8_t* buffer , ACPIDWord* word);
+int ExtractName(const uint8_t *buff, size_t size ,char* outChar);
 
 
+size_t GetInteger(uint8_t *object, uint64_t *integer);

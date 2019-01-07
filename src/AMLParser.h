@@ -36,7 +36,7 @@ typedef struct
 {
     AMLParserError (*DidReadDefBlock)(AMLParserState* parser,const ACPIDefinitionBlock* block);
     AMLParserError (*DidReadObject)(AMLParserState* parser  ,const ACPIDevice*device  );
-    TreeElement*   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent);
+    TreeElement*   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent , const uint8_t* bufferPos , size_t bufferSize);
 } AMLParserCallbacks;
 
 struct _AMLParserState

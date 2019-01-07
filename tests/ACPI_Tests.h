@@ -22,4 +22,6 @@ void ACPI_Tests(void);
 
 void ACPIReadAML(int argc, const char * argv[]);
 
+//void ACPIWriteAML(void);
+
 

@@ -16,14 +16,15 @@
  */
 
 #include <assert.h>
+#include <string.h>
 #include "AMLHelpers.h"
-
+#include "AMLByteCode.h"
 
 int GetDWord(const uint8_t* buffer , ACPIDWord* word)
 {
     assert(word);
     assert(buffer);
-    (void) buffer[3]; // 
+     
     
     union
     {
@@ -39,4 +40,57 @@ int GetDWord(const uint8_t* buffer , ACPIDWord* word)
     
     *word = val.v;
     return 1;
+}
+
+int ExtractName(const uint8_t *buff, size_t size ,char* outChar)
+{
+    strncpy(outChar, (const char*)buff, 4);
+    outChar[4] = 0;
+    
+    if (outChar[3] == '_')
+    {
+        outChar[3] = 0;
+    }
+    return 1;
+}
+
+// taken from https://github.com/tadryanom/lux/blob/master/kernel/acpi/eval.c
+// acpins_eval_integer(): Evaluates an integer object
+// Param:    uint8_t *object - pointer to object
+// Param:    uint64_t *integer - destination
+// Return:    size_t - size of object in bytes, 0 if it's not an integer
+
+size_t GetInteger(uint8_t *object, uint64_t *integer)
+{
+    uint8_t *byte = (uint8_t*)(object + 1);
+    uint16_t *word = (uint16_t*)(object + 1);
+    uint32_t *dword = (uint32_t*)(object + 1);
+    uint64_t *qword = (uint64_t*)(object + 1);
+    
+    switch(object[0])
+    {
+        case AML_OP_ZeroOp:
+            integer[0] = 0;
+            return 1;
+        case AML_OP_OneOp:
+            integer[0] = 1;
+            return 1;
+        case AML_OP_OnesOp:
+            integer[0] = 0xFFFFFFFFFFFFFFFF;
+            return 1;
+        case AML_OP_BytePrefix:
+            integer[0] = (uint64_t)byte[0];
+            return 2;
+        case AML_OP_WordPrefix:
+            integer[0] = (uint64_t)word[0];
+            return 3;
+        case AML_OP_DWordPrefix:
+            integer[0] = (uint64_t)dword[0];
+            return 5;
+        case AML_OP_QWordPrefix:
+            integer[0] = qword[0];
+            return 9;
+        default:
+            return 0;
+    }
 }

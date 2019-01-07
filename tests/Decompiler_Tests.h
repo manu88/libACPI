@@ -15,15 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include "ACPI_Tests.h"
-#include "AMLParser_Tests.h"
-#include "Decompiler_Tests.h"
+#pragma once
 
-int main(int argc, const char * argv[])
-{
-    AMLParserTests();
-    //ACPI_Tests();
-    Decompile_Tests();
-    return 0;
-}
+void Decompile_Tests(void);
