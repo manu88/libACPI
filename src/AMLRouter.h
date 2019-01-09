@@ -28,7 +28,7 @@ typedef enum
     AML_NameOp            ,
     AML_BytePrefix        ,
     AML_WordPrefix        ,
-    AML_DWordPrefix       ,
+    AML_DWordPrefix       , // 7
     AML_StringPrefix      ,
     AML_QWordPrefix       ,
     AML_ScopeOp           , // 10

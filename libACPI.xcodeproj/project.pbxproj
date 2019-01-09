@@ -24,10 +24,24 @@
 		59459A6E21DF4FB400DD9396 /* Decompiler_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */; };
 		59459A7221DF51B800DD9396 /* AMLDecompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A7021DF51B800DD9396 /* AMLDecompiler.c */; };
 		59459A7421DF51C900DD9396 /* AMLDecompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A7321DF51C900DD9396 /* AMLDecompiler.h */; };
+		59459A7D21E6512F00DD9396 /* ACPI_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6421DE26B200DD9396 /* ACPI_Tests.c */; };
+		59459A7E21E6512F00DD9396 /* Decompiler_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */; };
+		59459A7F21E6512F00DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
+		59459A8221E6512F00DD9396 /* liblibACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* liblibACPI.dylib */; };
+		59459A8921E6514500DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459A8821E6514500DD9396 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		59459A2721DE25C800DD9396 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		59459A8321E6512F00DD9396 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -65,6 +79,8 @@
 		59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Decompiler_Tests.c; sourceTree = "<group>"; };
 		59459A7021DF51B800DD9396 /* AMLDecompiler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLDecompiler.c; sourceTree = "<group>"; };
 		59459A7321DF51C900DD9396 /* AMLDecompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLDecompiler.h; sourceTree = "<group>"; };
+		59459A8721E6512F00DD9396 /* TestsCpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestsCpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		59459A8821E6514500DD9396 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +96,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59459A8121E6512F00DD9396 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59459A8221E6512F00DD9396 /* liblibACPI.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +126,7 @@
 			children = (
 				59459A2921DE25C800DD9396 /* Tests */,
 				59459A5121DE263C00DD9396 /* liblibACPI.dylib */,
+				59459A8721E6512F00DD9396 /* TestsCpp */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,6 +153,7 @@
 		59459A4A21DE25FC00DD9396 /* tests */ = {
 			isa = PBXGroup;
 			children = (
+				59459A8821E6514500DD9396 /* main.cpp */,
 				59459A6421DE26B200DD9396 /* ACPI_Tests.c */,
 				59459A6521DE26B200DD9396 /* ACPI_Tests.h */,
 				59459A6721DE26B200DD9396 /* AMLParser_Tests.c */,
@@ -210,6 +236,23 @@
 			productReference = 59459A5121DE263C00DD9396 /* liblibACPI.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		59459A7B21E6512F00DD9396 /* TestsCpp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 59459A8421E6512F00DD9396 /* Build configuration list for PBXNativeTarget "TestsCpp" */;
+			buildPhases = (
+				59459A7C21E6512F00DD9396 /* Sources */,
+				59459A8121E6512F00DD9396 /* Frameworks */,
+				59459A8321E6512F00DD9396 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestsCpp;
+			productName = libACPI;
+			productReference = 59459A8721E6512F00DD9396 /* TestsCpp */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -241,6 +284,7 @@
 			targets = (
 				59459A2821DE25C800DD9396 /* Tests */,
 				59459A5021DE263C00DD9396 /* libACPI */,
+				59459A7B21E6512F00DD9396 /* TestsCpp */,
 			);
 		};
 /* End PBXProject section */
@@ -268,6 +312,17 @@
 				59459A5921DE266500DD9396 /* ACPIDesc.c in Sources */,
 				59459A5A21DE266500DD9396 /* AMLParser.c in Sources */,
 				59459A5521DE265500DD9396 /* EISAID.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59459A7C21E6512F00DD9396 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59459A7D21E6512F00DD9396 /* ACPI_Tests.c in Sources */,
+				59459A7E21E6512F00DD9396 /* Decompiler_Tests.c in Sources */,
+				59459A7F21E6512F00DD9396 /* AMLParser_Tests.c in Sources */,
+				59459A8921E6514500DD9396 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,6 +484,24 @@
 			};
 			name = Release;
 		};
+		59459A8521E6512F00DD9396 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S3D34765YM;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		59459A8621E6512F00DD9396 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S3D34765YM;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -455,6 +528,15 @@
 			buildConfigurations = (
 				59459A5321DE263C00DD9396 /* Debug */,
 				59459A5421DE263C00DD9396 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		59459A8421E6512F00DD9396 /* Build configuration list for PBXNativeTarget "TestsCpp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59459A8521E6512F00DD9396 /* Debug */,
+				59459A8621E6512F00DD9396 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

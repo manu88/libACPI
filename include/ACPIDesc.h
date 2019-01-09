@@ -37,10 +37,11 @@ typedef enum
     ACPIObject_Type_Unknown = 0,
     ACPIObject_Type_Root,
     ACPIObject_Type_Device,
+    ACPIObject_Type_DefinitionBlock,
     ACPIObject_Type_Name,
     ACPIObject_Type_OperationRegion,
     ACPIObject_Type_Scope,
-    ACPIObject_Type_DWord,
+    ACPIObject_Type_DWord, // should remove this one
     
 }ACPIObject_Type;
 

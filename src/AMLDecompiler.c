@@ -32,37 +32,13 @@ int AMLDecompilerInit(AMLDecompiler* decomp)
     return 1;
 }
 
-static AMLParserError _DidReadDefBlock(AMLParserState* parser,const ACPIDefinitionBlock* desc)
-{
-    assert(parser);
-    assert(desc);
-    
-    
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    //doc->desc = *desc;
-    //doc->hasDesc = 1;
-    
-    // DefinitionBlock ("", "DSDT", 10, "IDOEM", "SOMEAID", 0x00001234)
-    printf("DefinitionBlock (\"\", \"%s\", %u ,\"%s\",\"%s\", 0x%x)\n" ,
-           desc->tableSignature ,
-           desc->complianceRevision ,
-           desc->OEMId,
-           desc->tableId,
-           desc->OEMRev
-           );
-    
-    return AMLParserError_None;
-}
 
-
-static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent ,const uint8_t* bufferPos , size_t bufferSize)
+static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
 {
     
-    
-    assert(parent || (parent == NULL &&  forObjectType == ACPIObject_Type_Root));
     assert(parser);
-    //printf("Allocate request for type %i (count %i)\n" , forObjectType , NextElementIndex);
+
+    static int indent = 0;
     
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
@@ -70,13 +46,43 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
     
     switch (forObjectType)
     {
-        
+        case ACPIObject_Type_DefinitionBlock:
+        {
+            const ACPIDefinitionBlock* desc =(const ACPIDefinitionBlock*) bufferPos;
+            printf("DefinitionBlock (\"\", \"%s\", %u ,\"%s\",\"%s\", 0x%x)\n" ,
+                   desc->tableSignature ,
+                   desc->complianceRevision ,
+                   desc->OEMId,
+                   desc->tableId,
+                   desc->OEMRev
+                   );
+            
+            if (decomp->callbacks.OnDefinitionBlock) decomp->callbacks.OnDefinitionBlock(decomp , desc);
+            
+        }
+            break;
         case ACPIObject_Type_Scope:
         {
             char name[5] = {0};
             
+            
             ACPIScopeGetLocation(bufferPos, bufferSize , name);
-            printf("Got a scope at location '%s'\n" , name);
+            
+            indent++;
+            
+            for(int i=0;i<indent;i++)printf("\t");
+            printf("-----Got a scope at location '%s'\n" , name);
+            
+            if (decomp->callbacks.StartScope) decomp->callbacks.StartScope(decomp , name);
+            
+            AMLParserProcessBuffer(parser, bufferPos, bufferSize);
+            
+            if (decomp->callbacks.EndScope) decomp->callbacks.EndScope(decomp , name);
+            
+            for(int i=0;i<indent;i++)printf("\t");
+            printf("----- END SCOPE \n");
+            
+            indent--;
         }
             break;
             
@@ -85,37 +91,70 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             
             char name[5] = {0};
             ExtractName(bufferPos, bufferSize, name);
+            
+            indent++;
+            
+            for(int i=0;i<indent;i++)printf("\t");
             printf("--Start Device '%s' \n" , name);
             
+            if (decomp->callbacks.StartDevice) decomp->callbacks.StartDevice(decomp , name);
+            
             AMLParserProcessBuffer(parser, bufferPos, bufferSize);
+            
+            if (decomp->callbacks.EndDevice) decomp->callbacks.EndDevice(decomp , name);
+            
+            for(int i=0;i<indent;i++)printf("\t");
             printf("--End Device '%s' \n" , name);
+            
+            indent--;
             //AMLDecompilerStart(decomp, bufferPos, bufferSize);
         }
             break;
+            
         case ACPIObject_Type_Name:
         {
-            printf("Name('%s' ," , (const char*)bufferPos);
+            char name[5] = {0};
+            const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
+            ExtractName(namePosition, 4, name);
+            
+            for(int i=0;i<indent;i++)printf("\t");
+            printf("Name('%s' ," , name);
+            
+            if (decomp->callbacks.StartName) decomp->callbacks.StartName(decomp , name);
+            
+            //int (*EndName)(AMLDecompiler* , const char* name);
+            /*
+            size_t adv = 0;
+            const AMLOperation nextNameOp =  AMLParserPeekOp(bufferPos + 4, 4, &adv);
+            printf("\nNext op %i val 0x%x\n" , nextNameOp , bufferPos[4]);
+            
+            uint64_t val;
+            GetInteger(bufferPos + 4 , &val);
+            printf("Value is %llx\n" , val);
+             */
         }
             break;
             
         case ACPIObject_Type_DWord:
         {
-            ACPIDWord w;
-            GetDWord(bufferPos, &w);
-            
+            //ACPIDWord w;
+            //GetDWord(bufferPos, &w);
+            uint64_t w;
+            GetInteger(bufferPos-1, &w);
             if (isEisaId(w))
             {
-                printf("EisaId(%x) )\n" ,w);
+                printf("EisaId(%llx) )\n" ,w);
             }
             else
             {
-                printf("%x)\n" ,w);
+                printf("%llx)\n" ,w);
             }
         }
             break;
             
         case ACPIObject_Type_Root:
             //printf("Start root \n");
+            for(int i=0;i<indent;i++)printf("\t");
             printf("{\n");
             break;
         default:
@@ -129,25 +168,13 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
     return &throwableElement;
 }
 
-static AMLParserError _DidReadDevice(AMLParserState* parser  ,const ACPIDevice*device)
-{
-    assert(parser);
-    assert(device);
-    
-    
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    
-    //memcpy(&doc->devices[ ACPIDocumentGetDevicesCount(doc)/* doc->devicesCount*/], device, sizeof(ACPIDevice));
-    //doc->devices[doc->devicesCount] = *device;
-    //doc->devicesCount++;
-    
-    return AMLParserError_None;
-}
-
 
 AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , size_t bufferSize)
 {
+    if (buffer == NULL || bufferSize == 0)
+    {
+        return AMLParserError_BufferTooShort;
+    }
     
     AMLParserState parser;
     
@@ -157,10 +184,53 @@ AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , 
     
     parser.userData = decomp;
     
-    parser.callbacks.DidReadObject = _DidReadDevice;
-    parser.callbacks.DidReadDefBlock = _DidReadDefBlock;
+    //parser.callbacks.DidReadObject = _DidReadDevice;
+    //parser.callbacks.DidReadDefBlock = _DidReadDefBlock;
     parser.callbacks.AllocateElement = _AllocateElement;
     
     return AMLParserProcessBuffer(&parser , buffer , bufferSize);
     
 }
+
+/*
+ static AMLParserError _DidReadDefBlock(AMLParserState* parser,const ACPIDefinitionBlock* desc)
+ {
+ assert(parser);
+ assert(desc);
+ 
+ 
+ AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
+ assert(decomp);
+ //doc->desc = *desc;
+ //doc->hasDesc = 1;
+ 
+ // DefinitionBlock ("", "DSDT", 10, "IDOEM", "SOMEAID", 0x00001234)
+ printf("DefinitionBlock (\"\", \"%s\", %u ,\"%s\",\"%s\", 0x%x)\n" ,
+ desc->tableSignature ,
+ desc->complianceRevision ,
+ desc->OEMId,
+ desc->tableId,
+ desc->OEMRev
+ );
+ 
+ return AMLParserError_None;
+ }
+ */
+
+/*
+ static AMLParserError _DidReadDevice(AMLParserState* parser  ,const ACPIDevice*device)
+ {
+ assert(parser);
+ assert(device);
+ 
+ 
+ AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
+ assert(decomp);
+ 
+ //memcpy(&doc->devices[ ACPIDocumentGetDevicesCount(doc)], device, sizeof(ACPIDevice));
+ //doc->devices[doc->devicesCount] = *device;
+ //doc->devicesCount++;
+ 
+ return AMLParserError_None;
+ }
+ */

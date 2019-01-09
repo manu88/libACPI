@@ -17,13 +17,40 @@
 
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include "AMLParser.h"
 
+
+typedef struct _AMLDecompiler AMLDecompiler;
+
 typedef struct
 {
-    uint8_t p;
-} AMLDecompiler;
+    //AMLParserError (*DidReadDefBlock)(AMLParserState* parser,const ACPIDefinitionBlock* block);
+    //AMLParserError (*DidReadObject)(AMLParserState* parser  ,const ACPIDevice*device  );
+    //TreeElement*   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
+    
+    int (*OnDefinitionBlock)(AMLDecompiler*, const ACPIDefinitionBlock* block);
+    int (*StartScope)(AMLDecompiler* , const char* location);
+    int (*EndScope)(AMLDecompiler* , const char* location);
+    
+    int (*StartDevice)(AMLDecompiler* , const char* name);
+    int (*EndDevice)(AMLDecompiler* , const char* name);
+    
+    int (*StartName)(AMLDecompiler* , const char* name);
+    int (*EndName)(AMLDecompiler* , const char* name);
+    
+} AMLDecompilerCallbacks;
+
+
+struct _AMLDecompiler
+{
+    AMLDecompilerCallbacks callbacks;
+    void* userData;
+};
 
 
 int AMLDecompilerInit(AMLDecompiler* decomp);
@@ -31,3 +58,7 @@ int AMLDecompilerInit(AMLDecompiler* decomp);
 
 
 AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , size_t bufferSize);
+
+#ifdef __cplusplus
+}
+#endif

@@ -34,11 +34,11 @@ int ACPIDocumentInit(ACPIDocument* doc)
     return 1;
 }
 
-static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType , TreeElement*parent , const uint8_t* bufferPos , size_t bufferSize)
+static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize)
 {
     
     
-    assert(parent || (parent == NULL &&  forObjectType == ACPIObject_Type_Root));
+    //assert(parent || (parent == NULL &&  forObjectType == ACPIObject_Type_Root));
     assert(parser);
     //printf("Allocate request for type %i (count %i)\n" , forObjectType , NextElementIndex);
     
@@ -59,34 +59,6 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
     return next;
 }
 
-static AMLParserError _DidReadDevice(AMLParserState* parser  ,const ACPIDevice*device)
-{
-    assert(parser);
-    assert(device);
-    
-    
-    ACPIDocument* doc = (ACPIDocument*) parser->userData;
-    assert(doc);
-    
-    //memcpy(&doc->devices[ ACPIDocumentGetDevicesCount(doc)/* doc->devicesCount*/], device, sizeof(ACPIDevice));
-    //doc->devices[doc->devicesCount] = *device;
-    //doc->devicesCount++;
-    
-    return AMLParserError_None;
-}
-
-static AMLParserError _DidReadDefBlock(AMLParserState* parser,const ACPIDefinitionBlock* desc)
-{
-    assert(parser);
-    assert(desc);
-    
-    
-    ACPIDocument* doc = (ACPIDocument*) parser->userData;
-    assert(doc);
-    doc->desc = *desc;
-    doc->hasDesc = 1;
-    return AMLParserError_None;
-}
 
 AMLParserError ACPIParseAMLByteCode(ACPIDocument* doc,const uint8_t* buffer , size_t bufferSize)
 {
@@ -98,8 +70,8 @@ AMLParserError ACPIParseAMLByteCode(ACPIDocument* doc,const uint8_t* buffer , si
     
     parser.userData = doc;
     
-    parser.callbacks.DidReadObject = _DidReadDevice;
-    parser.callbacks.DidReadDefBlock = _DidReadDefBlock;
+    //parser.callbacks.DidReadObject = _DidReadDevice;
+    //parser.callbacks.DidReadDefBlock = _DidReadDefBlock;
     parser.callbacks.AllocateElement = _AllocateElement;
     
     return AMLParserProcessBuffer(&parser , buffer , bufferSize);
@@ -174,3 +146,36 @@ const TreeElement* ACPIDocumentGetNthDevice(const ACPIDocument* doc, size_t inde
     
     return NULL;
 }
+
+
+/*
+ static AMLParserError _DidReadDevice(AMLParserState* parser  ,const ACPIDevice*device)
+ {
+ assert(parser);
+ assert(device);
+ 
+ 
+ ACPIDocument* doc = (ACPIDocument*) parser->userData;
+ assert(doc);
+ 
+ //memcpy(&doc->devices[ ACPIDocumentGetDevicesCount(doc)], device, sizeof(ACPIDevice));
+ //doc->devices[doc->devicesCount] = *device;
+ //doc->devicesCount++;
+ 
+ return AMLParserError_None;
+ }
+ */
+/*
+ static AMLParserError _DidReadDefBlock(AMLParserState* parser,const ACPIDefinitionBlock* desc)
+ {
+ assert(parser);
+ assert(desc);
+ 
+ 
+ ACPIDocument* doc = (ACPIDocument*) parser->userData;
+ assert(doc);
+ doc->desc = *desc;
+ doc->hasDesc = 1;
+ return AMLParserError_None;
+ }
+ */

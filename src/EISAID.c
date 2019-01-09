@@ -18,7 +18,7 @@
 #include "EISAID.h"
 
 
-int isEisaId( uint32_t val)
+int isEisaId( uint64_t val)
 {
     switch (val)
     {

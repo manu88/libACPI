@@ -23,7 +23,7 @@
 
 
 
-int isEisaId( uint32_t val);
+int isEisaId( uint64_t val);
 
 /*
  #--Interrupt Controllers--

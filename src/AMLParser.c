@@ -98,12 +98,23 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
     // update advanced pointer
     *advanced = pos;
 
-    return state->callbacks.DidReadDefBlock(state , &defBlk);
+    if(state->callbacks.AllocateElement(state , ACPIObject_Type_DefinitionBlock  ,(const uint8_t*) &defBlk , sizeof(defBlk)))
+    {
+        return AMLParserError_None;
+    }
+    return AMLParserUserAbord;
+                                            //DidReadDefBlock(state , &defBlk);
+}
+
+AMLOperation AMLParserPeekOp( const uint8_t* buffer , size_t bufSize ,size_t *advance)
+{
+    return _GetNextOp(buffer, bufSize, advance, 0);
 }
 
 
 AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
 {
+    state->maxDepth++;
     
     // 1st step is to try to get a valid DefinitionBlock
     //ACPIDefinitionBlock defBlk = {0};
@@ -115,99 +126,72 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
     size_t pos = advancedByte;
     bufSize -= advancedByte;
     
-    TreeElement* currentElement = state->callbacks.AllocateElement(state, ACPIObject_Type_Root , NULL , buffer+ pos , bufSize);
-    if (currentElement)
-    {
-        currentElement->type = ACPIObject_Type_Root;
-        currentElement->ptr = buffer +pos;
-        currentElement->size = bufSize;
-    }
-    else
-    {
-        return AMLParserError_ElementAllocError;
-    }
+    TreeElement* currentElement = state->callbacks.AllocateElement(state, ACPIObject_Type_Root  , buffer+ pos , bufSize);
     
-    const TreeElement* rootElement = currentElement;
     while (bufSize)
     {
-        
         
         AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
 
         if (op == AML_DeviceOpList)
         {
-            size_t deviceSize = _GetPackageLength(buffer + pos + advancedByte, bufSize - advancedByte, &advancedByte, 0);
-
+            // the returned _GetPackageLength will contains the size' size, so we need to substract it from the device size,
+            // and include the package size in the advancedByte.
+            // This could need a refactorization 
+            size_t deviceSizeLen = 0;
+            size_t deviceSize = _GetPackageLength(buffer + pos + advancedByte, bufSize - advancedByte, &deviceSizeLen, 0)  ;
+            
+            advancedByte += deviceSizeLen;
+            deviceSize   -= deviceSizeLen;
+            
             const uint8_t* startDevice = buffer + pos + advancedByte;
             assert(startDevice);
             //assert(*sizeVal <= bufSize);
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Device, currentElement , startDevice , deviceSize-advancedByte);
-            if (element)
-            {
-                element->parent = currentElement;
-                element->type = ACPIObject_Type_Device;
-                element->ptr = startDevice;
-                element->size = deviceSize-advancedByte;
-            }
+            state->callbacks.AllocateElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
             
             advancedByte += deviceSize;
             
         }
+        
+        else if (op == AML_ScopeOp)
+        {
+            size_t scopeSizeLen = 0;
+            size_t scopeSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &scopeSizeLen, 0);
+            
+            advancedByte += scopeSizeLen;
+            scopeSize    -= scopeSizeLen;
+            
+            const uint8_t* startScope = buffer + pos + advancedByte;
+            state->callbacks.AllocateElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
+            
+            advancedByte +=  scopeSize;
+        }
+        
+        /*
         else if (op == AML_ZeroOp)
         {
             printf("ZERO_OP\n");
         }
+         */
         else if (op == AML_DWordPrefix)
         {
             const uint8_t* valPosition = buffer + pos + advancedByte;
             
             const size_t valSize = sizeof(ACPIDWord);
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_DWord, currentElement , valPosition , valSize);
-            if (element)
-            {
-                element->parent = currentElement;
-                element->type = ACPIObject_Type_Device;
-                element->ptr = valPosition;
-                element->size = valSize;
-            }
+            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_DWord , valPosition , valSize);
             
             advancedByte += valSize;
         }
         else if (op == AML_NameOp)
         {
-            char name[5] = {0};
-            const uint8_t* namePosition = buffer + pos + advancedByte;
-            ExtractName(namePosition, 4, name);
-            //printf("Nameop '%s'\n" , name);
             
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Name, currentElement ,(const uint8_t*) name , strlen(name) );
-            if (element)
-            {
-                element->parent = currentElement;
-                element->type = ACPIObject_Type_Scope;
-                element->ptr = NULL;
-                element->size = 0;
-            }
+            const uint8_t* namePos = buffer + pos + advancedByte;
+            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
             
             advancedByte +=4;
             
         }
-        else if (op == AML_ScopeOp)
-        {
-            size_t scopeSize = _GetPackageLength(buffer+pos+1, bufSize-1, &advancedByte, 0);
-
-            const uint8_t* startScope = buffer + pos + advancedByte;
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_DWord, currentElement , startScope , scopeSize);
-            if (element)
-            {
-                element->parent = currentElement;
-                element->type = ACPIObject_Type_Scope;
-                element->ptr = startScope;
-                element->size = scopeSize;
-            }
-            
-            advancedByte +=  scopeSize;
-        }
+        
         
         
         // Check if wrapped
@@ -221,12 +205,14 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
         
         assert(_EnsureValidBuffer(state, buffer+pos, bufSize));
         
-    }
+    } // end while
+    
+    
     
     return 0;
 }
 
-
+/*
 static AMLParserError _ParseDeviceList(AMLParserState* state , const uint8_t* buffer , size_t bufSize)
 {
     assert(0);
@@ -244,7 +230,7 @@ static AMLParserError _ParseDeviceList(AMLParserState* state , const uint8_t* bu
     
     while (bufSize)
     {
-        AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
+        AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0 );
         
         if (op == AML_Char || op == AML_Int)
         {
@@ -254,12 +240,12 @@ static AMLParserError _ParseDeviceList(AMLParserState* state , const uint8_t* bu
                 idIndex++;
             }
         }
-        /*
+
          else if (op == AML_NameOp)
          {
          idIndex = 10; //
          }
-         */
+ 
         else if (op == AML_DWordPrefix)
         {
             const uint8_t* ptr = (const uint8_t*) buffer+pos+advancedByte;
@@ -368,7 +354,7 @@ static AMLParserError _ParseDeviceList(AMLParserState* state , const uint8_t* bu
     
     return state->callbacks.DidReadObject( state  ,&dev  );
 }
-
+*/
 
 
 /*
