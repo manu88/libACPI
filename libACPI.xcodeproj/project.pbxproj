@@ -14,22 +14,26 @@
 		59459A5821DE266500DD9396 /* AMLRouter.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3921DE25EC00DD9396 /* AMLRouter.c */; };
 		59459A5921DE266500DD9396 /* ACPIDesc.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3C21DE25EC00DD9396 /* ACPIDesc.c */; };
 		59459A5A21DE266500DD9396 /* AMLParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3F21DE25EC00DD9396 /* AMLParser.c */; };
-		59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5C21DE269000DD9396 /* ACPIDesc.h */; };
-		59459A6121DE269100DD9396 /* EISAID.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5D21DE269000DD9396 /* EISAID.h */; };
-		59459A6221DE269100DD9396 /* TreeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5E21DE269000DD9396 /* TreeRef.h */; };
-		59459A6321DE269100DD9396 /* ACPIParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5F21DE269000DD9396 /* ACPIParser.h */; };
+		59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5C21DE269000DD9396 /* ACPIDesc.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59459A6121DE269100DD9396 /* EISAID.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5D21DE269000DD9396 /* EISAID.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59459A6221DE269100DD9396 /* TreeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5E21DE269000DD9396 /* TreeRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59459A6321DE269100DD9396 /* ACPIParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5F21DE269000DD9396 /* ACPIParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A6821DE26B200DD9396 /* ACPI_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6421DE26B200DD9396 /* ACPI_Tests.c */; };
 		59459A6921DE26B200DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
-		59459A6B21DE26BE00DD9396 /* liblibACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* liblibACPI.dylib */; };
+		59459A6B21DE26BE00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
 		59459A6E21DF4FB400DD9396 /* Decompiler_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */; };
 		59459A7221DF51B800DD9396 /* AMLDecompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A7021DF51B800DD9396 /* AMLDecompiler.c */; };
-		59459A7421DF51C900DD9396 /* AMLDecompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A7321DF51C900DD9396 /* AMLDecompiler.h */; };
+		59459A7421DF51C900DD9396 /* AMLDecompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A7321DF51C900DD9396 /* AMLDecompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A7D21E6512F00DD9396 /* ACPI_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6421DE26B200DD9396 /* ACPI_Tests.c */; };
 		59459A7E21E6512F00DD9396 /* Decompiler_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */; };
 		59459A7F21E6512F00DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
-		59459A8221E6512F00DD9396 /* liblibACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* liblibACPI.dylib */; };
+		59459A8221E6512F00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
 		59459A8921E6514500DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459A8821E6514500DD9396 /* main.cpp */; };
 		59459A8C21E7243400DD9396 /* QemuTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A8B21E7243400DD9396 /* QemuTest.c */; };
+		59459A8F21E7274300DD9396 /* AMLRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A8D21E7274200DD9396 /* AMLRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59459A9021E7274300DD9396 /* AMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A8E21E7274200DD9396 /* AMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59459A9121E7279C00DD9396 /* AMLHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A3E21DE25EC00DD9396 /* AMLHelpers.h */; };
+		59459A9221E7279C00DD9396 /* AMLByteCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A4121DE25EC00DD9396 /* AMLByteCode.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -60,14 +64,12 @@
 		59459A3721DE25EC00DD9396 /* TreeRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TreeRef.c; sourceTree = "<group>"; };
 		59459A3821DE25EC00DD9396 /* ACPIParser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ACPIParser.c; sourceTree = "<group>"; };
 		59459A3921DE25EC00DD9396 /* AMLRouter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMLRouter.c; sourceTree = "<group>"; };
-		59459A3A21DE25EC00DD9396 /* AMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLParser.h; sourceTree = "<group>"; };
 		59459A3C21DE25EC00DD9396 /* ACPIDesc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ACPIDesc.c; sourceTree = "<group>"; };
 		59459A3E21DE25EC00DD9396 /* AMLHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLHelpers.h; sourceTree = "<group>"; };
 		59459A3F21DE25EC00DD9396 /* AMLParser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMLParser.c; sourceTree = "<group>"; };
-		59459A4021DE25EC00DD9396 /* AMLRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLRouter.h; sourceTree = "<group>"; };
 		59459A4121DE25EC00DD9396 /* AMLByteCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLByteCode.h; sourceTree = "<group>"; };
 		59459A4B21DE25FC00DD9396 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		59459A5121DE263C00DD9396 /* liblibACPI.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblibACPI.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		59459A5121DE263C00DD9396 /* libACPI.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libACPI.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		59459A5C21DE269000DD9396 /* ACPIDesc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPIDesc.h; sourceTree = "<group>"; };
 		59459A5D21DE269000DD9396 /* EISAID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EISAID.h; sourceTree = "<group>"; };
 		59459A5E21DE269000DD9396 /* TreeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeRef.h; sourceTree = "<group>"; };
@@ -84,6 +86,8 @@
 		59459A8821E6514500DD9396 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59459A8A21E7243400DD9396 /* QemuTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QemuTest.h; sourceTree = "<group>"; };
 		59459A8B21E7243400DD9396 /* QemuTest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = QemuTest.c; sourceTree = "<group>"; };
+		59459A8D21E7274200DD9396 /* AMLRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLRouter.h; sourceTree = "<group>"; };
+		59459A8E21E7274200DD9396 /* AMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLParser.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,7 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59459A6B21DE26BE00DD9396 /* liblibACPI.dylib in Frameworks */,
+				59459A6B21DE26BE00DD9396 /* libACPI.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +110,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59459A8221E6512F00DD9396 /* liblibACPI.dylib in Frameworks */,
+				59459A8221E6512F00DD9396 /* libACPI.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,7 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				59459A2921DE25C800DD9396 /* Tests */,
-				59459A5121DE263C00DD9396 /* liblibACPI.dylib */,
+				59459A5121DE263C00DD9396 /* libACPI.dylib */,
 				59459A8721E6512F00DD9396 /* TestsCpp */,
 			);
 			name = Products;
@@ -143,9 +147,7 @@
 				59459A3E21DE25EC00DD9396 /* AMLHelpers.h */,
 				59459A3621DE25EC00DD9396 /* AMLHelpers.c */,
 				59459A3721DE25EC00DD9396 /* TreeRef.c */,
-				59459A4021DE25EC00DD9396 /* AMLRouter.h */,
 				59459A3921DE25EC00DD9396 /* AMLRouter.c */,
-				59459A3A21DE25EC00DD9396 /* AMLParser.h */,
 				59459A3F21DE25EC00DD9396 /* AMLParser.c */,
 				59459A3C21DE25EC00DD9396 /* ACPIDesc.c */,
 				59459A4121DE25EC00DD9396 /* AMLByteCode.h */,
@@ -175,6 +177,8 @@
 			children = (
 				59459A7321DF51C900DD9396 /* AMLDecompiler.h */,
 				59459A5C21DE269000DD9396 /* ACPIDesc.h */,
+				59459A8E21E7274200DD9396 /* AMLParser.h */,
+				59459A8D21E7274200DD9396 /* AMLRouter.h */,
 				59459A5D21DE269000DD9396 /* EISAID.h */,
 				59459A5E21DE269000DD9396 /* TreeRef.h */,
 				59459A5F21DE269000DD9396 /* ACPIParser.h */,
@@ -198,9 +202,13 @@
 			files = (
 				59459A6321DE269100DD9396 /* ACPIParser.h in Headers */,
 				59459A6221DE269100DD9396 /* TreeRef.h in Headers */,
+				59459A8F21E7274300DD9396 /* AMLRouter.h in Headers */,
 				59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */,
 				59459A6121DE269100DD9396 /* EISAID.h in Headers */,
+				59459A9021E7274300DD9396 /* AMLParser.h in Headers */,
+				59459A9221E7279C00DD9396 /* AMLByteCode.h in Headers */,
 				59459A7421DF51C900DD9396 /* AMLDecompiler.h in Headers */,
+				59459A9121E7279C00DD9396 /* AMLHelpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,7 +246,7 @@
 			);
 			name = libACPI;
 			productName = libACPI;
-			productReference = 59459A5121DE263C00DD9396 /* liblibACPI.dylib */;
+			productReference = 59459A5121DE263C00DD9396 /* libACPI.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		59459A7B21E6512F00DD9396 /* TestsCpp */ = {
@@ -451,6 +459,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S3D34765YM;
+				HEADER_SEARCH_PATHS = /usr/local/include/libACPI/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -460,6 +469,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S3D34765YM;
+				HEADER_SEARCH_PATHS = /usr/local/include/libACPI/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -468,12 +478,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEPLOYMENT_LOCATION = YES;
 				DEVELOPMENT_TEAM = S3D34765YM;
+				DSTROOT = /;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
+				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libACPI/;
+				SKIP_INSTALL = NO;
 			};
 			name = Debug;
 		};
@@ -481,12 +495,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEPLOYMENT_LOCATION = YES;
 				DEVELOPMENT_TEAM = S3D34765YM;
+				DSTROOT = /;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
+				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/libACPI/;
+				SKIP_INSTALL = NO;
 			};
 			name = Release;
 		};
@@ -495,6 +513,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S3D34765YM;
+				HEADER_SEARCH_PATHS = /usr/local/include/libACPI/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -504,6 +523,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S3D34765YM;
+				HEADER_SEARCH_PATHS = /usr/local/include/libACPI/;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
