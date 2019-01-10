@@ -36,8 +36,15 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
     
     while(  read(fd, &c, 1) >0)
     {
+        uint8_t* lastP = ptr;
         ptr = reinterpret_cast<uint8_t*>( realloc(ptr, ++size) );
         
+        if (!ptr) 
+        {
+            free(lastP);
+            *bufSize = 0;
+            return NULL;
+        }
         ptr[size-1] = c;
         
     }

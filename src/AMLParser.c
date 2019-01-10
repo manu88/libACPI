@@ -40,7 +40,8 @@ static int _EnsureValidBuffer(AMLParserState* state , const uint8_t* buffer , si
     ptrdiff_t p1 = buffer+bufSize;
     ptrdiff_t p2 = state->startBuffer + state->totalSize;
     
-    ptrdiff_t diff = p2-p1;
+    ptrdiff_t diff = p2-p1; // for debug
+    (void) diff;
     assert( p1 <= p2);
     
     return 1;
@@ -126,7 +127,7 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
     size_t pos = advancedByte;
     bufSize -= advancedByte;
     
-    TreeElement* currentElement = state->callbacks.AllocateElement(state, ACPIObject_Type_Root  , buffer+ pos , bufSize);
+    state->callbacks.AllocateElement(state, ACPIObject_Type_Root  , buffer+ pos , bufSize);
     
     while (bufSize)
     {
@@ -178,7 +179,7 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
             const uint8_t* valPosition = buffer + pos + advancedByte;
             
             const size_t valSize = sizeof(ACPIDWord);
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_DWord , valPosition , valSize);
+            state->callbacks.AllocateElement(state, ACPIObject_Type_DWord , valPosition , valSize);
             
             advancedByte += valSize;
         }
@@ -186,7 +187,7 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
         {
             
             const uint8_t* namePos = buffer + pos + advancedByte;
-            TreeElement* element = state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
+            state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
             
             advancedByte +=4;
             
