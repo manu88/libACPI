@@ -18,7 +18,7 @@
 #pragma once
 
 #include <stdio.h>
-#include "AMLParser.h"
+#include <AMLParser.h>
 
 
 #define MAX_DEVICES_PER_DOC 20 // FIXME : this is absolutly arbitrary :)
