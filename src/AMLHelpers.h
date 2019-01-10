@@ -20,6 +20,7 @@
 #include "ACPIDesc.h"
 #include <stdint.h>
 
+int IsName(char character);
 int GetDWord(const uint8_t* buffer , ACPIDWord* word);
 int ExtractName(const uint8_t *buff, size_t size ,char* outChar);
 

@@ -26,6 +26,6 @@ int main(int argc, const char * argv[])
     AMLParserTests();
     //ACPI_Tests();
     Decompile_Tests();
-    QemuDecompTest();
+    //QemuDecompTest();
     return 0;
 }

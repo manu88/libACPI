@@ -20,6 +20,20 @@
 #include "AMLHelpers.h"
 #include "AMLByteCode.h"
 
+
+// acpins_is_name(): Evaluates a name character
+// Param:    char character - character from name
+// Return:    int - 1 if it's a name, 0 if it's not
+
+int IsName(char character)
+{
+    if((character >= '0' && character <= 'Z') || character == '_')
+        return 1;
+    
+    else
+        return 0;
+}
+
 int GetDWord(const uint8_t* buffer , ACPIDWord* word)
 {
     assert(word);
@@ -45,7 +59,7 @@ int GetDWord(const uint8_t* buffer , ACPIDWord* word)
 int ExtractName(const uint8_t *buff, size_t size ,char* outChar)
 {
     strncpy(outChar, (const char*)buff, 4);
-    outChar[4] = 0;
+    outChar[3] = 0;
     
     if (outChar[3] == '_')
     {

@@ -34,6 +34,18 @@ typedef enum
 
 typedef enum
 {
+   SystemMemory         =  0,
+   SystemIO             =  1,
+   PCI_Config           =  2,
+   EmbeddedControl      =  3,
+   SMBus                =  4,
+   CMOS                 =  5,
+   PCIBARTarget         =  6,
+    
+} ACPIRegionType;
+
+typedef enum
+{
     ACPIObject_Type_Unknown = 0,
     ACPIObject_Type_Root,
     ACPIObject_Type_Device,

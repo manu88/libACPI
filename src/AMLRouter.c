@@ -52,6 +52,17 @@ size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
         destination[0] |= (size_t)(data[3] << 20);
     }
     
+    if (bytecount == 0)
+    {
+        assert(*destination <=63);
+    }
+    else
+    {
+        assert(*destination > 63);
+    }
+    // Max size is 2^28 ie 268435456
+    assert(*destination < 268435456);
+    
     return (size_t)(bytecount + 1);
 }
 

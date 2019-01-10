@@ -130,7 +130,7 @@ int main(int argc, const char * argv[])
 {
     size_t bufSize = 0;
     
-    uint8_t *dataBuffer = readAndFillBuffer("test.aml" , &bufSize);
+    uint8_t *dataBuffer = readAndFillBuffer("qemu-dsdt.aml" , &bufSize);
     
     Decompiler decomp;
     

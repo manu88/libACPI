@@ -22,7 +22,7 @@
 #include "AMLHelpers.h"
 #include "AMLRouter.h"
 
-
+static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock);
 
 int AMLParserInit(AMLParserState* state)
 {
@@ -115,6 +115,11 @@ AMLOperation AMLParserPeekOp( const uint8_t* buffer , size_t bufSize ,size_t *ad
 
 AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
 {
+    return _AMLParserProcessBuffer(state, buffer, bufSize, 1);
+}
+
+static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock)
+{
     state->maxDepth++;
     
     // 1st step is to try to get a valid DefinitionBlock
@@ -122,8 +127,10 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
     
     size_t advancedByte = 0;
     
-    /*AMLParserError retDefBlock =*/ _ParseDefinitionBlock(state, buffer, bufSize , &advancedByte);
-    
+    if (parseDefBlock)
+    {
+        _ParseDefinitionBlock(state, buffer, bufSize , &advancedByte);
+    }
     size_t pos = advancedByte;
     bufSize -= advancedByte;
     
@@ -183,13 +190,81 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
             
             advancedByte += valSize;
         }
+        else if (op == AML_WordPrefix)
+        {
+            advancedByte +=1;
+        }
         else if (op == AML_NameOp)
         {
             
             const uint8_t* namePos = buffer + pos + advancedByte;
+            assert(IsName(*namePos));
             state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
             
             advancedByte +=4;
+            
+        }
+        else if (op == AML_FieldOp) // manual page 538.
+        {
+            size_t fieldSizeLen = 0;
+            size_t fieldSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &fieldSizeLen, 0);
+            
+            advancedByte += fieldSizeLen;
+            fieldSize    -= fieldSizeLen;
+            
+            const uint8_t* namePos = buffer + pos + advancedByte;
+            
+            
+            assert(IsName(*namePos));
+            
+            char name[4] = {0};
+            ExtractName(namePos, 4, name);
+            printf("Field name '%s' Package size %zi\n" , name , fieldSize);
+            
+            
+            
+            advancedByte += fieldSize;
+        }
+        else if (op == AML_MethodOp)
+        {
+            size_t methodSizeLen = 0;
+            size_t methodSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &methodSizeLen, 0);
+            
+            advancedByte += methodSizeLen;
+            methodSize   -= methodSizeLen;
+            
+            printf("Got a method\n");
+            const uint8_t* startPos = buffer + pos + advancedByte;
+            
+            
+            
+            advancedByte += methodSize;
+        }
+        else if (op == AML_OpRegionOp) // manual page 507.
+        {
+            const uint8_t* namePos = buffer + pos + advancedByte;
+            assert(IsName(*namePos));
+            char name[4] = {0};
+            ExtractName(namePos, 4, name);
+            printf("OpRegion name '%s'\n" , name);
+            advancedByte +=4;
+            
+            uint64_t regSpaceVal = 0;
+            uint64_t regOffsetVal = 0;
+            uint64_t regLenVal = 0;
+            
+            const uint8_t* regSpace = buffer + pos + advancedByte;
+            advancedByte += GetInteger(regSpace, &regSpaceVal);
+            
+            const uint8_t* regOffset = buffer + pos + advancedByte;
+            advancedByte += GetInteger(regOffset, &regOffsetVal);
+            
+            const uint8_t* regLen = buffer + pos + advancedByte;
+            advancedByte += GetInteger(regLen, &regLenVal);
+            
+            
+            //advancedByte +=1; // FIXME, we're off by one byte apparently
+            printf("space %x off %x len %x\n" , regSpaceVal , regOffsetVal , regLenVal);
             
         }
         
