@@ -20,7 +20,7 @@
 #include <stdint.h>
 #define PNP0A03  0x30ad041 //  PCI bus
 #define PNP0A01  0x10ad041 //  EISA bus
-
+#define PNP0103  0x301d041 //  HPET System Timer
 
 
 int isEisaId( uint64_t val);

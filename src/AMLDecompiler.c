@@ -257,13 +257,10 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
     
     assert(parser);
 
-    static int indent = 0;
-    
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
 
-    
-    
+        
     ParserContext ctx;
     
 
@@ -286,23 +283,21 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             
             
             ACPIScopeGetLocation(bufferPos, bufferSize , name);
-            
-            indent++;
-            
-            //for(int i=0;i<indent;i++)printf("\t");
-            //printf("-----Got a scope at location '%s'\n" , name);
-            
-            if (decomp->callbacks.StartScope) decomp->callbacks.StartScope(decomp ,&ctx , name);
+
+            if (decomp->callbacks.StartScope)
+            {
+                decomp->callbacks.StartScope(decomp ,&ctx , name);
+            }
             
             
             AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
             
-            if (decomp->callbacks.EndScope) decomp->callbacks.EndScope(decomp ,&ctx , name);
+            if (decomp->callbacks.EndScope)
+            {
+                decomp->callbacks.EndScope(decomp ,&ctx , name);
+            }
             
-            //for(int i=0;i<indent;i++)printf("\t");
-            //printf("----- END SCOPE \n");
             
-            indent--;
         }
             break;
         
@@ -318,8 +313,8 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             
             char name[5] = {0};
             ExtractName(bufferPos, bufferSize, name);
+            printf("Device '%s' - " , name);
             
-            indent++;
             
             //for(int i=0;i<indent;i++)printf("\t");
             //printf("--Start Device '%s' \n" , name);
@@ -339,7 +334,6 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             //for(int i=0;i<indent;i++)printf("\t");
             //printf("--End Device '%s' \n" , name);
             
-            indent--;
             //AMLDecompilerStart(decomp, bufferPos, bufferSize);
         }
             break;
@@ -360,7 +354,7 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             
             size_t adv = 0;
             const AMLOperation nextNameOp =  AMLParserPeekOp(bufferPos + 4, 1, &adv);
-            //printf("\nNext op %i val 0x%x\n" , nextNameOp , bufferPos[4]);
+            printf("\nName '%s'Next op %i val 0x%x\n" ,name, nextNameOp , bufferPos[4]);
             
             
             

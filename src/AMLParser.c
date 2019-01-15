@@ -256,7 +256,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
             case AML_NameOp:
             {
                 const uint8_t* namePos = buffer + pos + advancedByte;
-                //assert(IsName(*namePos)); FIXME : this fails for now 
+                assert(IsName(*namePos));// FIXME : this fails for now 
                 state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
                 
                 advancedByte +=4;

@@ -24,6 +24,7 @@ int isEisaId( uint64_t val)
     {
         case PNP0A01:
         case PNP0A03:
+        case PNP0103:
             return 1;
             
             

@@ -33,11 +33,6 @@ typedef struct _AMLDecompiler AMLDecompiler;
 
 typedef struct
 {
-    //AMLParserError (*DidReadDefBlock)(AMLParserState* parser,const ACPIDefinitionBlock* block);
-    //AMLParserError (*DidReadObject)(AMLParserState* parser  ,const ACPIDevice*device  );
-    //TreeElement*   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
-    
-    
     
     int (*onLargeItem)(AMLDecompiler*,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     int (*onSmallItem)(AMLDecompiler*,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);

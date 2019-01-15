@@ -385,8 +385,8 @@ int main(int argc, const char * argv[])
     size_t bufSize = 0;
     
     //const char* file = "Field.aml";
-    const char* file = "resTemp.aml";
-    //const char* file = "qemu-dsdt.aml";
+    //const char* file = "resTemp.aml";
+    const char* file = "qemu-dsdt.aml";
     uint8_t *dataBuffer = readAndFillBuffer(file , &bufSize);
     
     if (!dataBuffer)
