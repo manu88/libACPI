@@ -21,6 +21,7 @@
 #include "AMLParser.h"
 #include "AMLHelpers.h"
 #include "AMLRouter.h"
+#include "AMLByteCode.h"
 
 static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock);
 
@@ -99,6 +100,8 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
     // update advanced pointer
     *advanced = pos;
 
+    
+    
     if(state->callbacks.AllocateElement(state , ACPIObject_Type_DefinitionBlock  ,(const uint8_t*) &defBlk , sizeof(defBlk)))
     {
         return AMLParserError_None;
@@ -112,10 +115,14 @@ AMLOperation AMLParserPeekOp( const uint8_t* buffer , size_t bufSize ,size_t *ad
     return _GetNextOp(buffer, bufSize, advance, 0);
 }
 
-
 AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
 {
     return _AMLParserProcessBuffer(state, buffer, bufSize, 1);
+}
+
+AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
+{
+    return _AMLParserProcessBuffer(state, buffer, bufSize, 0);
 }
 
 static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock)
@@ -141,135 +148,231 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
         
         AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
 
-        if (op == AML_DeviceOpList)
-        {
-            // the returned _GetPackageLength will contains the size' size, so we need to substract it from the device size,
-            // and include the package size in the advancedByte.
-            // This could need a refactorization 
-            size_t deviceSizeLen = 0;
-            size_t deviceSize = _GetPackageLength(buffer + pos + advancedByte, bufSize - advancedByte, &deviceSizeLen, 0)  ;
-            
-            advancedByte += deviceSizeLen;
-            deviceSize   -= deviceSizeLen;
-            
-            const uint8_t* startDevice = buffer + pos + advancedByte;
-            assert(startDevice);
-            //assert(*sizeVal <= bufSize);
-            state->callbacks.AllocateElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
-            
-            advancedByte += deviceSize;
-            
-        }
-        
-        else if (op == AML_ScopeOp)
-        {
-            size_t scopeSizeLen = 0;
-            size_t scopeSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &scopeSizeLen, 0);
-            
-            advancedByte += scopeSizeLen;
-            scopeSize    -= scopeSizeLen;
-            
-            const uint8_t* startScope = buffer + pos + advancedByte;
-            state->callbacks.AllocateElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
-            
-            advancedByte +=  scopeSize;
-        }
-        
-        /*
-        else if (op == AML_ZeroOp)
-        {
-            printf("ZERO_OP\n");
-        }
-         */
-        else if (op == AML_DWordPrefix)
-        {
-            const uint8_t* valPosition = buffer + pos + advancedByte;
-            
-            const size_t valSize = sizeof(ACPIDWord);
-            state->callbacks.AllocateElement(state, ACPIObject_Type_DWord , valPosition , valSize);
-            
-            advancedByte += valSize;
-        }
-        else if (op == AML_WordPrefix)
-        {
-            advancedByte +=1;
-        }
-        else if (op == AML_NameOp)
-        {
-            
-            const uint8_t* namePos = buffer + pos + advancedByte;
-            assert(IsName(*namePos));
-            state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
-            
-            advancedByte +=4;
-            
-        }
-        else if (op == AML_FieldOp) // manual page 538.
-        {
-            size_t fieldSizeLen = 0;
-            size_t fieldSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &fieldSizeLen, 0);
-            
-            advancedByte += fieldSizeLen;
-            fieldSize    -= fieldSizeLen;
-            
-            const uint8_t* namePos = buffer + pos + advancedByte;
-            
-            
-            assert(IsName(*namePos));
-            
-            char name[4] = {0};
-            ExtractName(namePos, 4, name);
-            printf("Field name '%s' Package size %zi\n" , name , fieldSize);
-            
-            
-            
-            advancedByte += fieldSize;
-        }
-        else if (op == AML_MethodOp)
-        {
-            size_t methodSizeLen = 0;
-            size_t methodSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &methodSizeLen, 0);
-            
-            advancedByte += methodSizeLen;
-            methodSize   -= methodSizeLen;
-            
-            printf("Got a method\n");
-            const uint8_t* startPos = buffer + pos + advancedByte;
-            
-            
-            
-            advancedByte += methodSize;
-        }
-        else if (op == AML_OpRegionOp) // manual page 507.
-        {
-            const uint8_t* namePos = buffer + pos + advancedByte;
-            assert(IsName(*namePos));
-            char name[4] = {0};
-            ExtractName(namePos, 4, name);
-            printf("OpRegion name '%s'\n" , name);
-            advancedByte +=4;
-            
-            uint64_t regSpaceVal = 0;
-            uint64_t regOffsetVal = 0;
-            uint64_t regLenVal = 0;
-            
-            const uint8_t* regSpace = buffer + pos + advancedByte;
-            advancedByte += GetInteger(regSpace, &regSpaceVal);
-            
-            const uint8_t* regOffset = buffer + pos + advancedByte;
-            advancedByte += GetInteger(regOffset, &regOffsetVal);
-            
-            const uint8_t* regLen = buffer + pos + advancedByte;
-            advancedByte += GetInteger(regLen, &regLenVal);
-            
-            
-            //advancedByte +=1; // FIXME, we're off by one byte apparently
-            printf("space %x off %x len %x\n" , regSpaceVal , regOffsetVal , regLenVal);
-            
-        }
         
         
+        switch (op)
+        {
+            case AML_DeviceOpList:
+            {
+                // the returned _GetPackageLength will contains the size' size, so we need to substract it from the device size,
+                // and include the package size in the advancedByte.
+                // This could need a refactorization
+                size_t deviceSizeLen = 0;
+                size_t deviceSize = _GetPackageLength(buffer + pos + advancedByte, bufSize - advancedByte, &deviceSizeLen, 0)  ;
+                
+                advancedByte += deviceSizeLen;
+                deviceSize   -= deviceSizeLen;
+                
+                const uint8_t* startDevice = buffer + pos + advancedByte;
+                assert(startDevice);
+                //assert(*sizeVal <= bufSize);
+                state->callbacks.AllocateElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
+                
+                advancedByte += deviceSize;
+            }
+                break;
+                
+            case AML_ScopeOp:
+            {
+                size_t scopeSizeLen = 0;
+                size_t scopeSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &scopeSizeLen, 0);
+                
+                advancedByte += scopeSizeLen;
+                scopeSize    -= scopeSizeLen;
+                
+                const uint8_t* startScope = buffer + pos + advancedByte;
+                state->callbacks.AllocateElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
+                
+                advancedByte +=  scopeSize;
+            }
+                break;
+                
+            case AML_DWordPrefix:
+            {
+                const uint8_t* valPosition = buffer + pos + advancedByte;
+                
+                const size_t valSize = sizeof(ACPIDWord);
+                state->callbacks.AllocateElement(state, ACPIObject_Type_DWord , valPosition , valSize);
+                
+                advancedByte += valSize;
+            }
+                break;
+            case AML_BytePrefix:
+            {
+                const uint8_t* valPosition = buffer + pos + advancedByte;
+                
+                advancedByte+= 1;
+                
+                //printf("Got a byte %x\n" , *valPosition);
+            }
+                break;
+            case AML_WordPrefix:
+            {
+                advancedByte +=1;
+            }
+                break;
+            case AML_OP_BufferOp:
+            {
+                const uint8_t* bufferPos = buffer + pos + advancedByte;
+                //printf("Got a buffer op\n");
+            }
+                break;
+                
+            case AML_NameOp:
+            {
+                const uint8_t* namePos = buffer + pos + advancedByte;
+                //assert(IsName(*namePos)); FIXME : this fails for now 
+                state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
+                
+                advancedByte +=4;
+            }
+                break;
+                
+            case AML_FieldOp:
+            {
+                size_t fieldSizeLen = 0;
+                size_t fieldSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &fieldSizeLen, 0);
+                
+                advancedByte += fieldSizeLen;
+                fieldSize    -= fieldSizeLen;
+                
+                uint8_t* fieldPos = buffer + pos + advancedByte;
+                /*
+                 // DualNamePrefix '.'
+                 // ParentPrefixChar '^'
+                 if (*namePos ==  AML_OP_ParentPrefixChar)
+                 {
+                 namePos++;
+                 fieldSize -= 1;
+                 advancedByte += 1;
+                 }
+                 
+                 if (*namePos == AML_OP_DualNamePrefix)
+                 {
+                 namePos++;
+                 fieldSize -= 1;
+                 advancedByte += 1;
+                 }
+                 
+                 
+                 
+                 assert(IsName(*namePos));
+                 
+                 char name[4] = {0};
+                 ExtractName(namePos, 4, name);
+                 printf("Field name '%s' Package size %zi\n" , name , fieldSize);
+                 */
+                state->callbacks.AllocateElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
+                
+                
+                advancedByte += fieldSize;
+            }
+                break;
+                
+            case AML_MethodOp:
+            {
+                size_t methodSizeLen = 0;
+                size_t methodSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &methodSizeLen, 0);
+                
+                advancedByte += methodSizeLen;
+                methodSize   -= methodSizeLen;
+                
+                
+                const uint8_t* startPos = buffer + pos + advancedByte;
+                /*
+                assert(IsName(*startPos));
+                char name[4] = {0};
+                ExtractName(startPos, 4, name);
+                printf("Method name '%.4s' size %zi\n" , name , methodSize);
+                */
+                state->callbacks.AllocateElement(state , ACPIObject_Type_Method , startPos , methodSize);
+                
+                advancedByte += methodSize;
+            }
+                break;
+                
+            case AML_OpRegionOp:
+            {
+                const uint8_t* namePos = buffer + pos + advancedByte;
+                
+                ACPIOperationRegion reg;
+                assert(IsName(*namePos));
+                
+                ExtractName(namePos, 4, reg.name);
+                //printf("OpRegion name '%.4s'\n" , reg.name);
+                advancedByte +=4;
+                
+                /*
+                 uint64_t regSpaceVal = 0;
+                 uint64_t regOffsetVal = 0;
+                 uint64_t regLenVal = 0;
+                 */
+                const uint8_t* regSpace = buffer + pos + advancedByte;
+                advancedByte += GetInteger(regSpace, &reg.space);
+                
+                const uint8_t* regOffset = buffer + pos + advancedByte;
+                advancedByte += GetInteger(regOffset, &reg.offset);
+                
+                const uint8_t* regLen = buffer + pos + advancedByte;
+                advancedByte += GetInteger(regLen, &reg.length);
+                
+                
+                
+                state->callbacks.AllocateElement(state, ACPIObject_Type_OperationRegion , (const uint8_t*)&reg , sizeof(ACPIOperationRegion) );
+            }
+                break;
+                
+            case AML_VarPackageOp:
+            {
+                size_t varSizeLen = 0;
+                size_t varSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &varSizeLen, 0);
+                
+                advancedByte += varSizeLen;
+                assert(varSizeLen == 1);// For now this only works for 1 byte varPackageOp
+                varSize   -= varSizeLen;
+                
+                
+                const uint8_t* startPos = buffer + pos + advancedByte;
+                const uint8_t VarNumElements = *startPos;
+                
+                /*
+                printf("NumElements %i pack len %zi\n" , *startPos,varSize);
+                
+                for(int i=0;i<varSize;i++)
+                {
+                    printf("0x%x\n" , startPos[1+i]);
+                }
+                */
+                state->callbacks.AllocateElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
+                
+                advancedByte += 2;//varSize;
+            }
+                break;
+            
+            // cases we don't care for now
+            case AML_OneOp:
+            case AML_NotOp:
+            case AML_NameChar:
+            case AML_Char:
+            case AML_Int:
+            case AML_ZeroOp:
+            case AML_Unknown:
+                break;
+                
+            default:
+            {
+                /*
+                const uint8_t* currentPos = buffer + pos + advancedByte;
+                const uint8_t* next = currentPos+1;
+                const uint8_t* next2= currentPos+2;
+                */
+            }
+                break;
+        }
+
         
+        
+
         // Check if wrapped
         if( (ssize_t)bufSize - (ssize_t)advancedByte <= 0)
         {

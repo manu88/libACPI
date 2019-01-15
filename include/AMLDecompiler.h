@@ -24,7 +24,11 @@ extern "C" {
 #include <stdint.h>
 #include "AMLParser.h"
 
-
+typedef struct
+{
+    ACPIObject_Type lastObjectType;
+} ParserContext;
+    
 typedef struct _AMLDecompiler AMLDecompiler;
 
 typedef struct
@@ -33,15 +37,23 @@ typedef struct
     //AMLParserError (*DidReadObject)(AMLParserState* parser  ,const ACPIDevice*device  );
     //TreeElement*   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
     
-    int (*OnDefinitionBlock)(AMLDecompiler*, const ACPIDefinitionBlock* block);
-    int (*StartScope)(AMLDecompiler* , const char* location);
-    int (*EndScope)(AMLDecompiler* , const char* location);
+    int (*OnDefinitionBlock)(AMLDecompiler*,const ParserContext* context, const ACPIDefinitionBlock* block);
     
-    int (*StartDevice)(AMLDecompiler* , const char* name);
-    int (*EndDevice)(AMLDecompiler* , const char* name);
+    int (*onOperationRegion)(AMLDecompiler*,const ParserContext* context, const ACPIOperationRegion*);
     
-    int (*StartName)(AMLDecompiler* , const char* name);
-    int (*EndName)(AMLDecompiler* , const char* name);
+    int (*onField)(AMLDecompiler*,const ParserContext* context, const ACPIField*);
+    
+    int (*StartScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
+    int (*EndScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
+    
+    int (*StartDevice)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    int (*EndDevice)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    
+    int (*StartName)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    
+    int (*startMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    int (*endMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
 } AMLDecompilerCallbacks;
 

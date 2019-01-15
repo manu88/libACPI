@@ -58,6 +58,7 @@ typedef struct _AMLParserState AMLParserState;
 int AMLParserInit(AMLParserState* state);
 
 AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize);
+AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize);
 
 
 AMLOperation AMLParserPeekOp( const uint8_t* buffer , size_t bufSize , size_t *advance);

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include <string.h>
 #include <assert.h>
 #include "AMLParser_Tests.h"
 #include "AMLRouter.h"
@@ -56,6 +56,36 @@ static void AML_InternalTests()
         
         GetDWord(b, &w);
         assert(w == 0x00ef00ab);
+    }
+    {
+        const uint8_t b[] = { 'H' , 'I' , 'D' , 'A'};
+        char out[5] = {0};
+        ExtractName(b, 4, out);
+        assert( strcmp(out , "HIDA") == 0);
+    }
+    {
+        const uint8_t b[] = { '_' , 'I' , 'D' , 'A'};
+        char out[5] = {0};
+        ExtractName(b, 4, out);
+        assert( strcmp(out , "_IDA") == 0);
+    }
+    {
+        const uint8_t b[] = { 'H' , 'I' , 'D' , '_'};
+        char out[5] = {0};
+        ExtractName(b, 4, out);
+        assert( strcmp(out , "HID") == 0);
+    }
+    {
+        const uint8_t b[] = { 'H' , 'I' , '_' , '_'};
+        char out[5] = {0};
+        ExtractName(b, 4, out);
+        assert( strcmp(out , "HI") == 0);
+    }
+    {
+        const uint8_t b[] = { 'H' , '_' , '_' , '_'};
+        char out[5] = {0};
+        ExtractName(b, 4, out);
+        assert( strcmp(out , "H") == 0);
     }
 }
 

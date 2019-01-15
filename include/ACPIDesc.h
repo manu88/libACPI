@@ -52,7 +52,10 @@ typedef enum
     ACPIObject_Type_DefinitionBlock,
     ACPIObject_Type_Name,
     ACPIObject_Type_OperationRegion,
+    ACPIObject_Type_VarPackage,
     ACPIObject_Type_Scope,
+    ACPIObject_Type_Field,
+    ACPIObject_Type_Method,
     ACPIObject_Type_DWord, // should remove this one
     
 }ACPIObject_Type;
@@ -96,6 +99,22 @@ typedef struct
     ACPIName names[ACPIDeviceMaxNames];
 }ACPIDevice;
 
+
+typedef struct
+{
+    char name[4];
+    uint64_t space;
+    uint64_t offset;
+    uint64_t length;
+    
+} ACPIOperationRegion;
+
+typedef struct
+{
+    char name[4];
+    
+    
+} ACPIField;
 /*
 static inline size_t ACPIDeviceGetNamesCount(const ACPIDevice* dev)
 {

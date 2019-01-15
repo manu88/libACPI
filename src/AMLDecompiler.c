@@ -44,20 +44,20 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
     assert(decomp);
 
     
+    
+    ParserContext ctx;
+    
+
     switch (forObjectType)
     {
         case ACPIObject_Type_DefinitionBlock:
         {
             const ACPIDefinitionBlock* desc =(const ACPIDefinitionBlock*) bufferPos;
-            printf("DefinitionBlock (\"\", \"%s\", %u ,\"%s\",\"%s\", 0x%x)\n" ,
-                   desc->tableSignature ,
-                   desc->complianceRevision ,
-                   desc->OEMId,
-                   desc->tableId,
-                   desc->OEMRev
-                   );
             
-            if (decomp->callbacks.OnDefinitionBlock) decomp->callbacks.OnDefinitionBlock(decomp , desc);
+            if (decomp->callbacks.OnDefinitionBlock)
+            {
+                decomp->callbacks.OnDefinitionBlock(decomp,&ctx , desc);
+            }
             
         }
             break;
@@ -70,17 +70,18 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             
             indent++;
             
-            for(int i=0;i<indent;i++)printf("\t");
-            printf("-----Got a scope at location '%s'\n" , name);
+            //for(int i=0;i<indent;i++)printf("\t");
+            //printf("-----Got a scope at location '%s'\n" , name);
             
-            if (decomp->callbacks.StartScope) decomp->callbacks.StartScope(decomp , name);
+            if (decomp->callbacks.StartScope) decomp->callbacks.StartScope(decomp ,&ctx , name);
             
-            AMLParserProcessBuffer(parser, bufferPos, bufferSize);
             
-            if (decomp->callbacks.EndScope) decomp->callbacks.EndScope(decomp , name);
+            AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
             
-            for(int i=0;i<indent;i++)printf("\t");
-            printf("----- END SCOPE \n");
+            if (decomp->callbacks.EndScope) decomp->callbacks.EndScope(decomp ,&ctx , name);
+            
+            //for(int i=0;i<indent;i++)printf("\t");
+            //printf("----- END SCOPE \n");
             
             indent--;
         }
@@ -94,17 +95,23 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             
             indent++;
             
-            for(int i=0;i<indent;i++)printf("\t");
-            printf("--Start Device '%s' \n" , name);
+            //for(int i=0;i<indent;i++)printf("\t");
+            //printf("--Start Device '%s' \n" , name);
             
-            if (decomp->callbacks.StartDevice) decomp->callbacks.StartDevice(decomp , name);
+            if (decomp->callbacks.StartDevice)
+            {
+                decomp->callbacks.StartDevice(decomp ,&ctx , name);
+            }
             
-            AMLParserProcessBuffer(parser, bufferPos, bufferSize);
+            AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
             
-            if (decomp->callbacks.EndDevice) decomp->callbacks.EndDevice(decomp , name);
+            if (decomp->callbacks.EndDevice)
+            {
+                decomp->callbacks.EndDevice(decomp ,&ctx , name);
+            }
             
-            for(int i=0;i<indent;i++)printf("\t");
-            printf("--End Device '%s' \n" , name);
+            //for(int i=0;i<indent;i++)printf("\t");
+            //printf("--End Device '%s' \n" , name);
             
             indent--;
             //AMLDecompilerStart(decomp, bufferPos, bufferSize);
@@ -117,10 +124,13 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
             ExtractName(namePosition, 4, name);
             
-            for(int i=0;i<indent;i++)printf("\t");
-            printf("Name('%s' ," , name);
+            //for(int i=0;i<indent;i++)printf("\t");
+            //printf("Name('%s' ," , name);
             
-            if (decomp->callbacks.StartName) decomp->callbacks.StartName(decomp , name);
+            if (decomp->callbacks.StartName)
+            {
+                decomp->callbacks.StartName(decomp ,&ctx , name);
+            }
             
             //int (*EndName)(AMLDecompiler* , const char* name);
             /*
@@ -147,18 +157,65 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             }
             else
             {
-                printf("%llx)\n" ,w);
+                printf("_NOT_EisaId%llx)\n" ,w);
             }
         }
             break;
+        case ACPIObject_Type_VarPackage:
+        {
             
+            //AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
+            
+        }
+            break;
+        case ACPIObject_Type_OperationRegion:
+        {
+            assert( bufferSize == sizeof(ACPIOperationRegion));
+            assert(bufferPos);
+            const ACPIOperationRegion* reg = (const ACPIOperationRegion*)  bufferPos;
+            
+            if(decomp->callbacks.onOperationRegion)
+            {
+                decomp->callbacks.onOperationRegion(decomp ,&ctx , reg);
+            }
+            
+            
+        }
+            break;
+        case ACPIObject_Type_Field:
+        {
+            //printf("Got a Field size %zi at pos %p\n" , bufferSize , bufferPos);
+            
+            ACPIField field;
+            if(decomp->callbacks.onField)
+            {
+                ExtractName(bufferPos, 4, field.name);
+                decomp->callbacks.onField(decomp ,&ctx , &field);
+            }
+            
+        }
+            break;
+        case ACPIObject_Type_Method:
+        {
+            if (decomp->callbacks.startMethod)
+            {
+                decomp->callbacks.startMethod(decomp ,&ctx , NULL);
+            }
+            //printf("Got a method size %zi at pos %p\n" , bufferSize , bufferPos);
+            
+            if (decomp->callbacks.endMethod)
+            {
+                decomp->callbacks.endMethod(decomp ,&ctx , NULL);
+            }
+        }
+            break;
         case ACPIObject_Type_Root:
             //printf("Start root \n");
-            for(int i=0;i<indent;i++)printf("\t");
-            printf("{\n");
+            //for(int i=0;i<indent;i++)printf("\t");
+            //printf("{\n");
             break;
         default:
-            printf("Got an element type %i\n" , forObjectType);
+            //printf("Got an element type %i\n" , forObjectType);
             break;
     }
     

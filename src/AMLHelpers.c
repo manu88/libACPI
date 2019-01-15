@@ -59,11 +59,20 @@ int GetDWord(const uint8_t* buffer , ACPIDWord* word)
 int ExtractName(const uint8_t *buff, size_t size ,char* outChar)
 {
     strncpy(outChar, (const char*)buff, 4);
-    outChar[3] = 0;
+    //outChar[3] = 0;
     
     if (outChar[3] == '_')
     {
         outChar[3] = 0;
+        
+        if (outChar[2] == '_')
+        {
+            outChar[2] = 0;
+        }
+        if (outChar[1] == '_')
+        {
+            outChar[1] = 0;
+        }
     }
     return 1;
 }

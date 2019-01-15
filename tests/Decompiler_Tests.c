@@ -462,7 +462,7 @@ static uint8_t test4[] =
 };
 
 
-static int onName(AMLDecompiler* decompiler , const char* name)
+static int onName(AMLDecompiler* decompiler ,const ParserContext* context, const char* name)
 {
     return 0;
 }
