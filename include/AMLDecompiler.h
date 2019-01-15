@@ -37,6 +37,13 @@ typedef struct
     //AMLParserError (*DidReadObject)(AMLParserState* parser  ,const ACPIDevice*device  );
     //TreeElement*   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
     
+    
+    
+    int (*onLargeItem)(AMLDecompiler*,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
+    int (*onSmallItem)(AMLDecompiler*,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
+    
+    int (*OnValue)(AMLDecompiler*,const ParserContext* context, uint64_t value);
+    
     int (*OnDefinitionBlock)(AMLDecompiler*,const ParserContext* context, const ACPIDefinitionBlock* block);
     
     int (*onOperationRegion)(AMLDecompiler*,const ParserContext* context, const ACPIOperationRegion*);

@@ -121,10 +121,23 @@ public:
             
             
             self->indent();
-            self->str << std::string("Name( \"") + name + "\")" << "\n";
+            self->str << std::string("Name( ") + name  << "\n";
             
             //self->decScope();
 
+            return 0;
+        };
+        
+        decomp.callbacks.EndName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
+        {
+            Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
+            
+            
+            self->indent();
+            self->str << ")" << "\n";
+            
+            //self->decScope();
+            
             return 0;
         };
         
@@ -142,6 +155,15 @@ public:
             
 //            printf("STR '%s'\n" , self->str.str().c_str());
 
+            return 0;
+        };
+        
+        decomp.callbacks.OnValue = []( AMLDecompiler* _decomp ,const ParserContext* context, uint64_t val) -> int
+        {
+            Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
+            
+            self->indent();
+            self->str << "0x" <<  std::hex << val;
             return 0;
         };
         
@@ -224,8 +246,70 @@ public:
             return 0;
         };
         
+        decomp.callbacks.onSmallItem = [] (AMLDecompiler*_decomp,const ParserContext* context,
+                                 SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize) -> int
+        {
+            return 0;
+        };
+        
+        decomp.callbacks.onLargeItem = [](AMLDecompiler*_decomp,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize) -> int
+        {
+            Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
+            
+            switch (itemType)
+            {
+                case LargeResourceItemsType_MemoryRangeDescriptor32:
+                    assert(bufferSize == sizeof(MemoryRangeDescriptor32));
+                    return self->onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32*>(buffer));
+                    
+                case LargeResourceItemsType_QWORDAddressSpaceDescriptor:
+                    assert(bufferSize == sizeof(AddressSpaceDescriptor));
+                    return self->onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const AddressSpaceDescriptor*>(buffer));
+                    
+                default:
+                    break;
+            }
+            /*
+            
+             */
+            return 0;
+        };
         
         
+    }
+    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor* desc)
+    {
+        indent();
+        str << "QWordMemory( "
+        << (desc->isConsumer? "ResourceConsumer":"ResourceProducer") << ","
+        << (desc->decodeType? "SubDecode" : "PosDecode") << ","
+        << (desc->mif? "MinFixed" : "minNOTFixed") << ","
+        << (desc->maf? "MaxFixed" : "MaxNOTFixed") << ","
+        << "0x" << std::hex << desc->addrSpaceGranularity << ","
+        << "0x" << std::hex << desc->addrRangeMin << ","
+        << "0x" << std::hex << desc->addrRangeMax << ","
+        << "0x" << std::hex << desc->addrTranslationOffset << ","
+        << "0x" << std::hex << desc->addrTranslationLength << ","
+        << "\n";
+        
+        indent();
+        str << ")\n";
+        
+        decScope();
+        return 0;
+    }
+    
+    int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32* desc)
+    {
+        indent();
+        str << "Memory32Fixed( "
+        << (desc->writeStatus? "Write?":"ReadOnly") << ","
+        << std::hex << desc->rangeBaseAddr << ","
+        << std::hex << desc->rangeLength << ")"
+        << "\n";
+        
+        decScope();
+        return 0;
     }
     
     bool start(const uint8_t* buffer , size_t size)
@@ -301,9 +385,15 @@ int main(int argc, const char * argv[])
     size_t bufSize = 0;
     
     //const char* file = "Field.aml";
-    const char* file = "qemu-dsdt.aml";
+    const char* file = "resTemp.aml";
+    //const char* file = "qemu-dsdt.aml";
     uint8_t *dataBuffer = readAndFillBuffer(file , &bufSize);
     
+    if (!dataBuffer)
+    {
+        printf("Error while reading file '%s'\n" , file);
+        return 1;
+    }
     Decompiler decomp;
     
     if(decomp.start( dataBuffer, bufSize))
