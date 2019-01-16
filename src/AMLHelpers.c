@@ -17,6 +17,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include "AMLHelpers.h"
 #include "AMLByteCode.h"
 
@@ -56,25 +57,31 @@ int GetDWord(const uint8_t* buffer , ACPIDWord* word)
     return 1;
 }
 
-int ExtractName(const uint8_t *buff, size_t size ,char* outChar)
+uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar)
 {
     strncpy(outChar, (const char*)buff, 4);
-    //outChar[3] = 0;
     
+    uint8_t strSize = 4;
     if (outChar[3] == '_')
     {
+        
         outChar[3] = 0;
+        strSize--;
         
         if (outChar[2] == '_')
         {
             outChar[2] = 0;
+            strSize--;
+            
+            if (outChar[1] == '_')
+            {
+                outChar[1] = 0;
+                strSize--;
+            }
         }
-        if (outChar[1] == '_')
-        {
-            outChar[1] = 0;
-        }
+        
     }
-    return 1;
+    return strSize;
 }
 
 // taken from https://github.com/tadryanom/lux/blob/master/kernel/acpi/eval.c
@@ -116,4 +123,93 @@ size_t GetInteger( const uint8_t *object, uint64_t *integer)
         default:
             return 0;
     }
+}
+
+
+size_t ResolvePath(char *fullpath, const uint8_t *path)
+{
+    size_t name_size = 0;
+    size_t multi_count = 0;
+    size_t current_count = 0;
+    
+    memset(fullpath, 0, 512);
+    
+    if(path[0] == AML_OP_RootChar)
+    {
+        name_size = 1;
+        fullpath[0] = AML_OP_RootChar;
+        fullpath[1] = 0;
+        path++;
+        if(IsName(path[0]) || path[0] == AML_OP_DualNamePrefix || path[0] == AML_OP_MultiNamePrefix)
+        {
+            fullpath[1] = '.';
+            fullpath[2] = 0;
+            goto start;
+        } else
+            return name_size;
+    }
+    
+    //strcpy(fullpath, acpins_path);
+    fullpath[strlen(fullpath)] = '.';
+    
+start:
+    while(path[0] == AML_OP_ParentPrefixChar)
+    {
+        path++;
+        if(strlen(fullpath) <= 2)
+            break;
+        
+        name_size++;
+        fullpath[strlen(fullpath) - 5] = 0;
+        memset(fullpath + strlen(fullpath), 0, 32);
+    }
+    
+    if(path[0] == AML_OP_DualNamePrefix)
+    {
+        name_size += 9;
+        path++;
+        
+        //memcpy(fullpath + strlen(fullpath), path, 4);
+        ExtractName(path, 4, fullpath + strlen(fullpath));
+        
+        fullpath[strlen(fullpath)] = '.';
+        //memcpy(fullpath + strlen(fullpath), path + 4, 4);
+        ExtractName(path+4, 4, fullpath + strlen(fullpath));
+        
+        
+    } else if(path[0] == AML_OP_MultiNamePrefix)
+    {
+        // skip MULTI_PREFIX and name count
+        name_size += 2;
+        path++;
+        
+        // get name count here
+        multi_count = (size_t)path[0];
+        path++;
+        
+        current_count = 0;
+        while(current_count < multi_count)
+        {
+            name_size += 4;
+            ExtractName(path, 4, fullpath + strlen(fullpath));
+            //memcpy(fullpath + strlen(fullpath), path, 4);
+            path += 4;
+            current_count++;
+            if(current_count >= multi_count)
+                break;
+            
+            fullpath[strlen(fullpath)] = '.';
+        }
+    } else
+    {
+        name_size += 4;
+        
+        ExtractName(path, 4, fullpath + strlen(fullpath));
+        //memcpy(fullpath + strlen(fullpath), path, 4);
+        //const char* p = path;
+        //printf("Path '%s' \n" , p);
+        
+    }
+    
+    return name_size;
 }

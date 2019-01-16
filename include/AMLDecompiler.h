@@ -26,7 +26,12 @@ extern "C" {
 
 typedef struct
 {
+    
     ACPIObject_Type lastObjectType;
+    
+    AMLOperation nextOp;
+    
+    const char* currentScope;
 } ParserContext;
     
 typedef struct _AMLDecompiler AMLDecompiler;
@@ -48,8 +53,8 @@ typedef struct
     int (*StartScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
     int (*EndScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
     
-    int (*StartDevice)(AMLDecompiler* ,const ParserContext* context, const char* name);
-    int (*EndDevice)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    int (*StartDevice)(AMLDecompiler* ,const ParserContext* context, const ACPIDevice* name);
+    int (*EndDevice)(AMLDecompiler* ,const ParserContext* context, const ACPIDevice* name);
     
     int (*StartName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
@@ -63,6 +68,7 @@ typedef struct
 struct _AMLDecompiler
 {
     AMLDecompilerCallbacks callbacks;
+    char currentScope[512];
     void* userData;
 };
 

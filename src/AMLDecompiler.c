@@ -196,15 +196,15 @@ static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const
     assert(decomp);
     // 6.4.3.5.1
     
-    const uint8_t itemType = *bufferPos; // 0x0A : large (64) / 0x07 Large (32) Item Name
-    const uint8_t something = bufferPos[1];
+    //const uint8_t itemType = *bufferPos; // 0x0A : large (64) / 0x07 Large (32) Item Name
+    //const uint8_t something = bufferPos[1];
     
     
     const size_t bitOffset = 2;
     const uint8_t addrSpaceDescriptor = bufferPos[bitOffset+0];
     const uint8_t varLen1 = bufferPos[bitOffset+1];
     const uint8_t varLen2 = bufferPos[bitOffset+2];
-    const size_t varLen = (varLen1 - 0x2B ) * 255 + varLen2;
+    //const size_t varLen = (varLen1 - 0x2B ) * 255 + varLen2;
     
     if(addrSpaceDescriptor == 0x8A) // spec : 6.4.3.5.1
     {
@@ -262,6 +262,8 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
 
         
     ParserContext ctx;
+    ctx.currentScope = decomp->currentScope;
+    ctx.nextOp = AML_Unknown;
     
 
     switch (forObjectType)
@@ -279,18 +281,20 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             break;
         case ACPIObject_Type_Scope:
         {
-            char name[5] = {0};
             
-            
-            ACPIScopeGetLocation(bufferPos, bufferSize , name);
+            char name[512];
 
+            size_t advanced = ResolvePath(name,  bufferPos);
+            
+            strncpy(decomp->currentScope, name, 512);
+            
+            
             if (decomp->callbacks.StartScope)
             {
                 decomp->callbacks.StartScope(decomp ,&ctx , name);
             }
             
-            
-            AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
+            AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
             
             if (decomp->callbacks.EndScope)
             {
@@ -310,25 +314,27 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             break;
         case ACPIObject_Type_Device:
         {
+            ACPIDevice dev;
             
-            char name[5] = {0};
-            ExtractName(bufferPos, bufferSize, name);
-            printf("Device '%s' - " , name);
+            ExtractName(bufferPos, bufferSize, dev.name);
+            dev.name[4] = 0;
+            //printf("Device '%.4s' - " , dev.id);
             
             
             //for(int i=0;i<indent;i++)printf("\t");
             //printf("--Start Device '%s' \n" , name);
             
+            
             if (decomp->callbacks.StartDevice)
             {
-                decomp->callbacks.StartDevice(decomp ,&ctx , name);
+                decomp->callbacks.StartDevice(decomp ,&ctx , &dev);
             }
             
             AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
             
             if (decomp->callbacks.EndDevice)
             {
-                decomp->callbacks.EndDevice(decomp ,&ctx , name);
+                decomp->callbacks.EndDevice(decomp ,&ctx , &dev);
             }
             
             //for(int i=0;i<indent;i++)printf("\t");
@@ -342,19 +348,29 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
         {
             char name[5] = {0};
             const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
-            ExtractName(namePosition, 4, name);
-            
+            ExtractName(namePosition, 5, name);
+            name[4] = 0;
             //for(int i=0;i<indent;i++)printf("\t");
             //printf("Name('%s' ," , name);
+            size_t adv = 0;
+            ctx.nextOp =  AMLParserPeekOp(bufferPos + 4, 1, &adv);
+            //printf("\nName '%.4s'Next op %i val 0x%x\n" ,name, ctx.nextOp , bufferPos[4]);
             
+            assert(   ctx.nextOp ==  AML_QWordPrefix
+                   || ctx.nextOp ==  AML_OneOp
+                   || ctx.nextOp ==  AML_ZeroOp
+                   || ctx.nextOp ==  AML_DWordPrefix
+                   || ctx.nextOp ==  AML_BufferOp
+                   || ctx.nextOp ==  AML_BytePrefix
+                   || ctx.nextOp ==  AML_PackageOp
+                   || ctx.nextOp ==  AML_StringPrefix // realy allowed ?
+                   );
             if (decomp->callbacks.StartName)
             {
                 decomp->callbacks.StartName(decomp ,&ctx , name);
             }
             
-            size_t adv = 0;
-            const AMLOperation nextNameOp =  AMLParserPeekOp(bufferPos + 4, 1, &adv);
-            printf("\nName '%s'Next op %i val 0x%x\n" ,name, nextNameOp , bufferPos[4]);
+            
             
             
             
@@ -414,6 +430,7 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             if(decomp->callbacks.onField)
             {
                 ExtractName(bufferPos, 4, field.name);
+                field.name[4] = 0;
                 decomp->callbacks.onField(decomp ,&ctx , &field);
             }
             

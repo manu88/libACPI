@@ -55,6 +55,11 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 }
 
 
+static std::string idToString(const char* s)
+{
+    return /*s[3] == 0? s :*/ std::string(s);//, 4);
+}
+
 class Decompiler
 {
 public:
@@ -76,12 +81,12 @@ public:
             self->str << std::to_string(desc->OEMRev) + ")";
             self->str << "\n{\n";
             
-//            printf("STR '%s'\n" , self->str.str().c_str());
+
             
             return 0;
         };
         
-        decomp.callbacks.StartDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
+        decomp.callbacks.StartDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* device) -> int
         {
             Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
             
@@ -89,7 +94,7 @@ public:
             
             self->indent();
             
-            self->str << std::string("Device(") + name + ")";
+            self->str << std::string("Device(") + idToString(device->name) + ")";
             
             self->str << "\n";
             self->indent();
@@ -99,7 +104,7 @@ public:
             return 0;
         };
         
-        decomp.callbacks.EndDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
+        decomp.callbacks.EndDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* dev) -> int
         {
             Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
             
@@ -121,7 +126,9 @@ public:
             
             
             self->indent();
-            self->str << std::string("Name( ") + name  << "\n";
+            self->str << std::string("Name( ") + std::string(name,4)  << "\n";
+            
+            
             
             //self->decScope();
 
@@ -148,7 +155,7 @@ public:
             self->incScope();
             
             self->indent();
-            self->str << std::string("Scope(") + location + ")" + "\n";
+            self->str << std::string("Scope(") + /*std::string(*/location/*,4)*/ + ")" + "\n";
             
             self->indent();
             self->str << "{\n"  ;
@@ -157,16 +164,6 @@ public:
 
             return 0;
         };
-        
-        decomp.callbacks.OnValue = []( AMLDecompiler* _decomp ,const ParserContext* context, uint64_t val) -> int
-        {
-            Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
-            
-            self->indent();
-            self->str << "0x" <<  std::hex << val;
-            return 0;
-        };
-        
         decomp.callbacks.EndScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
         {
             Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
@@ -177,6 +174,18 @@ public:
             self->decScope();
             return 0;
         };
+        
+        
+        decomp.callbacks.OnValue = []( AMLDecompiler* _decomp ,const ParserContext* context, uint64_t val) -> int
+        {
+            Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
+            
+            self->indent();
+            self->str << " 0x" <<  std::hex << val << " ";
+            return 0;
+        };
+        
+       
         
         decomp.callbacks.onOperationRegion = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIOperationRegion* reg) -> int
         {
@@ -205,7 +214,7 @@ public:
             self->indent();
             
             self->str << std::string("Field(")
-            << field->name
+            << idToString(field->name)
             /*
             << reg->name << ","
             << "0x" << std::hex << reg->offset << ","
@@ -281,16 +290,16 @@ public:
     {
         indent();
         str << "QWordMemory( "
-        << (desc->isConsumer? "ResourceConsumer":"ResourceProducer") << ","
-        << (desc->decodeType? "SubDecode" : "PosDecode") << ","
-        << (desc->mif? "MinFixed" : "minNOTFixed") << ","
-        << (desc->maf? "MaxFixed" : "MaxNOTFixed") << ","
-        << "0x" << std::hex << desc->addrSpaceGranularity << ","
-        << "0x" << std::hex << desc->addrRangeMin << ","
-        << "0x" << std::hex << desc->addrRangeMax << ","
-        << "0x" << std::hex << desc->addrTranslationOffset << ","
-        << "0x" << std::hex << desc->addrTranslationLength << ","
-        << "\n";
+            << (desc->isConsumer? "ResourceConsumer":"ResourceProducer") << ","
+            << (desc->decodeType? "SubDecode" : "PosDecode") << ","
+            << (desc->mif? "MinFixed" : "minNOTFixed") << ","
+            << (desc->maf? "MaxFixed" : "MaxNOTFixed") << ","
+            << "0x" << std::hex << desc->addrSpaceGranularity << ","
+            << "0x" << std::hex << desc->addrRangeMin << ","
+            << "0x" << std::hex << desc->addrRangeMax << ","
+            << "0x" << std::hex << desc->addrTranslationOffset << ","
+            << "0x" << std::hex << desc->addrTranslationLength << ","
+            << "\n";
         
         indent();
         str << ")\n";
@@ -398,10 +407,11 @@ int main(int argc, const char * argv[])
     
     if(decomp.start( dataBuffer, bufSize))
     {
-        printf("---------------------------\n");
-        printf("%s\n" , decomp.getResult().c_str());
+        
     }
     
+    printf("---------------------------\n");
+    printf("%s\n" , decomp.getResult().c_str());
     
     free(dataBuffer);
     return 0;

@@ -20,10 +20,12 @@
 #include "AMLParser_Tests.h"
 #include "Decompiler_Tests.h"
 #include "QemuTest.h"
+#include "Helper_Tests.h"
 
 int main(int argc, const char * argv[])
 {
     AMLParserTests();
+    Helper_Tests();
     //ACPI_Tests();
     Decompile_Tests();
     //QemuDecompTest();

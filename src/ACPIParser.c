@@ -19,6 +19,7 @@
 #include <assert.h>
 #include "ACPIParser.h"
 #include "AMLHelpers.h"
+//#include "AMLByteCode.h"
 
 #define MAXElements 64
 static TreeElement Elements[MAXElements] = {0};
@@ -80,18 +81,6 @@ AMLParserError ACPIParseAMLByteCode(ACPIDocument* doc,const uint8_t* buffer , si
 TreeElement* ACPIDocumentGetRoot(const ACPIDocument* doc)
 {
     return doc->root;
-}
-
-
-
-int ACPIScopeGetLocation(const uint8_t *buff, size_t size ,char* outChar)
-{
-    return ExtractName(buff, size, outChar);
-}
-
-int ACPIDeviceGetName( const TreeElement* element , char* outChar)
-{
-    return ExtractName(element->ptr, element->size, outChar);
 }
 
 size_t ACPIDeviceGetNamedObjectsCount(const TreeElement* element)

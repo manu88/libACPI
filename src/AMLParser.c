@@ -38,8 +38,8 @@ static int _EnsureValidBuffer(AMLParserState* state , const uint8_t* buffer , si
     
     assert( buffer >= state->startBuffer);
     
-    ptrdiff_t p1 = buffer+bufSize;
-    ptrdiff_t p2 = state->startBuffer + state->totalSize;
+    ptrdiff_t p1 = (ptrdiff_t) buffer+bufSize;
+    ptrdiff_t p2 = (ptrdiff_t) state->startBuffer + state->totalSize;
     
     ptrdiff_t diff = p2-p1; // for debug
     (void) diff;
@@ -200,6 +200,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 size_t scopeSizeLen = 0;
                 size_t scopeSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &scopeSizeLen, 0);
                 
+                
                 advancedByte += scopeSizeLen;
                 scopeSize    -= scopeSizeLen;
                 
@@ -272,32 +273,8 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 advancedByte += fieldSizeLen;
                 fieldSize    -= fieldSizeLen;
                 
-                uint8_t* fieldPos = buffer + pos + advancedByte;
-                /*
-                 // DualNamePrefix '.'
-                 // ParentPrefixChar '^'
-                 if (*namePos ==  AML_OP_ParentPrefixChar)
-                 {
-                 namePos++;
-                 fieldSize -= 1;
-                 advancedByte += 1;
-                 }
-                 
-                 if (*namePos == AML_OP_DualNamePrefix)
-                 {
-                 namePos++;
-                 fieldSize -= 1;
-                 advancedByte += 1;
-                 }
-                 
-                 
-                 
-                 assert(IsName(*namePos));
-                 
-                 char name[4] = {0};
-                 ExtractName(namePos, 4, name);
-                 printf("Field name '%s' Package size %zi\n" , name , fieldSize);
-                 */
+                uint8_t* fieldPos = (uint8_t* ) buffer + pos + advancedByte;
+                
                 state->callbacks.AllocateElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
                 
                 
@@ -315,12 +292,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 
                 
                 const uint8_t* startPos = buffer + pos + advancedByte;
-                /*
-                assert(IsName(*startPos));
-                char name[4] = {0};
-                ExtractName(startPos, 4, name);
-                printf("Method name '%.4s' size %zi\n" , name , methodSize);
-                */
+
                 state->callbacks.AllocateElement(state , ACPIObject_Type_Method , startPos , methodSize);
                 
                 advancedByte += methodSize;
@@ -335,6 +307,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 assert(IsName(*namePos));
                 
                 ExtractName(namePos, 4, reg.name);
+                reg.name[4] = 0;
                 //printf("OpRegion name '%.4s'\n" , reg.name);
                 advancedByte +=4;
                 
@@ -369,16 +342,9 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 
                 
                 const uint8_t* startPos = buffer + pos + advancedByte;
-                const uint8_t VarNumElements = *startPos;
+                //const uint8_t VarNumElements = *startPos;
                 
-                /*
-                printf("NumElements %i pack len %zi\n" , *startPos,varSize);
-                
-                for(int i=0;i<varSize;i++)
-                {
-                    printf("0x%x\n" , startPos[1+i]);
-                }
-                */
+
                 state->callbacks.AllocateElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
                 
                 advancedByte += 2;//varSize;

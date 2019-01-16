@@ -21,7 +21,8 @@
 #define PNP0A03  0x30ad041 //  PCI bus
 #define PNP0A01  0x10ad041 //  EISA bus
 #define PNP0103  0x301d041 //  HPET System Timer
-
+#define PNP0B00  0xbd041   //  AT Real-Time Clock
+#define PNP0303  0x303d041 //  IBM Enhanced Keyboard (101/102-key, PS/2 Mouse)
 
 int isEisaId( uint64_t val);
 

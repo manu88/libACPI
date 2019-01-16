@@ -83,7 +83,7 @@ typedef struct
 } ACPIDefinitionBlock;
 
 
-
+/*
 typedef struct
 {
     char id[5]; // 4 bytes + null ; 00000 denotes an empty name. empty names shall be at the end, ie no gaps in the list
@@ -94,7 +94,7 @@ typedef struct
     } value;
     
 } ACPIName;
-
+*/
 
 typedef enum
 {
@@ -176,18 +176,17 @@ typedef struct // 6.4.3.4
 } MemoryRangeDescriptor32;
 
 
-
-#define ACPIDeviceMaxNames 6 // FIXME : this is absolutly arbitrary :)
 typedef struct
 {
-    char id[5]; // 4 bytes + null ; 00000 denotes an invalid device. invalid devices shall be at the end, ie no gaps in the list
-    ACPIName names[ACPIDeviceMaxNames];
+    char name[5]; // 4 chars max + null terminaison
+                //Warning: this is a non-terminated String! ; 00000 denotes an invalid device. invalid devices shall be at the end, ie no gaps in the list
+    
 }ACPIDevice;
 
 
 typedef struct
 {
-    char name[4];
+    char name[5]; // 4 chars max + null terminaison
     uint64_t space;
     uint64_t offset;
     uint64_t length;
@@ -196,7 +195,7 @@ typedef struct
 
 typedef struct
 {
-    char name[4];
+    char name[5];
     
     
 } ACPIField;
