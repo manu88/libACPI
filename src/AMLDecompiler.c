@@ -252,7 +252,7 @@ static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const
 }
 
 
-static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
+int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
 {
     
     assert(parser);
@@ -369,36 +369,18 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             {
                 decomp->callbacks.StartName(decomp ,&ctx , name);
             }
-            
-            
-            
-            
-            
-
         }
             break;
         case ACPIObject_NumericValue:
-        //case ACPIObject_Type_DWord:
         {
-            //ACPIDWord w;
-            //GetDWord(bufferPos, &w);
             uint64_t w;
-            GetInteger(bufferPos-1, &w);
+            GetInteger(bufferPos,bufferSize, &w);
             
             if (decomp->callbacks.OnValue)
             {
                 decomp->callbacks.OnValue(decomp,&ctx , w);
             }
-            /*
-            if (isEisaId(w))
-            {
-                printf("EisaId(%llx) )\n" ,w);
-            }
-            else
-            {
-                printf("_NOT_EisaId%llx)\n" ,w);
-            }
-             */
+
         }
             break;
         case ACPIObject_Type_VarPackage:
@@ -424,8 +406,6 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             break;
         case ACPIObject_Type_Field:
         {
-            //printf("Got a Field size %zi at pos %p\n" , bufferSize , bufferPos);
-            
             ACPIField field;
             if(decomp->callbacks.onField)
             {
@@ -442,7 +422,6 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
             {
                 decomp->callbacks.startMethod(decomp ,&ctx , NULL);
             }
-            //printf("Got a method size %zi at pos %p\n" , bufferSize , bufferPos);
             
             if (decomp->callbacks.endMethod)
             {
@@ -451,19 +430,16 @@ static TreeElement* _AllocateElement(AMLParserState* parser , ACPIObject_Type fo
         }
             break;
         case ACPIObject_Type_Root:
-            //printf("Start root \n");
-            //for(int i=0;i<indent;i++)printf("\t");
-            //printf("{\n");
+
             break;
         default:
+            assert(0);
             //printf("Got an element type %i\n" , forObjectType);
             break;
     }
     
     
-    static TreeElement throwableElement = {0};
-    
-    return &throwableElement;
+    return 0;
 }
 
 
@@ -482,8 +458,6 @@ AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , 
     
     parser.userData = decomp;
     
-    //parser.callbacks.DidReadObject = _DidReadDevice;
-    //parser.callbacks.DidReadDefBlock = _DidReadDefBlock;
     parser.callbacks.AllocateElement = _AllocateElement;
     
     return AMLParserProcessBuffer(&parser , buffer , bufferSize);

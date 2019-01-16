@@ -90,7 +90,7 @@ uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar)
 // Param:    uint64_t *integer - destination
 // Return:    size_t - size of object in bytes, 0 if it's not an integer
 
-size_t GetInteger( const uint8_t *object, uint64_t *integer)
+size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer)
 {
     uint8_t *byte = (uint8_t*)(object + 1);
     uint16_t *word = (uint16_t*)(object + 1);
@@ -100,24 +100,31 @@ size_t GetInteger( const uint8_t *object, uint64_t *integer)
     switch(object[0])
     {
         case AML_OP_ZeroOp:
+            assert(objectSize >=1);
             *integer = 0;
             return 1;
         case AML_OP_OneOp:
+            assert(objectSize >=1);
             *integer = 1;
             return 1;
         case AML_OP_OnesOp:
+            assert(objectSize >=1);
             *integer = 0xFFFFFFFFFFFFFFFF;
             return 1;
         case AML_OP_BytePrefix:
+            assert(objectSize >=2);
             *integer = (uint64_t)byte[0];
             return 2;
         case AML_OP_WordPrefix:
+            assert(objectSize >=3);
             *integer = (uint64_t)word[0];
             return 3;
         case AML_OP_DWordPrefix:
+            assert(objectSize >=5);
             *integer = (uint64_t)dword[0];
             return 5;
         case AML_OP_QWordPrefix:
+            assert(objectSize >=9);
             *integer = qword[0];
             return 9;
         default:

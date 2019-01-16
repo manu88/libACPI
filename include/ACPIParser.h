@@ -19,7 +19,7 @@
 
 #include <stdio.h>
 #include <AMLParser.h>
-
+#include <TreeRef.h>
 
 #define MAX_DEVICES_PER_DOC 20 // FIXME : this is absolutly arbitrary :)
 typedef struct

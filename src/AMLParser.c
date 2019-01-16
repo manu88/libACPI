@@ -210,48 +210,66 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 advancedByte +=  scopeSize;
             }
                 break;
+            
+/* Integer types */
                 
-            case AML_DWordPrefix:
-            {
-                const uint8_t* valPosition = buffer + pos + advancedByte;
-                
-                const size_t valSize = sizeof(ACPIDWord);
-                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize);
-                
-                advancedByte += valSize;
-            }
-                break;
             case AML_ZeroOp:
             case AML_OneOp:
+            case AML_OnesOp:
             {
-                const uint8_t* valPosition = buffer + pos + advancedByte;
-                
-                const size_t valSize = 0;// sizeof(ACPIDWord);
-                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize);
+                const uint8_t* valPosition = buffer + pos + advancedByte-1;
+                const size_t valSize = 0;
+                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize +1);
                 
                 advancedByte += valSize;
             }
                 break;
             case AML_BytePrefix:
-            case AML_WordPrefix:
             {
-                const uint8_t* valPosition = buffer + pos + advancedByte;
+                const uint8_t* valPosition = buffer + pos + advancedByte-1;
                 
                 const size_t valSize = 1;// sizeof(ACPIDWord);
-                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize);
+                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+                
+                advancedByte += valSize;
+            }
+                break;
+            case AML_WordPrefix:
+            {
+                const uint8_t* valPosition = buffer + pos + advancedByte-1;
+                
+                const size_t valSize = 2;// sizeof(ACPIDWord);
+                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
                 
                 advancedByte += valSize;
                 
-                //printf("Got a byte %x\n" , *valPosition);
             }
                 break;
-                /*
-            case AML_WordPrefix:
+            case AML_DWordPrefix:
             {
-                advancedByte +=1;
+                const uint8_t* valPosition = buffer + pos + advancedByte-1; // we step back one byte
+                
+                const size_t valSize = 4;
+                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+                
+                advancedByte += valSize;
             }
                 break;
-                 */
+            case AML_QWordPrefix:
+            {
+                const uint8_t* valPosition = buffer + pos + advancedByte-1; // we step back one byte
+                
+                const size_t valSize = 8;
+                state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+                
+                advancedByte += valSize;
+            }
+                break;
+            
+            
+            
+            
+/* END Integer types */
 
                 
             case AML_NameOp:
@@ -317,13 +335,13 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                  uint64_t regLenVal = 0;
                  */
                 const uint8_t* regSpace = buffer + pos + advancedByte;
-                advancedByte += GetInteger(regSpace, &reg.space);
+                advancedByte += GetInteger(regSpace,bufSize-advancedByte, &reg.space);
                 
                 const uint8_t* regOffset = buffer + pos + advancedByte;
-                advancedByte += GetInteger(regOffset, &reg.offset);
+                advancedByte += GetInteger(regOffset,bufSize-advancedByte, &reg.offset);
                 
                 const uint8_t* regLen = buffer + pos + advancedByte;
-                advancedByte += GetInteger(regLen, &reg.length);
+                advancedByte += GetInteger(regLen,bufSize-advancedByte, &reg.length);
                 
                 
                 

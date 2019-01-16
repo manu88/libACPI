@@ -25,33 +25,20 @@
 
 static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 {
-    
-    int fd = open(fromFile, O_RDONLY);
-    
-    uint8_t c = 0;
 
-    uint8_t* ptr = NULL;
+    FILE *fileptr;
+    fileptr = fopen(fromFile, "rb");  // Open the file in binary mode
+    fseek(fileptr, 0, SEEK_END);          // Jump to the end of the file
+    *bufSize = ftell(fileptr);             // Get the current byte offset in the file
+    rewind(fileptr);                      // Jump back to the beginning of the file
     
-    size_t size = 0;
+    uint8_t *buffer = (uint8_t *)malloc((*bufSize+1)*sizeof(char)); // Enough memory for file + \0
+    fread(buffer, *bufSize, 1, fileptr); // Read in the entire file
+    fclose(fileptr); // Close the file
     
-    while(  read(fd, &c, 1) >0)
-    {
-        uint8_t* lastP = ptr;
-        ptr = reinterpret_cast<uint8_t*>( realloc(ptr, ++size) );
-        
-        if (!ptr) 
-        {
-            free(lastP);
-            *bufSize = 0;
-            return NULL;
-        }
-        ptr[size-1] = c;
-        
-    }
     
-    *bufSize = size;
-
-    return ptr;
+    return buffer;
+   
 }
 
 
@@ -323,12 +310,6 @@ public:
     
     bool start(const uint8_t* buffer , size_t size)
     {
-        /*
-        for(int i=0; i<size;i++)
-        {
-            printf(" 0x%x " , buffer[i]);
-        }
-         */
         return AMLDecompilerStart(&decomp, buffer, size) == AMLParserError_None;
     }
     
@@ -396,6 +377,7 @@ int main(int argc, const char * argv[])
     //const char* file = "Field.aml";
     //const char* file = "resTemp.aml";
     const char* file = "qemu-dsdt.aml";
+    //const char* file = "testQEMU.aml";
     uint8_t *dataBuffer = readAndFillBuffer(file , &bufSize);
     
     if (!dataBuffer)
@@ -410,7 +392,7 @@ int main(int argc, const char * argv[])
         
     }
     
-    printf("---------------------------\n");
+    printf("------- Result --------------------\n");
     printf("%s\n" , decomp.getResult().c_str());
     
     free(dataBuffer);

@@ -18,7 +18,6 @@
 #pragma once
 
 #include "ACPIDesc.h"
-#include "TreeRef.h"
 #include "AMLRouter.h"
 
 typedef enum
@@ -33,11 +32,12 @@ typedef enum
 
 typedef struct _AMLParserState AMLParserState;
 
+/*
+ This is the low level AML Bytecode parser.
+ */
 typedef struct
 {
-    //AMLParserError (*DidReadDefBlock)(AMLParserState* parser,const ACPIDefinitionBlock* block);
-    //AMLParserError (*DidReadObject)(AMLParserState* parser  ,const ACPIDevice*device  );
-    TreeElement*   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
+    int   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
 } AMLParserCallbacks;
 
 struct _AMLParserState
@@ -48,8 +48,6 @@ struct _AMLParserState
     const uint8_t* startBuffer;
     size_t   totalSize;
     
-    
-    //size_t currentScope;
     size_t maxDepth;      // will be increased every time we enter a scope/device
 } ;
 

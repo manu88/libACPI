@@ -25,10 +25,10 @@ typedef struct _TreeElement TreeElement;
 struct _TreeElement
 {
     TreeElement *parent;
-    int    type;
+    /*int    type;
     const void   *ptr;
-    size_t size;
+    size_t size;*/
 };
 
-void TreeElementInit( TreeElement* element);
+
 

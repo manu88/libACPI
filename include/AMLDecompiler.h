@@ -24,6 +24,9 @@ extern "C" {
 #include <stdint.h>
 #include "AMLParser.h"
 
+/*
+ This is an intermediate module that helps the AML bytecode interpretation.
+ */
 typedef struct
 {
     

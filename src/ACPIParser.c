@@ -93,46 +93,14 @@ size_t ACPIDocumentGetDevicesCount(const ACPIDocument* doc)
     
     size_t n = 0;
     
-    for (int i = 0;i<NextElementIndex;i++)
-    {
-        TreeElement* el = &Elements[i];
-        if (el->type == ACPIObject_Type_Device)
-        {
-            assert(el->parent !=  NULL);
-            n++;
-        }
-    }
-    /*
-    while (n<MAX_DEVICES_PER_DOC)
-    {
-        if (doc->devices[n].id[0] == 0)
-        {
-            break;
-        }
-        n++;
-    }
-     */
+    
     
     return n;
 }
 
 const TreeElement* ACPIDocumentGetNthDevice(const ACPIDocument* doc, size_t index)
 {
-    size_t n = 0;
-    
-    for (int i = 0;i<NextElementIndex;i++)
-    {
-        TreeElement* el = &Elements[i];
-        if (el->type == ACPIObject_Type_Device)
-        {
-            assert(el->parent !=  NULL);
-            if(n++ == index)
-            {
-                return el;
-            }
-        }
-    }
-    
+
     return NULL;
 }
 
