@@ -29,12 +29,12 @@
 		59459A7F21E6512F00DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
 		59459A8221E6512F00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
 		59459A8921E6514500DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459A8821E6514500DD9396 /* main.cpp */; };
-		59459A8C21E7243400DD9396 /* QemuTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A8B21E7243400DD9396 /* QemuTest.c */; };
 		59459A8F21E7274300DD9396 /* AMLRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A8D21E7274200DD9396 /* AMLRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A9021E7274300DD9396 /* AMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A8E21E7274200DD9396 /* AMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A9121E7279C00DD9396 /* AMLHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A3E21DE25EC00DD9396 /* AMLHelpers.h */; };
 		59459A9221E7279C00DD9396 /* AMLByteCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A4121DE25EC00DD9396 /* AMLByteCode.h */; };
 		59459A9D21EF0D3500DD9396 /* Helper_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A9C21EF0D3500DD9396 /* Helper_Tests.c */; };
+		59459AA721F0607D00DD9396 /* DecompilerInvalid_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459AA621F0607D00DD9396 /* DecompilerInvalid_Tests.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -85,12 +85,12 @@
 		59459A7321DF51C900DD9396 /* AMLDecompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLDecompiler.h; sourceTree = "<group>"; };
 		59459A8721E6512F00DD9396 /* TestsCpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestsCpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		59459A8821E6514500DD9396 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		59459A8A21E7243400DD9396 /* QemuTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QemuTest.h; sourceTree = "<group>"; };
-		59459A8B21E7243400DD9396 /* QemuTest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = QemuTest.c; sourceTree = "<group>"; };
 		59459A8D21E7274200DD9396 /* AMLRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLRouter.h; sourceTree = "<group>"; };
 		59459A8E21E7274200DD9396 /* AMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLParser.h; sourceTree = "<group>"; };
 		59459A9B21EF0D3500DD9396 /* Helper_Tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Helper_Tests.h; sourceTree = "<group>"; };
 		59459A9C21EF0D3500DD9396 /* Helper_Tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Helper_Tests.c; sourceTree = "<group>"; };
+		59459AA521F0607D00DD9396 /* DecompilerInvalid_Tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DecompilerInvalid_Tests.h; sourceTree = "<group>"; };
+		59459AA621F0607D00DD9396 /* DecompilerInvalid_Tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DecompilerInvalid_Tests.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +162,8 @@
 			isa = PBXGroup;
 			children = (
 				59459A8821E6514500DD9396 /* main.cpp */,
+				59459AA521F0607D00DD9396 /* DecompilerInvalid_Tests.h */,
+				59459AA621F0607D00DD9396 /* DecompilerInvalid_Tests.c */,
 				59459A9B21EF0D3500DD9396 /* Helper_Tests.h */,
 				59459A9C21EF0D3500DD9396 /* Helper_Tests.c */,
 				59459A6421DE26B200DD9396 /* ACPI_Tests.c */,
@@ -170,8 +172,6 @@
 				59459A6621DE26B200DD9396 /* AMLParser_Tests.h */,
 				59459A6C21DF4FB400DD9396 /* Decompiler_Tests.h */,
 				59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */,
-				59459A8A21E7243400DD9396 /* QemuTest.h */,
-				59459A8B21E7243400DD9396 /* QemuTest.c */,
 				59459A4B21DE25FC00DD9396 /* main.c */,
 			);
 			path = tests;
@@ -315,8 +315,8 @@
 				59459A6821DE26B200DD9396 /* ACPI_Tests.c in Sources */,
 				59459A6E21DF4FB400DD9396 /* Decompiler_Tests.c in Sources */,
 				59459A6921DE26B200DD9396 /* AMLParser_Tests.c in Sources */,
+				59459AA721F0607D00DD9396 /* DecompilerInvalid_Tests.c in Sources */,
 				59459A9D21EF0D3500DD9396 /* Helper_Tests.c in Sources */,
-				59459A8C21E7243400DD9396 /* QemuTest.c in Sources */,
 				59459A4C21DE25FC00DD9396 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

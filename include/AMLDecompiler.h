@@ -35,6 +35,9 @@ typedef struct
     AMLOperation nextOp;
     
     const char* currentScope;
+    
+    
+    
 } ParserContext;
     
 typedef struct _AMLDecompiler AMLDecompiler;
@@ -73,6 +76,7 @@ struct _AMLDecompiler
     AMLDecompilerCallbacks callbacks;
     char currentScope[512];
     void* userData;
+    const uint8_t* errorPos;
 };
 
 

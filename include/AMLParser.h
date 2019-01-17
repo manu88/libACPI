@@ -22,7 +22,7 @@
 
 typedef enum
 {
-    AMLParserError_None = 0,
+    AMLParserError_None             = 0,
     AMLParserError_BufferTooShort,
     AMLParserError_UnexpectedToken,
     AMLParserError_ElementAllocError,
@@ -49,6 +49,9 @@ struct _AMLParserState
     size_t   totalSize;
     
     size_t maxDepth;      // will be increased every time we enter a scope/device
+    
+    
+    const uint8_t* errorPos;
 } ;
 
 typedef struct _AMLParserState AMLParserState;

@@ -29,21 +29,30 @@ int AMLParserInit(AMLParserState* state)
 {
     memset(state , 0, sizeof(AMLParserState));
 
+    
     return 1;
 }
 
 
 static int _EnsureValidBuffer(AMLParserState* state , const uint8_t* buffer , size_t bufSize)
 {
-    
-    assert( buffer >= state->startBuffer);
-    
+    if (buffer < state->startBuffer)
+    {
+        state->errorPos = buffer;
+        return 0;
+    }
     ptrdiff_t p1 = (ptrdiff_t) buffer+bufSize;
     ptrdiff_t p2 = (ptrdiff_t) state->startBuffer + state->totalSize;
     
     ptrdiff_t diff = p2-p1; // for debug
     (void) diff;
-    assert( p1 <= p2);
+    
+    if (p1 > p2)
+    {
+        state->errorPos = buffer;
+        return 0;
+    }
+    //assert( p1 <= p2);
     
     return 1;
 }
@@ -55,6 +64,7 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
     
     if (bufSize <= sizeof(ACPIDefinitionBlock))
     {
+        state->errorPos = buffer;
         return AMLParserError_BufferTooShort;
     }
     
@@ -64,6 +74,7 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
     
     if (op != AML_Char)
     {
+        state->errorPos = buffer;
         return AMLParserError_UnexpectedToken;
     }
 
@@ -449,13 +460,17 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
         bufSize -= advancedByte;
         pos     += advancedByte;
         
-        assert(_EnsureValidBuffer(state, buffer+pos, bufSize));
+        if (!_EnsureValidBuffer(state, buffer+pos, bufSize))
+        {
+            return AMLParserError_BufferTooShort;
+        }
+        //assert(_EnsureValidBuffer(state, buffer+pos, bufSize));
         
     } // end while
     
     
     
-    return 0;
+    return AMLParserError_None;
 }
 
 /*

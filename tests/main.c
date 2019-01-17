@@ -19,15 +19,17 @@
 #include "ACPI_Tests.h"
 #include "AMLParser_Tests.h"
 #include "Decompiler_Tests.h"
-#include "QemuTest.h"
 #include "Helper_Tests.h"
+#include "DecompilerInvalid_Tests.h"
 
 int main(int argc, const char * argv[])
 {
+    
     AMLParserTests();
     Helper_Tests();
-    //ACPI_Tests();
+    DecompilerInvalid_Tests();
+
     Decompile_Tests();
-    //QemuDecompTest();
+
     return 0;
 }

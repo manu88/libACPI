@@ -245,6 +245,8 @@ static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const
             printf("\n");
             
             printf("Other addr space type 0x%x\n" , addrSpaceDescriptor);
+            
+            return AMLParserError_UnexpectedToken;
         }
     }
     else
@@ -260,6 +262,7 @@ static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const
 
         
         printf("Other Item Type type 0x%x\n" , itemType);
+        return AMLParserError_UnexpectedToken;
 //        assert(0);
     }
     
@@ -327,7 +330,10 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
         case ACPIObject_Type_Buffer:
         {
             
-            _DecodeBufferObject(parser, &ctx, bufferPos, bufferSize);
+            AMLParserError err =  _DecodeBufferObject(parser, &ctx, bufferPos, bufferSize);
+            if(err != AMLParserError_None)
+                return err;
+            
             
         }
             break;
@@ -483,7 +489,10 @@ AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , 
     
     parser.callbacks.AllocateElement = _AllocateElement;
     
-    return AMLParserProcessBuffer(&parser , buffer , bufferSize);
+    AMLParserError ret =  AMLParserProcessBuffer(&parser , buffer , bufferSize);
+    decomp->errorPos = parser.errorPos;
+    
+    return ret;
     
 }
 
