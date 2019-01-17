@@ -56,6 +56,8 @@ typedef struct
     
     int (*onField)(AMLDecompiler*,const ParserContext* context, const ACPIField*);
     
+    int (*OnBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
+    
     int (*StartScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
     int (*EndScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
     
@@ -73,6 +75,7 @@ typedef struct
 
 struct _AMLDecompiler
 {
+    AMLParserPolicy parserPolicy;
     AMLDecompilerCallbacks callbacks;
     char currentScope[512];
     void* userData;

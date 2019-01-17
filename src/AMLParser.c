@@ -39,6 +39,7 @@ static int _EnsureValidBuffer(AMLParserState* state , const uint8_t* buffer , si
     if (buffer < state->startBuffer)
     {
         state->errorPos = buffer;
+        assert( state->parserPolicy.assertOnError == 0);
         return 0;
     }
     ptrdiff_t p1 = (ptrdiff_t) buffer+bufSize;
@@ -50,6 +51,7 @@ static int _EnsureValidBuffer(AMLParserState* state , const uint8_t* buffer , si
     if (p1 > p2)
     {
         state->errorPos = buffer;
+        assert( state->parserPolicy.assertOnError == 0);
         return 0;
     }
     //assert( p1 <= p2);
@@ -138,7 +140,6 @@ AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8
 
 static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock)
 {
-    state->maxDepth++;
     
     // 1st step is to try to get a valid DefinitionBlock
     //ACPIDefinitionBlock defBlk = {0};
@@ -462,6 +463,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
         
         if (!_EnsureValidBuffer(state, buffer+pos, bufSize))
         {
+            assert( state->parserPolicy.assertOnError == 0);
             return AMLParserError_BufferTooShort;
         }
         //assert(_EnsureValidBuffer(state, buffer+pos, bufSize));

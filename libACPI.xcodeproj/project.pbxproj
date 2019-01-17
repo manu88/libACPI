@@ -10,14 +10,12 @@
 		59459A4C21DE25FC00DD9396 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A4B21DE25FC00DD9396 /* main.c */; };
 		59459A5521DE265500DD9396 /* EISAID.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3421DE25EC00DD9396 /* EISAID.c */; };
 		59459A5621DE266500DD9396 /* AMLHelpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3621DE25EC00DD9396 /* AMLHelpers.c */; };
-		59459A5721DE266500DD9396 /* ACPIParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3821DE25EC00DD9396 /* ACPIParser.c */; };
 		59459A5821DE266500DD9396 /* AMLRouter.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3921DE25EC00DD9396 /* AMLRouter.c */; };
 		59459A5921DE266500DD9396 /* ACPIDesc.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3C21DE25EC00DD9396 /* ACPIDesc.c */; };
 		59459A5A21DE266500DD9396 /* AMLParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3F21DE25EC00DD9396 /* AMLParser.c */; };
 		59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5C21DE269000DD9396 /* ACPIDesc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A6121DE269100DD9396 /* EISAID.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5D21DE269000DD9396 /* EISAID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A6221DE269100DD9396 /* TreeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5E21DE269000DD9396 /* TreeRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		59459A6321DE269100DD9396 /* ACPIParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5F21DE269000DD9396 /* ACPIParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A6821DE26B200DD9396 /* ACPI_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6421DE26B200DD9396 /* ACPI_Tests.c */; };
 		59459A6921DE26B200DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
 		59459A6B21DE26BE00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
@@ -63,7 +61,6 @@
 		59459A3421DE25EC00DD9396 /* EISAID.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EISAID.c; sourceTree = "<group>"; };
 		59459A3621DE25EC00DD9396 /* AMLHelpers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMLHelpers.c; sourceTree = "<group>"; };
 		59459A3721DE25EC00DD9396 /* TreeRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TreeRef.c; sourceTree = "<group>"; };
-		59459A3821DE25EC00DD9396 /* ACPIParser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ACPIParser.c; sourceTree = "<group>"; };
 		59459A3921DE25EC00DD9396 /* AMLRouter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMLRouter.c; sourceTree = "<group>"; };
 		59459A3C21DE25EC00DD9396 /* ACPIDesc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ACPIDesc.c; sourceTree = "<group>"; };
 		59459A3E21DE25EC00DD9396 /* AMLHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLHelpers.h; sourceTree = "<group>"; };
@@ -74,7 +71,6 @@
 		59459A5C21DE269000DD9396 /* ACPIDesc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPIDesc.h; sourceTree = "<group>"; };
 		59459A5D21DE269000DD9396 /* EISAID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EISAID.h; sourceTree = "<group>"; };
 		59459A5E21DE269000DD9396 /* TreeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeRef.h; sourceTree = "<group>"; };
-		59459A5F21DE269000DD9396 /* ACPIParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPIParser.h; sourceTree = "<group>"; };
 		59459A6421DE26B200DD9396 /* ACPI_Tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ACPI_Tests.c; sourceTree = "<group>"; };
 		59459A6521DE26B200DD9396 /* ACPI_Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPI_Tests.h; sourceTree = "<group>"; };
 		59459A6621DE26B200DD9396 /* AMLParser_Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLParser_Tests.h; sourceTree = "<group>"; };
@@ -146,7 +142,6 @@
 			children = (
 				59459A3421DE25EC00DD9396 /* EISAID.c */,
 				59459A7021DF51B800DD9396 /* AMLDecompiler.c */,
-				59459A3821DE25EC00DD9396 /* ACPIParser.c */,
 				59459A3E21DE25EC00DD9396 /* AMLHelpers.h */,
 				59459A3621DE25EC00DD9396 /* AMLHelpers.c */,
 				59459A3721DE25EC00DD9396 /* TreeRef.c */,
@@ -186,7 +181,6 @@
 				59459A8D21E7274200DD9396 /* AMLRouter.h */,
 				59459A5D21DE269000DD9396 /* EISAID.h */,
 				59459A5E21DE269000DD9396 /* TreeRef.h */,
-				59459A5F21DE269000DD9396 /* ACPIParser.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -205,7 +199,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59459A6321DE269100DD9396 /* ACPIParser.h in Headers */,
 				59459A6221DE269100DD9396 /* TreeRef.h in Headers */,
 				59459A8F21E7274300DD9396 /* AMLRouter.h in Headers */,
 				59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */,
@@ -327,7 +320,6 @@
 			files = (
 				59459A5621DE266500DD9396 /* AMLHelpers.c in Sources */,
 				59459A7221DF51B800DD9396 /* AMLDecompiler.c in Sources */,
-				59459A5721DE266500DD9396 /* ACPIParser.c in Sources */,
 				59459A5821DE266500DD9396 /* AMLRouter.c in Sources */,
 				59459A5921DE266500DD9396 /* ACPIDesc.c in Sources */,
 				59459A5A21DE266500DD9396 /* AMLParser.c in Sources */,

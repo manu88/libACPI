@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "ACPIParser.h"
 #include "AMLHelpers.h"
 
 
@@ -233,20 +232,30 @@ static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const
         {
             return 0;
         }
-        else
+        else // This is a regular buffer
         {
-            for(int i=0;i<bufferSize+8;i++)
+            const uint8_t bufSize = bufferPos[1];
+            
+            const uint8_t* buffer = bufferPos+2;
+            
+            if (decomp->callbacks.OnBuffer)
+            {
+                decomp->callbacks.OnBuffer(decomp, ctx , bufSize , buffer);
+            }
+            /*
+            for(int i=0;i<bufferSize;i++)
             {
                 if (i%8==0)
                     printf("\n");
                 
-                printf(" 0x%x " , bufferPos[i-8]);
+                printf(" 0x%x " , bufferPos[i]);
             }
             printf("\n");
             
             printf("Other addr space type 0x%x\n" , addrSpaceDescriptor);
             
-            return AMLParserError_UnexpectedToken;
+            assert(decomp->parserPolicy.assertOnError == 0);
+            return AMLParserError_UnexpectedToken;*/
         }
     }
     else
@@ -268,7 +277,7 @@ static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const
     
     
     
-    return 0;
+    return AMLParserError_None;
 }
 
 
@@ -482,6 +491,9 @@ AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , 
     AMLParserState parser;
     
     AMLParserInit(&parser);
+    
+    parser.parserPolicy = decomp->parserPolicy;
+    
     parser.startBuffer = buffer;
     parser.totalSize = bufferSize;
     

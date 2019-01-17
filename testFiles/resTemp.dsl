@@ -2,6 +2,8 @@
 DefinitionBlock ("", "DSDT", 1, "BXPC", "BXDSDT", 0x00000001)
 {
 
+Name (STS0, Buffer () {0xAB, 0xCD, 0xEF, 0x12,0x00,0x12,0xEF,0xCD,0xAB})
+
 Name (CR64, ResourceTemplate ()
         {
             QWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,

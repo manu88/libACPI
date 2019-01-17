@@ -42,10 +42,7 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 }
 
 
-static std::string idToString(const char* s)
-{
-    return /*s[3] == 0? s :*/ std::string(s);//, 4);
-}
+
 
 class Decompiler
 {
@@ -53,6 +50,9 @@ public:
     Decompiler()
     {
         AMLDecompilerInit(&decomp);
+        
+        decomp.parserPolicy.assertOnError = 1;
+        
         decomp.userData = this;
         
         decomp.callbacks.OnDefinitionBlock = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDefinitionBlock* desc)-> int
@@ -73,6 +73,26 @@ public:
             return 0;
         };
         
+        
+        decomp.callbacks.OnBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
+        {
+            Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
+            
+            
+            self->str << ",Buffer() {";
+            
+            for(int i=0;i<bufferSize;i++)
+            {
+                self->str << "0x"<< std::hex << ((unsigned int) buffer[i]) << ",";
+                
+            }
+            self->str << "}";
+            
+            self->str << "\n";
+            
+            return 0;
+        };
+        
         decomp.callbacks.StartDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* device) -> int
         {
             Decompiler* self = reinterpret_cast<Decompiler*>(_decomp->userData);
@@ -81,7 +101,7 @@ public:
             
             self->indent();
             
-            self->str << std::string("Device(") + idToString(device->name) + ")";
+            self->str << std::string("Device(") + std::string(device->name) + ")";
             
             self->str << "\n";
             self->indent();
@@ -201,7 +221,7 @@ public:
             self->indent();
             
             self->str << std::string("Field(")
-            << idToString(field->name)
+            << std::string(field->name)
             /*
             << reg->name << ","
             << "0x" << std::hex << reg->offset << ","

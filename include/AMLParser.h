@@ -40,16 +40,20 @@ typedef struct
     int   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
 } AMLParserCallbacks;
 
+
+
+typedef struct
+{
+    uint8_t assertOnError; // default to NO
+} AMLParserPolicy;
 struct _AMLParserState
 {
+    AMLParserPolicy parserPolicy;
     AMLParserCallbacks callbacks;
     void *userData;
     
     const uint8_t* startBuffer;
     size_t   totalSize;
-    
-    size_t maxDepth;      // will be increased every time we enter a scope/device
-    
     
     const uint8_t* errorPos;
 } ;
@@ -58,6 +62,8 @@ typedef struct _AMLParserState AMLParserState;
 
 int AMLParserInit(AMLParserState* state);
 
+
+ 
 AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize);
 AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize);
 

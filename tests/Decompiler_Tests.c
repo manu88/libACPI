@@ -478,7 +478,6 @@ static void Decompile_Test1()
     decomp.callbacks.StartName = onName;
     
     AMLParserError ret = AMLDecompilerStart(&decomp, test1, sizeof(test1));
-    ptrdiff_t d = decomp.errorPos - test1;
     assert(ret == AMLParserError_None);
     
     
