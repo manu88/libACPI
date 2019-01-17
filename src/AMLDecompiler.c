@@ -183,20 +183,12 @@ static int _DecodeQWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserCont
 
 static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
-/*
-    for(int i=0;i<bufferSize;i++)
-    {
-        if (i%8==0)
-            printf("\n");
-        
-        printf(" 0x%x " , bufferPos[i]);
-    }
- */
+
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
     // 6.4.3.5.1
     
-    //const uint8_t itemType = *bufferPos; // 0x0A : large (64) / 0x07 Large (32) Item Name
+    const uint8_t itemType = *bufferPos; // 0x0A : large (64) / 0x07 Large (32) Item Name
     //const uint8_t something = bufferPos[1];
     
     
@@ -206,43 +198,68 @@ static int _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const
     const uint8_t varLen2 = bufferPos[bitOffset+2];
     //const size_t varLen = (varLen1 - 0x2B ) * 255 + varLen2;
     
-    if(addrSpaceDescriptor == 0x8A) // spec : 6.4.3.5.1
+    if (itemType == 0x0A)
     {
-        assert(varLen1 >= 0x2B); // says the specs
-        return _DecodeQWORDAddressSpaceDescriptor(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
+        if(addrSpaceDescriptor == 0x8A) // spec : 6.4.3.5.1
+        {
+            assert(varLen1 >= 0x2B); // says the specs
+            return _DecodeQWORDAddressSpaceDescriptor(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
+        }
+        else if (addrSpaceDescriptor == 0x86)
+        {
+            assert(varLen1 == 0x09);
+            assert(varLen2 == 0);
+            
+            return _DecodeMemoryRangeDescriptor32(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
+        }
+        else if (addrSpaceDescriptor == 0x88) // 6.4.3.5.3 Word Address Space Descriptor
+        {
+            assert(varLen1 == 0x0D);
+            assert(varLen2 == 0);
+            
+            return _DecodeWORDAddressSpaceDescriptor(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
+        }
+        else if (addrSpaceDescriptor == 0x89)
+        {
+            assert(varLen1 >= 0x06);
+            assert(varLen2 >= 0);
+            return _DecodeExtendedIRQDescriptor(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
+        }
+        else if( addrSpaceDescriptor == 0x22) // 6.4.2.1 IRQ Descriptor
+        {
+            return 0;
+        }
+        else if( addrSpaceDescriptor == 0x47) // 6.4.2.5 I/O Port Descriptor
+        {
+            return 0;
+        }
+        else
+        {
+            for(int i=0;i<bufferSize+8;i++)
+            {
+                if (i%8==0)
+                    printf("\n");
+                
+                printf(" 0x%x " , bufferPos[i-8]);
+            }
+            printf("\n");
+            
+            printf("Other addr space type 0x%x\n" , addrSpaceDescriptor);
+        }
     }
-    else if (addrSpaceDescriptor == 0x86)
-    {
-        assert(varLen1 == 0x09);
-        assert(varLen2 == 0);
-        
-        return _DecodeMemoryRangeDescriptor32(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
-    }
-    else if (addrSpaceDescriptor == 0x88) // 6.4.3.5.3 Word Address Space Descriptor
-    {
-        assert(varLen1 == 0x0D);
-        assert(varLen2 == 0);
-        
-        return _DecodeWORDAddressSpaceDescriptor(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
-    }
-    else if (addrSpaceDescriptor == 0x89)
-    {
-        assert(varLen1 >= 0x06);
-        assert(varLen2 >= 0);
-        return _DecodeExtendedIRQDescriptor(parser, ctx, bufferPos+bitOffset, bufferSize - bitOffset);
-    }
-    else if( addrSpaceDescriptor == 0x22) // 6.4.2.1 IRQ Descriptor
-    {
-        return 0;
-    }
-    else if( addrSpaceDescriptor == 0x47) // 6.4.2.5 I/O Port Descriptor
-    {
-        return 0;
-    }
-        
     else
     {
-        printf("Other addr space type 0x%x\n" , addrSpaceDescriptor);
+
+         for(int i=0;i<bufferSize;i++)
+         {
+             if (i%8==0)
+                 printf("\n");
+         
+             printf(" 0x%x " , bufferPos[i]);
+         }
+
+        
+        printf("Other Item Type type 0x%x\n" , itemType);
 //        assert(0);
     }
     
@@ -294,7 +311,9 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
                 decomp->callbacks.StartScope(decomp ,&ctx , name);
             }
             
-            AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
+            AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
+            if(err != AMLParserError_None)
+                return err;
             
             if (decomp->callbacks.EndScope)
             {
@@ -330,17 +349,16 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
                 decomp->callbacks.StartDevice(decomp ,&ctx , &dev);
             }
             
-            AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
+            AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos, bufferSize);
+            if(err != AMLParserError_None)
+                return err;
+            
             
             if (decomp->callbacks.EndDevice)
             {
                 decomp->callbacks.EndDevice(decomp ,&ctx , &dev);
             }
             
-            //for(int i=0;i<indent;i++)printf("\t");
-            //printf("--End Device '%s' \n" , name);
-            
-            //AMLDecompilerStart(decomp, bufferPos, bufferSize);
         }
             break;
             
@@ -356,15 +374,20 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
             ctx.nextOp =  AMLParserPeekOp(bufferPos + 4, 1, &adv);
             //printf("\nName '%.4s'Next op %i val 0x%x\n" ,name, ctx.nextOp , bufferPos[4]);
             
-            assert(   ctx.nextOp ==  AML_QWordPrefix
-                   || ctx.nextOp ==  AML_OneOp
-                   || ctx.nextOp ==  AML_ZeroOp
-                   || ctx.nextOp ==  AML_DWordPrefix
-                   || ctx.nextOp ==  AML_BufferOp
-                   || ctx.nextOp ==  AML_BytePrefix
-                   || ctx.nextOp ==  AML_PackageOp
-                   || ctx.nextOp ==  AML_StringPrefix // realy allowed ?
-                   );
+            
+            if(   ctx.nextOp !=  AML_QWordPrefix
+               && ctx.nextOp !=  AML_OneOp
+               && ctx.nextOp !=  AML_ZeroOp
+               && ctx.nextOp !=  AML_DWordPrefix
+               && ctx.nextOp !=  AML_BufferOp
+               && ctx.nextOp !=  AML_BytePrefix
+               && ctx.nextOp !=  AML_PackageOp
+               && ctx.nextOp !=  AML_StringPrefix // realy allowed ?
+               )
+            {
+                return AMLParserError_UnexpectedToken;
+            }
+            
             if (decomp->callbacks.StartName)
             {
                 decomp->callbacks.StartName(decomp ,&ctx , name);
@@ -439,7 +462,7 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
     }
     
     
-    return 0;
+    return AMLParserError_None;
 }
 
 
