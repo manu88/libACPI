@@ -220,3 +220,112 @@ start:
     
     return name_size;
 }
+
+/*
+DeviceIdentifiers GetDeviceIDFromStr(const uint8_t* name)
+{
+    if (name[0] != '_')
+        return _UnknownDeviceIdentifier;
+    
+    if (memcmp(name+1, "ADR", 3) == 0)
+    {
+        return _ADR;
+    }
+    
+    else if (memcmp(name+1, "CID", 3) == 0)
+    {
+        return _CID;
+    }
+    else if (memcmp(name+1, "DDN", 3) == 0)
+    {
+        return _DDN;
+    }
+    else if (memcmp(name+1, "HID", 3) == 0)
+    {
+        return _HID;
+    }
+    else if (memcmp(name+1, "MLS", 3) == 0)
+    {
+        return _MLS;
+    }
+    else if (memcmp(name+1, "PLD", 3) == 0)
+    {
+        return _PLD;
+    }
+    else if (memcmp(name+1, "SUN", 3) == 0)
+    {
+        return _SUN;
+    }
+    else if (memcmp(name+1, "STR", 3) == 0)
+    {
+        return _STR;
+    }
+    else if (memcmp(name+1, "UID", 3) == 0)
+    {
+        return _UID;
+    }
+    
+    
+    else if (memcmp(name+1, "CRS", 3) == 0)
+    {
+        return _CRS;
+    }
+    else if (memcmp(name+1, "DIS", 3) == 0)
+    {
+        return _DIS;
+    }
+    else if (memcmp(name+1, "DMA", 3) == 0)
+    {
+        return _DMA;
+    }
+    else if (memcmp(name+1, "FIX", 3) == 0)
+    {
+        return _FIX;
+    }
+    else if (memcmp(name+1, "GSB", 3) == 0)
+    {
+        return _GSB;
+    }
+    else if (memcmp(name+1, "HPP", 3) == 0)
+    {
+        return _HPP;
+    }
+    else if (memcmp(name+1, "HPX", 3) == 0)
+    {
+        return _HPX;
+    }
+    else if (memcmp(name+1, "MAT", 3) == 0)
+    {
+        return _MAT;
+    }
+    else if (memcmp(name+1, "OSC", 3) == 0)
+    {
+        return _OSC;
+    }
+    else if (memcmp(name+1, "PRS", 3) == 0)
+    {
+        return _PRS;
+    }
+    else if (memcmp(name+1, "PRT", 3) == 0)
+    {
+        return _PRT;
+    }
+    else if (memcmp(name+1, "PXM", 3) == 0)
+    {
+        return _PXM;
+    }
+    else if (memcmp(name+1, "SLI", 3) == 0)
+    {
+        return _SLI;
+    }
+    else if (memcmp(name+1, "SRS", 3) == 0)
+    {
+        return _SRS;
+    }
+    
+    
+
+    
+    return _UnknownDeviceIdentifier;
+}
+*/

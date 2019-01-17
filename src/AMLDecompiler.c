@@ -379,16 +379,15 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
             
         case ACPIObject_Type_Name:
         {
+            
+            
             char name[5] = {0};
             const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
             ExtractName(namePosition, 5, name);
             name[4] = 0;
-            //for(int i=0;i<indent;i++)printf("\t");
-            //printf("Name('%s' ," , name);
+            
             size_t adv = 0;
             ctx.nextOp =  AMLParserPeekOp(bufferPos + 4, 1, &adv);
-            //printf("\nName '%.4s'Next op %i val 0x%x\n" ,name, ctx.nextOp , bufferPos[4]);
-            
             
             if(   ctx.nextOp !=  AML_QWordPrefix
                && ctx.nextOp !=  AML_OneOp
@@ -397,7 +396,7 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
                && ctx.nextOp !=  AML_BufferOp
                && ctx.nextOp !=  AML_BytePrefix
                && ctx.nextOp !=  AML_PackageOp
-               && ctx.nextOp !=  AML_StringPrefix // realy allowed ?
+               && ctx.nextOp !=  AML_StringPrefix // really allowed ?
                )
             {
                 return AMLParserError_UnexpectedToken;

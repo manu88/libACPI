@@ -23,14 +23,39 @@ typedef int32_t  ACPIDWord;
 
 typedef enum
 {
-    HID,
-    ADR,
-    CRS,
-    PRW,
-    BBN,
-    UID
+    _UnknownDeviceIdentifier = 0,
     
-} DefaultNames;
+    // Device Identifier Objects
+    _ADR, //Object that evaluates to a device’s address on its parent bus.
+    _CID, //Object that evaluates to a device’s Plug and Play-compatible ID list.
+    _DDN, //Object that associates a logical software name (for example, COM1) with a device.
+    _HID, //Object that evaluates to a device’s Plug and Play hardware ID.
+    _MLS, //Object that provides a human readable description of a device in multiple languages.
+    _PLD, //Object that provides physical location description information.
+    _SUN, //Object that evaluates to the slot-unique ID number for a slot.
+    _STR, //Object that contains a Unicode identifier for a device.
+    _UID, //Object that specifies a device’s unique persistent ID, or a control method that generates it.
+    
+    
+    // Device Configuration Objects
+    
+    _CRS, //Object that specifies a device’s current resource settings, or a control method that generates such an object.
+    _DIS, //Control method that disables a device.
+    _DMA, //Object that specifies a device’s current resources for DMA transactions.
+    _FIX, //Object used to provide correlation between the fixed-hardware register blocks defined in the FADT and the devices that implement these fixed-hardware registers.
+    _GSB, //Object that provides the Global System Interrupt Base for a hot-plugged I/O APIC device.
+    
+    _HPP, // Object that specifies the cache-line size, latency timer, SERR enable, and PERR enable values to be used when configuring a PCI device inserted into a hot-plug slot or initial configuration of a PCI device at system boot.
+    _HPX, //Object that provides device parameters when configuring a PCI device inserted into a hot-plug slot or initial configuration of a PCI device at system boot. Supersedes _HPP.
+    _MAT, //Object that evaluates to a buffer of MADT APIC Structure entries.
+    _OSC, //An object OSPM evaluates to convey specific software support / capabilities to the platform allowing the platform to configure itself appropriately.
+    _PRS, //An object that specifies a device’s possible resource settings, or a control method that generates such an object.
+    _PRT, //Object that specifies the PCI interrupt routing table.
+    _PXM, //Object that specifies a proximity domain for a device.
+    _SLI, //Object that provides updated distance information for a system locality.
+    _SRS, //Control method that sets a device’s settings.
+    
+} DeviceIdentifiers;
 
 typedef enum
 {

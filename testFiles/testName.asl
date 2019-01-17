@@ -7,6 +7,6 @@ DefinitionBlock ("test.aml", "DSDT", 10, "IDOEM", "SOMEAID", 0x00001234)
         Device (PCI1)
         {
             Name (_HID, EisaId ("PNP0A01"))
-            Name (_ADR, 0x4536ABEF)
+            Name (TADR, 0x4536ABEF)
         }
 }

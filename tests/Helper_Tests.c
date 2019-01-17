@@ -242,10 +242,73 @@ static void GetInteger_Tests()
     }
     
 }
+
+/*
+static void DeviceIds_Tests()
+{
+    {
+        const uint8_t b[] = {0,0,0,0};
+    
+        assert(GetDeviceIDFromStr(b) == _UnknownDeviceIdentifier);
+    }
+    {
+        const uint8_t b[] = {'_' , 'A' , 'D' , 'R'};
+        
+        assert(GetDeviceIDFromStr(b) == _ADR);
+    }
+    {
+        const uint8_t b[] = {'P' , 'A' , 'D' , 'R'};
+        
+        assert(GetDeviceIDFromStr(b) == _UnknownDeviceIdentifier);
+    }
+    {
+        const uint8_t b[] = {'_' , 'U' , 'I' , 'D'};
+        
+        assert(GetDeviceIDFromStr(b) == _UID);
+    }
+    {
+        const uint8_t b[] = {'_' , 'C' , 'I' , 'D'};
+        
+        assert(GetDeviceIDFromStr(b) == _CID);
+    }
+    {
+        const uint8_t b[] = {'_' , 'D' , 'D' , 'N'};
+        
+        assert(GetDeviceIDFromStr(b) == _DDN);
+    }
+    {
+        const uint8_t b[] = {'_' , 'H' , 'I' , 'D'};
+        
+        assert(GetDeviceIDFromStr(b) == _HID);
+    }
+    {
+        const uint8_t b[] = {'_' , 'M' , 'L' , 'S'};
+        
+        assert(GetDeviceIDFromStr(b) == _MLS);
+    }
+    {
+        const uint8_t b[] = {'_' , 'P' , 'L' , 'D'};
+        
+        assert(GetDeviceIDFromStr(b) == _PLD);
+    }
+    {
+        const uint8_t b[] = {'_' , 'S' , 'U' , 'N'};
+        
+        assert(GetDeviceIDFromStr(b) == _SUN);
+    }
+    {
+        const uint8_t b[] = {'_' , 'S' , 'T' , 'R'};
+        
+        assert(GetDeviceIDFromStr(b) == _STR);
+    }
+}
+*/
 void Helper_Tests()
 {
     ExtractNameTests();
     ResolvePath_Tests();
     GetInteger_Tests();
+    
+    //DeviceIds_Tests();
     
 }

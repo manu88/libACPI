@@ -17,19 +17,17 @@
 
 #pragma once
 
-#include "ACPIDesc.h"
-#include <stdint.h>
+#include "AMLDecompiler.h"
 
-int IsName(char character);
-int GetDWord(const uint8_t* buffer , ACPIDWord* word);
+class AMLDecompilerInterface
+{
+public:
+    virtual ~AMLDecompilerInterface()
+    {}
+protected:
+    AMLDecompilerInterface()
+    {}
+    
+};
 
-// returns the corrected string size
-uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar);
 
-
-size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);
-
-size_t ResolvePath(char *fullpath, const uint8_t *path);
-
-
-//DeviceIdentifiers GetDeviceIDFromStr(const uint8_t* name);
