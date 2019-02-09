@@ -14,6 +14,31 @@
 #include "EISAID.h"
 
 
+struct TextFormatter
+{
+    
+    void increaseLevel() { ++curIndentLevel_; }
+    void decreaseLevel() { --curIndentLevel_; }
+    
+    std::stringstream content;
+    int curIndentLevel_;
+    
+};
+
+
+
+
+template<typename T>
+std::ostream& operator<<(TextFormatter& format, T op)
+{
+    for(int i = 0; i < format.curIndentLevel_; ++i)
+    {
+        format.content << "\t";
+    }
+    format.content << op;
+    return format.content;
+}
+
 class DecompilerImpl : public AMLDecompilerInterface
 {
 public:
@@ -22,6 +47,18 @@ public:
     {
         
     }
+    
+    void indentUp()
+    {
+        content.increaseLevel();
+    }
+    
+    void indentDown()
+    {
+        content.decreaseLevel();
+    }
+    
+    
     
     
     void writeNumValue( uint64_t v)
@@ -81,6 +118,8 @@ public:
             
         }
         content << ")" << std::endl;
+        
+        indentDown();
         return 0;
     }
     
@@ -98,16 +137,22 @@ public:
     }
     int StartScope(const ParserContext* context, const char* location)override
     {
+        const char* realLoc = location[0] == '.' ? location+1 : location;
+        indentUp();
+        content << "Scope" << "(" << realLoc << ")" << std::endl;
         content << "{" << std::endl;
         return 0;
     }
     int EndScope(const ParserContext* context, const char* location)override
     {
+        
         content << "}" << std::endl;
+        indentDown();
         return 0;
     }
     int StartDevice(const ParserContext* context, const ACPIDevice* device)override
     {
+        indentUp();
         content << "Device" << "(" << device->name << ")" << std::endl;
         content << "{" << std::endl;
         return 0;
@@ -115,10 +160,13 @@ public:
     int EndDevice(const ParserContext* context, const ACPIDevice* name)override
     {
         content << "}" << std::endl;
+        
+        indentDown();
         return 0;
     }
     int StartName(const ParserContext* context, const char* name)override
     {
+        indentUp();
         content << "Name" << "(" << name << ",";
         return 0;
     }
@@ -143,7 +191,10 @@ public:
         return 0;
     }
     
-    std::stringstream content;
+    TextFormatter content;
+    
+private:
+    
 };
 
 
@@ -165,7 +216,7 @@ bool AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
         impl.content << "}" << std::endl;
         
         std::cout << "Result : " << std::endl;
-        std::cout << impl.content.str() << std::endl;;
+        std::cout << impl.content.content.str() << std::endl;;
     }
     return err == AMLParserError_None;
 }
