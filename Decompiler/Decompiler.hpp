@@ -22,7 +22,10 @@ public:
     bool process( const uint8_t* buffer , std::size_t bufferSize);
     
     
+    std::string getStringResult() const;
     
+private:
+    std::string result;
 };
     
 } // end namespace AML

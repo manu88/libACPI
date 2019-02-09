@@ -7,37 +7,14 @@
 //
 
 #include <string>
-#include <iostream>
+//#include <iostream>
 #include <sstream>
 #include "Decompiler.hpp"
 #include "AMLDecompilerInterface.hpp"
 #include "EISAID.h"
 
 
-struct TextFormatter
-{
-    
-    void increaseLevel() { ++curIndentLevel_; }
-    void decreaseLevel() { --curIndentLevel_; }
-    
-    std::stringstream content;
-    int curIndentLevel_;
-    
-};
 
-
-
-
-template<typename T>
-std::ostream& operator<<(TextFormatter& format, T op)
-{
-    for(int i = 0; i < format.curIndentLevel_; ++i)
-    {
-        format.content << "\t";
-    }
-    format.content << op;
-    return format.content;
-}
 
 class DecompilerImpl : public AMLDecompilerInterface
 {
@@ -48,19 +25,7 @@ public:
         
     }
     
-    void indentUp()
-    {
-        content.increaseLevel();
-    }
-    
-    void indentDown()
-    {
-        content.decreaseLevel();
-    }
-    
-    
-    
-    
+
     void writeNumValue( uint64_t v)
     {
         if( v == 0)
@@ -108,6 +73,7 @@ public:
     }
     int OnValue(const ParserContext* context, uint64_t value)override
     {
+        
         if (isEisaId(value))
         {
             content << "EisaId (\"" << GetEisaId(value) << "\")";
@@ -119,7 +85,7 @@ public:
         }
         content << ")" << std::endl;
         
-        indentDown();
+        decScope();
         return 0;
     }
     
@@ -138,35 +104,44 @@ public:
     int StartScope(const ParserContext* context, const char* location)override
     {
         const char* realLoc = location[0] == '.' ? location+1 : location;
-        indentUp();
+        incScope();
+        indent();
+        
         content << "Scope" << "(" << realLoc << ")" << std::endl;
+        
+        indent();
         content << "{" << std::endl;
         return 0;
     }
     int EndScope(const ParserContext* context, const char* location)override
     {
-        
+        indent();
         content << "}" << std::endl;
-        indentDown();
+        decScope();
         return 0;
     }
     int StartDevice(const ParserContext* context, const ACPIDevice* device)override
     {
-        indentUp();
+        incScope();
+        indent();
         content << "Device" << "(" << device->name << ")" << std::endl;
+        
+        indent();
         content << "{" << std::endl;
         return 0;
     }
     int EndDevice(const ParserContext* context, const ACPIDevice* name)override
     {
+        indent();
         content << "}" << std::endl;
         
-        indentDown();
+        decScope();
         return 0;
     }
     int StartName(const ParserContext* context, const char* name)override
     {
-        indentUp();
+        incScope();
+        indent();
         content << "Name" << "(" << name << ",";
         return 0;
     }
@@ -191,10 +166,33 @@ public:
         return 0;
     }
     
-    TextFormatter content;
+    
+    void indent()
+    {
+        for(int i=0;i<currentScope;i++)
+        {
+            content << "\t";
+        }
+        
+    }
+    void incScope()
+    {
+        currentScope++;
+        
+        
+    }
+    
+    void decScope()
+    {
+        currentScope--;
+        
+        
+    }
+    
+    std::stringstream content;
     
 private:
-    
+    int currentScope = 0;
 };
 
 
@@ -215,8 +213,23 @@ bool AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
     {
         impl.content << "}" << std::endl;
         
-        std::cout << "Result : " << std::endl;
-        std::cout << impl.content.content.str() << std::endl;;
+        
+        result = impl.content.str();
+        
     }
     return err == AMLParserError_None;
+}
+
+
+
+
+static std::string generateHeaderComment()
+{
+    return "// File Generated with AML::Decompiler from libACPI\n";
+}
+
+
+std::string AML::Decompiler::getStringResult() const
+{
+    return generateHeaderComment() + result;
 }

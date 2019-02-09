@@ -44,6 +44,14 @@ int main(int argc, const char * argv[])
         
         auto ret = decomp.process(buffer, bufSize);
         
+        if (ret )
+        {
+            const std::string result = decomp.getStringResult();
+            
+            std::cout << "Result : " << std::endl;
+            std::cout << result << std::endl;;
+        }
+        
         free(buffer);
         
         return ret ? 0 : 10;
