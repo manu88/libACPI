@@ -42,6 +42,10 @@
 		59459ABE21F0C39700DD9396 /* AMLDecompilerInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459ABD21F0C39700DD9396 /* AMLDecompilerInterface.cpp */; };
 		59459AC421F347EA00DD9396 /* JSONConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AC221F347EA00DD9396 /* JSONConverter.cpp */; };
 		59459AC62204175900DD9396 /* AMLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459AC52204175900DD9396 /* AMLTypes.h */; };
+		59459ACE220F0B4F00DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459ACD220F0B4F00DD9396 /* main.cpp */; };
+		59459AD2220F0B5F00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
+		59459AD5220F0B7D00DD9396 /* Decompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AD3220F0B7D00DD9396 /* Decompiler.cpp */; };
+		59459AD6220F0D6800DD9396 /* AMLDecompilerInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459ABD21F0C39700DD9396 /* AMLDecompilerInterface.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -64,6 +68,15 @@
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		59459AB021F0BF5500DD9396 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		59459AC9220F0B4F00DD9396 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -115,6 +128,10 @@
 		59459AC221F347EA00DD9396 /* JSONConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSONConverter.cpp; sourceTree = "<group>"; };
 		59459AC321F347EA00DD9396 /* JSONConverter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JSONConverter.hpp; sourceTree = "<group>"; };
 		59459AC52204175900DD9396 /* AMLTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLTypes.h; sourceTree = "<group>"; };
+		59459ACB220F0B4F00DD9396 /* Decompiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Decompiler; sourceTree = BUILT_PRODUCTS_DIR; };
+		59459ACD220F0B4F00DD9396 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		59459AD3220F0B7D00DD9396 /* Decompiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Decompiler.cpp; sourceTree = "<group>"; };
+		59459AD4220F0B7D00DD9396 /* Decompiler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Decompiler.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,12 +166,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		59459AC8220F0B4F00DD9396 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59459AD2220F0B5F00DD9396 /* libACPI.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		59459A2021DE25C800DD9396 = {
 			isa = PBXGroup;
 			children = (
+				59459ACC220F0B4F00DD9396 /* Decompiler */,
 				59459AB521F0BF8500DD9396 /* DeviceTreeCtor */,
 				59459A5B21DE269000DD9396 /* include */,
 				59459A3321DE25EC00DD9396 /* src */,
@@ -171,6 +197,7 @@
 				59459A5121DE263C00DD9396 /* libACPI.dylib */,
 				59459A8721E6512F00DD9396 /* TestsCpp */,
 				59459AB421F0BF5500DD9396 /* DeviceTreeCtor */,
+				59459ACB220F0B4F00DD9396 /* Decompiler */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -244,6 +271,16 @@
 				59459AC321F347EA00DD9396 /* JSONConverter.hpp */,
 			);
 			path = DeviceTreeCtor;
+			sourceTree = "<group>";
+		};
+		59459ACC220F0B4F00DD9396 /* Decompiler */ = {
+			isa = PBXGroup;
+			children = (
+				59459AD3220F0B7D00DD9396 /* Decompiler.cpp */,
+				59459AD4220F0B7D00DD9396 /* Decompiler.hpp */,
+				59459ACD220F0B4F00DD9396 /* main.cpp */,
+			);
+			path = Decompiler;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -336,6 +373,23 @@
 			productReference = 59459AB421F0BF5500DD9396 /* DeviceTreeCtor */;
 			productType = "com.apple.product-type.tool";
 		};
+		59459ACA220F0B4F00DD9396 /* Decompiler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 59459AD1220F0B4F00DD9396 /* Build configuration list for PBXNativeTarget "Decompiler" */;
+			buildPhases = (
+				59459AC7220F0B4F00DD9396 /* Sources */,
+				59459AC8220F0B4F00DD9396 /* Frameworks */,
+				59459AC9220F0B4F00DD9396 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Decompiler;
+			productName = Decompiler;
+			productReference = 59459ACB220F0B4F00DD9396 /* Decompiler */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -349,6 +403,9 @@
 						CreatedOnToolsVersion = 10.1;
 					};
 					59459A5021DE263C00DD9396 = {
+						CreatedOnToolsVersion = 10.1;
+					};
+					59459ACA220F0B4F00DD9396 = {
 						CreatedOnToolsVersion = 10.1;
 					};
 				};
@@ -369,6 +426,7 @@
 				59459A5021DE263C00DD9396 /* libACPI */,
 				59459A7B21E6512F00DD9396 /* TestsCpp */,
 				59459AA821F0BF5500DD9396 /* DeviceTreeCtor */,
+				59459ACA220F0B4F00DD9396 /* Decompiler */,
 			);
 		};
 /* End PBXProject section */
@@ -422,6 +480,16 @@
 				59459AAC21F0BF5500DD9396 /* AMLParser_Tests.c in Sources */,
 				59459ABE21F0C39700DD9396 /* AMLDecompilerInterface.cpp in Sources */,
 				59459AB721F0BF8600DD9396 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59459AC7220F0B4F00DD9396 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59459ACE220F0B4F00DD9396 /* main.cpp in Sources */,
+				59459AD6220F0D6800DD9396 /* AMLDecompilerInterface.cpp in Sources */,
+				59459AD5220F0B7D00DD9396 /* Decompiler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,6 +703,24 @@
 			};
 			name = Release;
 		};
+		59459ACF220F0B4F00DD9396 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S3D34765YM;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		59459AD0220F0B4F00DD9396 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S3D34765YM;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -679,6 +765,15 @@
 			buildConfigurations = (
 				59459AB221F0BF5500DD9396 /* Debug */,
 				59459AB321F0BF5500DD9396 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		59459AD1220F0B4F00DD9396 /* Build configuration list for PBXNativeTarget "Decompiler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59459ACF220F0B4F00DD9396 /* Debug */,
+				59459AD0220F0B4F00DD9396 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -46,7 +46,6 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
     
     
     return buffer;
-    
 }
 
 struct DeviceTreeTester
