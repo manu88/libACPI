@@ -1,0 +1,31 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 1,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": {
+      "PCI0": {
+        "_ADR": {
+          "eisaid": false,
+          "type": 0,
+          "value": 0
+        },
+        "_HID": {
+          "eisaid": true,
+          "type": 0,
+          "value": 51040321
+        },
+        "_UID": {
+          "eisaid": false,
+          "type": 0,
+          "value": 1
+        }
+      }
+    }
+  }
+}

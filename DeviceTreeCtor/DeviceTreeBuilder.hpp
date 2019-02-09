@@ -34,7 +34,7 @@ struct NameDeclaration
     {}
     
     std::string id;
-    
+    bool isEisaid = false;
     
     void setValue( uint64_t val)
     {
@@ -134,6 +134,9 @@ struct DeviceTree
     
     TreeNode* getNodeForPathAndCreateIfNeeded( const std::string &path , const std::string &relativeTo);
     TreeNode* getNodeForPath( const std::string &path , const std::string &relativeTo);
+    
+    
+    ACPIDefinitionBlock defBlock = {0};
 };
 
 class DeviceTreeBuilder : public AMLDecompilerInterface
@@ -161,9 +164,9 @@ public:
     void print();
     
     
-    const TreeNode &getDeviceTreeRoot() const
+    const DeviceTree &getDeviceTree() const
     {
-        return _deviceTree.root;
+        return _deviceTree;
     }
 protected:
     int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc) override;

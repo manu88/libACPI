@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <string>
 #include <dirent.h>
-
+#include <fstream>
 #include <stdlib.h>
 #include "JSONConverter.hpp"
 
@@ -71,11 +71,28 @@ struct DeviceTreeTester
         
         AMLParserError err = builder.start( buffer, bufSize);
         
-        JSONConverter conv(builder.getDeviceTreeRoot() );
+        if (err != AMLParserError_None)
+            return false;
         
-        printf("JSON : %s\n" , conv.getJSON().c_str() );
         
-        return err == AMLParserError_None;
+        
+        JSONConverter conv(builder.getDeviceTree() );
+        
+        const auto jsonResult = conv.getJSON();
+        
+        std::ifstream ifs(jsonToMatch);
+        const auto jsonReference = nlohmann::json::parse(ifs);
+        
+        const auto diff = nlohmann::json::diff(jsonResult, jsonReference);
+        
+        if (!diff.empty())
+        {
+            builder.print();
+            printf("Got : '%s' \n" , jsonResult.dump(2).c_str());
+            printf("Got a diff : '%s'/n" , diff.dump(2).c_str());
+        }
+        return diff.empty();
+        
     }
     
     
@@ -150,7 +167,7 @@ int main(int argc, const char * argv[])
     }
     
     return 0;
-    
+    /*
     size_t bufSize = 0;
     
     const char* file = argv[1];
@@ -175,11 +192,12 @@ int main(int argc, const char * argv[])
     
     builder.print();
     
-    JSONConverter conv(builder.getDeviceTreeRoot() );
+    JSONConverter conv(builder.getDeviceTree() );
     
     printf("JSON : %s\n" , conv.getJSON().c_str() );
     //printf("%s\n" , builder.getResult().c_str());
     
     free(dataBuffer);
     return 0;
+     */
 }

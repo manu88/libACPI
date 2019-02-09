@@ -17,10 +17,10 @@
 
 #include "JSONConverter.hpp"
 #include "DeviceTreeBuilder.hpp"
-#include "json.hpp"
 
-JSONConverter::JSONConverter( const TreeNode &node ):
-node(node)
+
+JSONConverter::JSONConverter( const DeviceTree &tree ):
+tree(tree)
 {}
 
 static nlohmann::json serializeName( const NameDeclaration&name)
@@ -32,6 +32,7 @@ static nlohmann::json serializeName( const NameDeclaration&name)
     {
         case NameDeclaration::Type_NumericValue:
             res["value"] = name.value.value64;
+            res["eisaid"] = name.isEisaid;
             break;
             
         case NameDeclaration::Type_MemoryRangeDescriptor32:
@@ -102,13 +103,33 @@ static nlohmann::json serializeNode( const TreeNode&node)
 }
 
 
+static nlohmann::json serializeDefBlock( const ACPIDefinitionBlock&block)
+{
+    nlohmann::json res;
+    
+    if (block.OEMId[0] && block.tableId[0] && block.tableSignature[0])
+    {        
+        res["tableSignature"] = block.tableSignature;
+//        res["tableLength"] = block.tableLength;
+        res["complianceRevision"] = block.complianceRevision;
+//        res["tableCheckSum"] = block.tableCheckSum;
+        res["OEMId"] = block.OEMId;
+        res["tableId"] = block.tableId;
+        res["OEMRev"] = block.OEMRev;
+        res["creatorID"] = block.creatorID;
+        
+    }
+    return res;
+}
 
-std::string JSONConverter::getJSON() const
+nlohmann::json JSONConverter::getJSON() const
 {
     nlohmann::json jsonResult;
     
-    jsonResult = serializeNode(node);
     
-    return jsonResult.dump(2);
+    jsonResult["tree"] = serializeNode(tree.root);
+    jsonResult["def"] = serializeDefBlock(tree.defBlock);
+    
+    return jsonResult;
     //return serializeNode(jsonResult,node);
 }

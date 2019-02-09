@@ -82,6 +82,20 @@ state(BuilderState::Ready)
     decomp.parserPolicy.assertOnError = 1;
 }
 
+static void printDefBlock( const ACPIDefinitionBlock& defBlock)
+{
+    
+    printf("tableSignature :'%s'\n" , defBlock.tableSignature);
+    printf("OEMId :'%s'\n" , defBlock.OEMId);
+    printf("tableId :'%s'\n" , defBlock.tableId);
+    printf("tableLength :%d\n" , defBlock.tableLength);
+    printf("complianceRevision :%hhu\n" , defBlock.complianceRevision);
+    printf("tableCheckSum :%hhu\n" , defBlock.tableCheckSum);
+    printf("OEMRev : %d\n" , defBlock.OEMRev);
+    printf("creatorID : %d\n" , defBlock.OEMRev);
+    
+}
+
 static void printDev(TreeNode* node ,int indent)
 {
     for(int i=0;i<indent;i++)
@@ -118,6 +132,7 @@ static void printDev(TreeNode* node ,int indent)
 void DeviceTreeBuilder::print()
 {
 
+    printDefBlock(_deviceTree.defBlock);
     printDev(&_deviceTree.root ,0);
     
     
@@ -254,7 +269,7 @@ int DeviceTreeBuilder::endMethod(const ParserContext* context, const char* name)
 
 int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc)
 {
-
+    _deviceTree.defBlock = *desc;
     return 0;
 }
 
@@ -262,10 +277,13 @@ int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
 {
     state = Ready;
     
-    //assert(currentName);
+    
     if(currentName)
     {
         currentName->setValue(value);
+        
+        currentName->isEisaid = isEisaId(value);
+        
     }
     return 0;
 }

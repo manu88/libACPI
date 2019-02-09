@@ -20,18 +20,19 @@
 
 
 #include <string>
+#include "json.hpp"
 
-struct TreeNode;
+struct DeviceTree;
 
 class JSONConverter
 {
 public:
-    JSONConverter( const TreeNode &node );
+    JSONConverter( const DeviceTree &tree );
     
     
-    std::string getJSON() const;
+    nlohmann::json getJSON() const;
 private:
-    const TreeNode &node;
+    const DeviceTree &tree;
     
 };
 
