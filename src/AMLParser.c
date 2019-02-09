@@ -138,6 +138,288 @@ AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8
     return _AMLParserProcessBuffer(state, buffer, bufSize, 0);
 }
 
+static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperation op, const uint8_t* buffer , size_t bufSize , size_t* advancedBy)
+{
+    switch (op)
+    {
+        case AML_VarPackageOp:
+        {
+            size_t varSizeLen = 0;
+            size_t varSize = _GetPackageLength(buffer, bufSize, &varSizeLen, 0);
+            
+            *advancedBy += varSizeLen;
+            assert(varSizeLen == 1);// For now this only works for 1 byte varPackageOp
+            varSize   -= varSizeLen;
+            
+            const uint8_t* startPos = buffer  + *advancedBy;
+            //const uint8_t VarNumElements = *startPos;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
+            if (err != AMLParserError_None)
+            {
+                return err;
+            }
+            *advancedBy += 2;//varSize;
+        }
+            break;
+            
+        case AML_NameOp:
+        {
+            const uint8_t* namePos = buffer;
+            
+            if (!IsName(*namePos))
+            {
+                return AMLParserError_UnexpectedToken;
+            }
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
+            if (err != AMLParserError_None)
+                return err;
+            
+            *advancedBy +=4;
+            
+        }
+            break;
+        case AML_NameChar:
+            
+            break;
+        case AML_DeviceOpList:
+        {
+            size_t deviceSizeLen = 0;
+            size_t deviceSize = _GetPackageLength(buffer,bufSize, &deviceSizeLen, 0)  ;
+            
+            *advancedBy += deviceSizeLen;
+            deviceSize   -= deviceSizeLen;
+            
+            const uint8_t* startDevice = buffer + *advancedBy;
+            assert(startDevice);
+            //assert(*sizeVal <= bufSize);
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
+            if (err != AMLParserError_None)
+                return err;
+            
+            *advancedBy += deviceSize;
+        }
+            break;
+            
+        case AML_ScopeOp:
+        {
+            size_t scopeSizeLen = 0;
+            size_t scopeSize = _GetPackageLength(buffer/*+pos+advancedByte*/, bufSize, &scopeSizeLen, 0);
+            
+            
+            *advancedBy += scopeSizeLen;
+            scopeSize    -= scopeSizeLen;
+            
+            const uint8_t* startScope = buffer +  *advancedBy;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
+            if (err != AMLParserError_None)
+            {
+                return err;
+            }
+            *advancedBy +=  scopeSize;
+        }
+            break;
+            
+        case AML_OpRegionOp:
+        {
+            const uint8_t* namePos = buffer;
+            
+            ACPIOperationRegion reg;
+            assert(IsName(*namePos));
+            
+            ExtractName(namePos, 4, reg.name);
+            reg.name[4] = 0;
+            //printf("OpRegion name '%.4s'\n" , reg.name);
+            *advancedBy +=4;
+            
+            /*
+             uint64_t regSpaceVal = 0;
+             uint64_t regOffsetVal = 0;
+             uint64_t regLenVal = 0;
+             */
+            const uint8_t* regSpace = buffer + *advancedBy;
+            *advancedBy += GetInteger(regSpace,bufSize-*advancedBy, &reg.space);
+            
+            const uint8_t* regOffset = buffer +  *advancedBy;
+            *advancedBy += GetInteger(regOffset,bufSize-*advancedBy, &reg.offset);
+            
+            const uint8_t* regLen = buffer + *advancedBy;
+            *advancedBy += GetInteger(regLen,bufSize-*advancedBy, &reg.length);
+            
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_OperationRegion , (const uint8_t*)&reg , sizeof(ACPIOperationRegion) );
+            if (err != AMLParserError_None)
+                return err;
+            
+        }
+            break;
+            
+        case AML_FieldOp:
+        {
+            size_t fieldSizeLen = 0;
+            size_t fieldSize = _GetPackageLength(buffer, bufSize, &fieldSizeLen, 0);
+            
+            *advancedBy += fieldSizeLen;
+            fieldSize    -= fieldSizeLen;
+            
+            uint8_t* fieldPos = (uint8_t* ) buffer + *advancedBy;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
+            if (err != AMLParserError_None)
+                return err;
+            
+            *advancedBy += fieldSize;
+        }
+            break;
+        case AML_MethodOp:
+        {
+            size_t methodSizeLen = 0;
+            size_t methodSize = _GetPackageLength(buffer, bufSize, &methodSizeLen, 0);
+            
+            *advancedBy += methodSizeLen;
+            methodSize   -= methodSizeLen;
+            
+            
+            const uint8_t* startPos = buffer + *advancedBy;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state , ACPIObject_Type_Method , startPos , methodSize);
+            if (err != AMLParserError_None)
+                return err;
+            
+            
+            *advancedBy += methodSize;
+        }
+            break;
+        case AML_BufferOp:
+        {
+            size_t bufSizeLen = 0;
+            size_t bufferSizePackage = _GetPackageLength(buffer, bufSize, &bufSizeLen, 0);
+            
+            *advancedBy        += bufSizeLen;
+            bufferSizePackage   -= bufSizeLen;
+            
+            const uint8_t* startBuffer = buffer + *advancedBy;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Buffer , startBuffer , bufferSizePackage);
+            if (err != AMLParserError_None)
+            {
+                return err;
+            }
+            *advancedBy +=  bufferSizePackage;
+        }
+            break;
+            
+            /* Integer types */
+            
+        case AML_ZeroOp:
+        case AML_OneOp:
+        case AML_OnesOp:
+        {
+            const uint8_t* valPosition = buffer-1;
+            const size_t valSize = 0;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize +1);
+            if (err != AMLParserError_None)
+                return err;
+            
+            
+            *advancedBy += valSize;
+        }
+            break;
+        case AML_BytePrefix:
+        {
+            const uint8_t* valPosition = buffer-1;
+            
+            const size_t valSize = 1;// sizeof(ACPIDWord);
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            if (err != AMLParserError_None)
+                return err;
+            
+            
+            *advancedBy += valSize;
+        }
+            break;
+        case AML_WordPrefix:
+        {
+            const uint8_t* valPosition = buffer-1;
+            
+            const size_t valSize = 2;// sizeof(ACPIDWord);
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            if (err != AMLParserError_None)
+                return err;
+            
+            
+            *advancedBy += valSize;
+            
+        }
+            break;
+        case AML_DWordPrefix:
+        {
+            const uint8_t* valPosition = buffer -1; // we step back one byte
+            
+            const size_t valSize = 4;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            if (err != AMLParserError_None)
+                return err;
+            
+            
+            *advancedBy += valSize;
+        }
+            break;
+        case AML_QWordPrefix:
+        {
+            const uint8_t* valPosition = buffer -1; // we step back one byte
+            
+            const size_t valSize = 8;
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            if (err != AMLParserError_None)
+                return err;
+            
+            
+            *advancedBy += valSize;
+        }
+            break;
+            
+            /* END Integer types */
+        case AML_StringPrefix:
+        {
+            const uint8_t* valPosition = buffer;
+            
+            const size_t valSize = strlen( (const char*)valPosition);
+            
+            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_StringValue , valPosition , valSize);
+            if (err != AMLParserError_None)
+                return err;
+            
+            
+            *advancedBy += valSize;
+
+            
+        }
+            break;
+            
+        case AML_Char:
+            printf("Char '%c'\n" , *buffer);
+            assert(0);
+        case AML_Int:
+            break;
+        case AML_Unknown:
+            break;
+            
+            default:
+            assert(0);
+    }
+            
+    return AMLParserError_None;
+}
+
 static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock)
 {
     
@@ -155,186 +437,45 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
     
     AMLParserError err_ = state->callbacks.AllocateElement(state, ACPIObject_Type_Root  , buffer+ pos , bufSize);
     if (err_ != AMLParserError_None)
+    {
         return err_;
-    
+    }
     
     while (bufSize)
     {
         
         AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
 
+        const uint8_t* startOfOP = buffer +pos+ advancedByte;
+        const size_t   operationSize = bufSize - advancedByte;
         
+        size_t advancedOf = 0;
+        AMLParserError retOperation =  _AMLParserProcessOperation(state, op, startOfOP, operationSize, &advancedOf);
         
+        if (retOperation != AMLParserError_None)
+        {
+            return retOperation;
+        }
+        advancedByte += advancedOf;
+        
+        // Check if wrapped
+        if( (ssize_t)bufSize - (ssize_t)advancedByte <= 0)
+        {
+            break;
+        }
+        
+        bufSize -= advancedByte;
+        pos     += advancedByte;
+        
+        if (!_EnsureValidBuffer(state, buffer+pos, bufSize))
+        {
+            assert( state->parserPolicy.assertOnError == 0);
+            return AMLParserError_BufferTooShort;
+        }
+        
+#if 0
         switch (op)
         {
-            case AML_DeviceOpList:
-            {
-                // the returned _GetPackageLength will contains the size' size, so we need to substract it from the device size,
-                // and include the package size in the advancedByte.
-                // This could need a refactorization
-                size_t deviceSizeLen = 0;
-                size_t deviceSize = _GetPackageLength(buffer + pos + advancedByte, bufSize - advancedByte, &deviceSizeLen, 0)  ;
-                
-                advancedByte += deviceSizeLen;
-                deviceSize   -= deviceSizeLen;
-                
-                const uint8_t* startDevice = buffer + pos + advancedByte;
-                assert(startDevice);
-                //assert(*sizeVal <= bufSize);
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte += deviceSize;
-            }
-                break;
-                
-            case AML_BufferOp:
-            {
-                size_t bufSizeLen = 0;
-                size_t bufferSizePackage = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &bufSizeLen, 0);
-                
-                advancedByte        += bufSizeLen;
-                bufferSizePackage   -= bufSizeLen;
-                
-                const uint8_t* startBuffer = buffer + pos + advancedByte;
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Buffer , startBuffer , bufferSizePackage);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte +=  bufferSizePackage;
-                // 1010
-                // 
-                /*
-                 const uint8_t* bufferPos = buffer + pos + advancedByte;
-                 printf("Got a buffer op\n");
-                 state->callbacks.AllocateElement(state , ACPIObject_Type_Buffer , bufferPos, 1);
-                 */
-            }
-                break;
-            case AML_ScopeOp:
-            {
-                size_t scopeSizeLen = 0;
-                size_t scopeSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &scopeSizeLen, 0);
-                
-                
-                advancedByte += scopeSizeLen;
-                scopeSize    -= scopeSizeLen;
-                
-                const uint8_t* startScope = buffer + pos + advancedByte;
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte +=  scopeSize;
-            }
-                break;
-            
-/* Integer types */
-                
-            case AML_ZeroOp:
-            case AML_OneOp:
-            case AML_OnesOp:
-            {
-                const uint8_t* valPosition = buffer + pos + advancedByte-1;
-                const size_t valSize = 0;
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize +1);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte += valSize;
-            }
-                break;
-            case AML_BytePrefix:
-            {
-                const uint8_t* valPosition = buffer + pos + advancedByte-1;
-                
-                const size_t valSize = 1;// sizeof(ACPIDWord);
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte += valSize;
-            }
-                break;
-            case AML_WordPrefix:
-            {
-                const uint8_t* valPosition = buffer + pos + advancedByte-1;
-                
-                const size_t valSize = 2;// sizeof(ACPIDWord);
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte += valSize;
-                
-            }
-                break;
-            case AML_DWordPrefix:
-            {
-                const uint8_t* valPosition = buffer + pos + advancedByte-1; // we step back one byte
-                
-                const size_t valSize = 4;
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte += valSize;
-            }
-                break;
-            case AML_QWordPrefix:
-            {
-                const uint8_t* valPosition = buffer + pos + advancedByte-1; // we step back one byte
-                
-                const size_t valSize = 8;
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte += valSize;
-            }
-                break;
-            
-            
-            
-            
-/* END Integer types */
-
-                
-            case AML_NameOp:
-            {
-                const uint8_t* namePos = buffer + pos + advancedByte;
-                
-                if (!IsName(*namePos))
-                {
-                    return AMLParserError_UnexpectedToken;
-                }
-                
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
-                if (err != AMLParserError_None)
-                    return err;
-                
-                advancedByte +=4;
-                
-            }
-                break;
-                
             case AML_FieldOp:
             {
                 size_t fieldSizeLen = 0;
@@ -353,25 +494,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
             }
                 break;
                 
-            case AML_MethodOp:
-            {
-                size_t methodSizeLen = 0;
-                size_t methodSize = _GetPackageLength(buffer+pos+advancedByte, bufSize-advancedByte, &methodSizeLen, 0);
-                
-                advancedByte += methodSizeLen;
-                methodSize   -= methodSizeLen;
-                
-                
-                const uint8_t* startPos = buffer + pos + advancedByte;
 
-                AMLParserError err = state->callbacks.AllocateElement(state , ACPIObject_Type_Method , startPos , methodSize);
-                if (err != AMLParserError_None)
-                    return err;
-                
-                
-                advancedByte += methodSize;
-            }
-                break;
                 
             case AML_OpRegionOp:
             {
@@ -447,25 +570,12 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 */
             }
                 break;
-        }
-
+        } // end Switch
+#endif
         
         
 
-        // Check if wrapped
-        if( (ssize_t)bufSize - (ssize_t)advancedByte <= 0)
-        {
-            break;
-        }
-        
-        bufSize -= advancedByte;
-        pos     += advancedByte;
-        
-        if (!_EnsureValidBuffer(state, buffer+pos, bufSize))
-        {
-            assert( state->parserPolicy.assertOnError == 0);
-            return AMLParserError_BufferTooShort;
-        }
+
         //assert(_EnsureValidBuffer(state, buffer+pos, bufSize));
         
     } // end while

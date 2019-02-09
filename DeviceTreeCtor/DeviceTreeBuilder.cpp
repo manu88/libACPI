@@ -18,288 +18,291 @@
 
 
 #include "DeviceTreeBuilder.hpp"
+#include <EISAID.h>
 
-
-DeviceTreeBuilder::DeviceTreeBuilder()
+TreeNode*  DeviceTree::getNodeForPathAndCreateIfNeeded( const std::string &path , const std::string &relativeTo)
 {
-    AMLDecompilerInit(&decomp);
+    std::istringstream fullPath(relativeTo + (path[0] == '.'?"":".") + path);
     
-    decomp.parserPolicy.assertOnError = 1;
     
-    decomp.userData = this;
+    TreeNode* ret = &root;
     
-    decomp.callbacks.OnDefinitionBlock = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDefinitionBlock* desc)-> int
+    std::string s;
+    while (getline(fullPath, s, '.'))
     {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        
-        self->str << "DefinitionBlock (\"\",";
-        self->str << std::string(",\"")+ desc->tableSignature + "\",";
-        self->str << std::to_string(desc->complianceRevision) + ",";
-        self->str << std::string("\"")+ desc->OEMId + "\",";
-        self->str << std::string("\"")+ desc->tableId + "\",";
-        self->str << std::to_string(desc->OEMRev) + ")";
-        self->str << "\n{\n";
-        
-        
-        
-        return 0;
-    };
-    
-    
-    decomp.callbacks.OnBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        
-        self->str << ",Buffer() {";
-        
-        for(int i=0;i<bufferSize;i++)
+        if (!s.empty())
         {
-            self->str << "0x"<< std::hex << ((unsigned int) buffer[i]) << ",";
+            TreeNode*n = ret->getChildByName(s);
             
+            if (n == nullptr)
+            {
+                ret->children.push_back( std::make_unique<TreeNode>(TreeNode(s , ret)));
+            }
+            
+            ret = ret->getChildByName(s);
         }
-        self->str << "}";
-        
-        self->str << "\n";
-        
-        return 0;
-    };
+
+    }
     
-    decomp.callbacks.StartDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* device) -> int
+    return ret;
+}
+
+TreeNode* DeviceTree::getNodeForPath( const std::string &path , const std::string &relativeTo)
+{
+    std::istringstream fullPath(relativeTo + (path[0] == '.'?"":".") + path);
+    std::vector<std::string> strings;
+    
+    TreeNode* ret = &root;
+    
+    std::string s;
+    while (getline(fullPath, s, '.'))
     {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->incScope();
-        
-        self->indent();
-        
-        self->str << std::string("Device(") + std::string(device->name) + ")";
-        
-        self->str << "\n";
-        self->indent();
-        self->str << "{\n";
-        self->incScope();
-        //            printf("STR '%s'\n" , self->str.str().c_str());
-        return 0;
-    };
-    
-    decomp.callbacks.EndDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* dev) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->decScope();
-        self->str << "\n";
-        self->indent();
-        self->str << "}\n";
-        
-        
-        self->decScope();
-        //            printf("STR '%s'\n" , self->str.str().c_str());
-        
-        return 0;
-    };
-    
-    decomp.callbacks.StartName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        
-        self->indent();
-        self->str << std::string("Name( ") + std::string(name,4)  << "\n";
-        
-        
-        
-        //self->decScope();
-        
-        return 0;
-    };
-    
-    decomp.callbacks.EndName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        
-        self->indent();
-        self->str << ")" << "\n";
-        
-        //self->decScope();
-        
-        return 0;
-    };
-    
-    decomp.callbacks.StartScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->incScope();
-        
-        self->indent();
-        self->str << std::string("Scope(") + /*std::string(*/location/*,4)*/ + ")" + "\n";
-        
-        self->indent();
-        self->str << "{\n"  ;
-        
-        //            printf("STR '%s'\n" , self->str.str().c_str());
-        
-        return 0;
-    };
-    decomp.callbacks.EndScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->indent();
-        self->str << "}\n";
-        
-        self->decScope();
-        return 0;
-    };
-    
-    
-    decomp.callbacks.OnValue = []( AMLDecompiler* _decomp ,const ParserContext* context, uint64_t val) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->indent();
-        self->str << " 0x" <<  std::hex << val << " ";
-        return 0;
-    };
-    
-    
-    
-    decomp.callbacks.onOperationRegion = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIOperationRegion* reg) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->incScope();
-        self->indent();
-        
-        self->str << std::string("OperationRegion(")
-        << reg->name << ","
-        << "0x" << std::hex << reg->offset << ","
-        << std::to_string( reg->length) << ")"
-        << "\n";
-        
-        self->decScope();
-        //            printf("STR '%s'\n" , self->str.str().c_str());
-        
-        return 0;
-    };
-    
-    decomp.callbacks.onField = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIField* field) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->incScope();
-        self->indent();
-        
-        self->str << std::string("Field(")
-        << std::string(field->name)
-        /*
-         << reg->name << ","
-         << "0x" << std::hex << reg->offset << ","
-         << std::to_string( reg->length) */<< ")"
-        << "\n";
-        
-        self->decScope();
-        //            printf("STR '%s'\n" , self->str.str().c_str());
-        
-        return 0;
-    };
-    
-    decomp.callbacks.startMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        self->incScope();
-        self->indent();
-        
-        self->str << std::string("Method(")
-        /*
-         << reg->name << ","
-         << "0x" << std::hex << reg->offset << ","
-         << std::to_string( reg->length) */<< ")"
-        << "\n";
-        
-        self->indent();
-        self->str << "{\n";
-        return 0;
-    };
-    
-    decomp.callbacks.endMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        self->indent();
-        self->str << "}\n";
-        self->decScope();
-        return 0;
-    };
-    
-    decomp.callbacks.onSmallItem = [] (AMLDecompiler*_decomp,const ParserContext* context,
-                                       SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize) -> int
-    {
-        return 0;
-    };
-    
-    decomp.callbacks.onLargeItem = [](AMLDecompiler*_decomp,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize) -> int
-    {
-        DeviceTreeBuilder* self = reinterpret_cast<DeviceTreeBuilder*>(_decomp->userData);
-        
-        switch (itemType)
+        if (!s.empty())
         {
-            case LargeResourceItemsType_MemoryRangeDescriptor32:
-                assert(bufferSize == sizeof(MemoryRangeDescriptor32));
-                return self->onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32*>(buffer));
-                
-            case LargeResourceItemsType_QWORDAddressSpaceDescriptor:
-                assert(bufferSize == sizeof(AddressSpaceDescriptor));
-                return self->onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const AddressSpaceDescriptor*>(buffer));
-                
-            default:
-                break;
+            strings.push_back(s);
+            
+            TreeNode*n = ret->getChildByName(s);
+            
+            if (n == nullptr)
+            {
+                return nullptr;
+            }
+            
+            ret = ret->getChildByName(s);
         }
-        /*
-         
-         */
-        return 0;
-    };
+    }
+    
+    return ret;
+}
+
+DeviceTreeBuilder::DeviceTreeBuilder(AMLDecompiler& decomp):
+AMLDecompilerInterface(decomp),
+state(BuilderState::Ready)
+{
+    decomp.parserPolicy.assertOnError = 1;
+}
+
+static void printDev(TreeNode* node ,int indent)
+{
+    for(int i=0;i<indent;i++)
+        printf("\t");
+    
+    printf("TreeNode '%s' %zi names : \n" , node->id.c_str() , node->_names.size() );
+    for(const auto &name : node->_names)
+    {
+        for(int i=0;i<indent+1;i++)
+            printf("\t");
+        
+        if (name.id == "_HID")
+        {
+            printf("%s:%s",name.id.c_str() ,isEisaId(name.value.value64)? GetEisaId(name.value.value64): std::to_string(name.value.value64).c_str() );
+        }
+        else
+        {
+            printf("%s:%llx (type %i)",name.id.c_str() ,name.value.value64 , name.type );
+        }
+        printf("\n");
+    }
     
     
+    for (const auto &dev : node->children)
+    {
+        indent++;
+        printDev(dev.get(), indent);
+        indent--;
+        
+    }
+    
+};
+
+void DeviceTreeBuilder::print()
+{
+
+    printDev(&_deviceTree.root ,0);
+    
+    
+    /*
+    for( const auto &dev : _devices)
+    {
+        printf("Device '%s'\n" , dev.id.c_str());
+        printf("Scope '%s'\n" , dev.scope.c_str());
+        for( const auto &n : dev._names )
+        {
+            printf("\t Name '%s' %llx\n" , n.id.c_str() , n.value);
+        }
+    }
+     */
 }
 
 
+int DeviceTreeBuilder::onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
+{
+    switch (itemType)
+    {
+        case LargeResourceItemsType_MemoryRangeDescriptor32:
+            assert(bufferSize == sizeof(MemoryRangeDescriptor32));
+            return onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32*>(buffer));
+            
+        case LargeResourceItemsType_QWORDAddressSpaceDescriptor:
+            assert(bufferSize == sizeof(AddressSpaceDescriptor));
+            return onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const AddressSpaceDescriptor*>(buffer));
+            
+        case LargeResourceItemsType_WORDAddressSpaceDescriptor:
+            assert(bufferSize == sizeof(WordAddressSpaceDescriptor) );
+            return onWORDAddressSpaceDescriptor(context, reinterpret_cast<const WordAddressSpaceDescriptor*>(buffer));
+        default:
+            assert(0);
+            break;
+    }
+    return 0;
+}
+
+int DeviceTreeBuilder::onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
+{
+    return 0;
+}
+
+
+
+int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACPIOperationRegion* reg)
+{
+    
+    return 0;
+}
+
+int DeviceTreeBuilder::onField(const ParserContext* context, const ACPIField*field)
+{
+
+    return 0;
+}
+
+int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
+{
+
+    return 0;
+}
+
+int DeviceTreeBuilder::StartDevice(const ParserContext* context, const ACPIDevice* device)
+{
+    currentNode = _deviceTree.getNodeForPathAndCreateIfNeeded(device->name, _scopes.empty()? "" :  _scopes.top());
+    //printf("Start Device named '%s' current scope '%s' -> %s \n" , device->name , _scopes.top().c_str() , currentNode? "found":"Not found" );
+    
+    //assert(node);
+    return 0;
+}
+
+int DeviceTreeBuilder::StartScope(const ParserContext* context, const char* location)
+{
+    
+    currentNode = _deviceTree.getNodeForPathAndCreateIfNeeded(location, _scopes.empty()? "" :  _scopes.top());
+    
+    _scopes.push( (_scopes.empty()? "" :  _scopes.top() )+  location);
+    assert(currentNode);
+
+    return 0;
+}
+
+int DeviceTreeBuilder::EndScope(const ParserContext* context, const char* location)
+{
+    //printf("End scope '%s' '%s'\n" , location , _scopes.back().c_str());
+    _scopes.pop();
+    return 0;
+}
+
+int DeviceTreeBuilder::EndDevice(const ParserContext* context, const ACPIDevice* device)
+{
+    currentNode = nullptr;
+    return 0;
+}
+
+int DeviceTreeBuilder::StartName(const ParserContext* context, const char* name)
+{
+    //assert( state != WaitingNameValue);
+
+    state = WaitingNameValue;
+    
+    assert(currentNode);
+    
+    
+    currentNode->_names.push_back(NameDeclaration(name) );
+    currentName = &currentNode->_names.back();
+    
+    return 0;
+}
+
+
+
+
+int DeviceTreeBuilder::EndName(const ParserContext* context, const char* name)
+{
+    assert( state != WaitingNameValue);
+    
+    state = Ready;
+    
+    return 0;
+}
+int DeviceTreeBuilder::startMethod(const ParserContext* context, const char* name)
+{
+
+    return 0;
+}
+int DeviceTreeBuilder::endMethod(const ParserContext* context, const char* name)
+{
+    return 0;
+}
+
+
+int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc)
+{
+
+    return 0;
+}
+
+int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
+{
+    state = Ready;
+    
+    //assert(currentName);
+    if(currentName)
+    {
+        currentName->setValue(value);
+    }
+    return 0;
+}
+
 int DeviceTreeBuilder::onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor* desc)
 {
-    indent();
-    str << "QWordMemory( "
-    << (desc->isConsumer? "ResourceConsumer":"ResourceProducer") << ","
-    << (desc->decodeType? "SubDecode" : "PosDecode") << ","
-    << (desc->mif? "MinFixed" : "minNOTFixed") << ","
-    << (desc->maf? "MaxFixed" : "MaxNOTFixed") << ","
-    << "0x" << std::hex << desc->addrSpaceGranularity << ","
-    << "0x" << std::hex << desc->addrRangeMin << ","
-    << "0x" << std::hex << desc->addrRangeMax << ","
-    << "0x" << std::hex << desc->addrTranslationOffset << ","
-    << "0x" << std::hex << desc->addrTranslationLength << ","
-    << "\n";
-    
-    indent();
-    str << ")\n";
-    
-    decScope();
+    assert(desc);
+    state = Ready;
+    assert(currentName);
+    if(currentName)
+    {
+        currentName->setValue(*desc);
+    }
     return 0;
 }
 
 int DeviceTreeBuilder::onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32* desc)
 {
-    indent();
-    str << "Memory32Fixed( "
-    << (desc->writeStatus? "Write?":"ReadOnly") << ","
-    << std::hex << desc->rangeBaseAddr << ","
-    << std::hex << desc->rangeLength << ")"
-    << "\n";
-    
-    decScope();
+    assert(desc);
+    state = Ready;
+    assert(currentName);
+    if(currentName)
+    {
+        currentName->setValue(*desc);
+    }
+    return 0;
+}
+
+int DeviceTreeBuilder::onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor* desc)
+{
+    assert(desc);
+    state = Ready;
+    assert(currentName);
+    if(currentName)
+    {
+        currentName->setValue(*desc);
+    }
     return 0;
 }
 
@@ -307,24 +310,3 @@ AMLParserError DeviceTreeBuilder::start(const uint8_t* buffer , size_t size)
 {
     return AMLDecompilerStart(&decomp, buffer, size);
 }
-
-
-void DeviceTreeBuilder::indent()
-{
-    for(int i=0;i<currentScope;i++)
-    {
-        str << "\t";
-    }
-    
-}
-void DeviceTreeBuilder::incScope()
-{
-    currentScope++;
-    
-    
-}
-
-void DeviceTreeBuilder::decScope()
-{
-    currentScope--;
-    }

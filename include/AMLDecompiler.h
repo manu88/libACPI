@@ -22,7 +22,9 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "AMLTypes.h"
 #include "AMLParser.h"
+
 
 /*
  This is an intermediate module that helps the AML bytecode interpretation.
@@ -37,7 +39,6 @@ typedef struct
     const char* currentScope;
     
     
-    
 } ParserContext;
     
 typedef struct _AMLDecompiler AMLDecompiler;
@@ -49,6 +50,7 @@ typedef struct
     int (*onSmallItem)(AMLDecompiler*,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     
     int (*OnValue)(AMLDecompiler*,const ParserContext* context, uint64_t value);
+    int (*OnString)(AMLDecompiler*,const ParserContext* context, const char* string);
     
     int (*OnDefinitionBlock)(AMLDecompiler*,const ParserContext* context, const ACPIDefinitionBlock* block);
     
@@ -73,11 +75,12 @@ typedef struct
 } AMLDecompilerCallbacks;
 
 
+
 struct _AMLDecompiler
 {
     AMLParserPolicy parserPolicy;
     AMLDecompilerCallbacks callbacks;
-    char currentScope[512];
+    char currentScope[SCOPE_STR_SIZE];
     void* userData;
     const uint8_t* errorPos;
 };

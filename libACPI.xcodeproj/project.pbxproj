@@ -39,6 +39,9 @@
 		59459AB721F0BF8600DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AB621F0BF8500DD9396 /* main.cpp */; };
 		59459AB821F0BFB500DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459A8821E6514500DD9396 /* main.cpp */; };
 		59459ABB21F0C01200DD9396 /* DeviceTreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AB921F0C01200DD9396 /* DeviceTreeBuilder.cpp */; };
+		59459ABE21F0C39700DD9396 /* AMLDecompilerInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459ABD21F0C39700DD9396 /* AMLDecompilerInterface.cpp */; };
+		59459AC421F347EA00DD9396 /* JSONConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AC221F347EA00DD9396 /* JSONConverter.cpp */; };
+		59459AC62204175900DD9396 /* AMLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459AC52204175900DD9396 /* AMLTypes.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -106,7 +109,12 @@
 		59459AB621F0BF8500DD9396 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59459AB921F0C01200DD9396 /* DeviceTreeBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceTreeBuilder.cpp; sourceTree = "<group>"; };
 		59459ABA21F0C01200DD9396 /* DeviceTreeBuilder.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DeviceTreeBuilder.hpp; sourceTree = "<group>"; };
-		59459ABC21F0C0E600DD9396 /* AMLDecompilerInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLDecompilerInterface.h; sourceTree = "<group>"; };
+		59459ABC21F0C0E600DD9396 /* AMLDecompilerInterface.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AMLDecompilerInterface.hpp; sourceTree = "<group>"; };
+		59459ABD21F0C39700DD9396 /* AMLDecompilerInterface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AMLDecompilerInterface.cpp; sourceTree = "<group>"; };
+		59459ABF21F0CBCB00DD9396 /* json.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
+		59459AC221F347EA00DD9396 /* JSONConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSONConverter.cpp; sourceTree = "<group>"; };
+		59459AC321F347EA00DD9396 /* JSONConverter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = JSONConverter.hpp; sourceTree = "<group>"; };
+		59459AC52204175900DD9396 /* AMLTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLTypes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +215,7 @@
 			children = (
 				59459A7321DF51C900DD9396 /* AMLDecompiler.h */,
 				59459A5C21DE269000DD9396 /* ACPIDesc.h */,
+				59459AC52204175900DD9396 /* AMLTypes.h */,
 				59459A8E21E7274200DD9396 /* AMLParser.h */,
 				59459A8D21E7274200DD9396 /* AMLRouter.h */,
 				59459A5D21DE269000DD9396 /* EISAID.h */,
@@ -226,9 +235,13 @@
 			isa = PBXGroup;
 			children = (
 				59459AB621F0BF8500DD9396 /* main.cpp */,
-				59459ABC21F0C0E600DD9396 /* AMLDecompilerInterface.h */,
+				59459ABC21F0C0E600DD9396 /* AMLDecompilerInterface.hpp */,
+				59459ABD21F0C39700DD9396 /* AMLDecompilerInterface.cpp */,
 				59459AB921F0C01200DD9396 /* DeviceTreeBuilder.cpp */,
 				59459ABA21F0C01200DD9396 /* DeviceTreeBuilder.hpp */,
+				59459ABF21F0CBCB00DD9396 /* json.hpp */,
+				59459AC221F347EA00DD9396 /* JSONConverter.cpp */,
+				59459AC321F347EA00DD9396 /* JSONConverter.hpp */,
 			);
 			path = DeviceTreeCtor;
 			sourceTree = "<group>";
@@ -242,6 +255,7 @@
 			files = (
 				59459A6221DE269100DD9396 /* TreeRef.h in Headers */,
 				59459A8F21E7274300DD9396 /* AMLRouter.h in Headers */,
+				59459AC62204175900DD9396 /* AMLTypes.h in Headers */,
 				59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */,
 				59459A6121DE269100DD9396 /* EISAID.h in Headers */,
 				59459A9021E7274300DD9396 /* AMLParser.h in Headers */,
@@ -404,7 +418,9 @@
 				59459ABB21F0C01200DD9396 /* DeviceTreeBuilder.cpp in Sources */,
 				59459AAA21F0BF5500DD9396 /* ACPI_Tests.c in Sources */,
 				59459AAB21F0BF5500DD9396 /* Decompiler_Tests.c in Sources */,
+				59459AC421F347EA00DD9396 /* JSONConverter.cpp in Sources */,
 				59459AAC21F0BF5500DD9396 /* AMLParser_Tests.c in Sources */,
+				59459ABE21F0C39700DD9396 /* AMLDecompilerInterface.cpp in Sources */,
 				59459AB721F0BF8600DD9396 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

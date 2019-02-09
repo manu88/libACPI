@@ -17,14 +17,29 @@
 
 #pragma once
 
-#include <stdint.h>
-#define PNP0A03  0x30ad041 //  PCI bus
-#define PNP0A01  0x10ad041 //  EISA bus
-#define PNP0103  0x301d041 //  HPET System Timer
-#define PNP0B00  0xbd041   //  AT Real-Time Clock
-#define PNP0303  0x303d041 //  IBM Enhanced Keyboard (101/102-key, PS/2 Mouse)
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+#include <stdint.h>
+#define PNP0A03  0x30ad041  //  PCI bus
+#define PNP0A01  0x10ad041  //  EISA bus
+#define PNP0103  0x301d041  //  HPET System Timer
+#define PNP0B00  0xbd041    //  AT Real-Time Clock
+#define PNP0303  0x303d041  //  IBM Enhanced Keyboard (101/102-key, PS/2 Mouse)
+#define PNP0F13  0x130FD041 //  PS/2 port for PS/2-style mice
+#define PNP0700  0x7D041    // PC standard floppy disk controller
+#define PNP0400  0x4D041    // Standard LPT printer port
+#define PNP0501  0x105D041  // A-compatible COM port
+    
+#define PNP0C0F  0xF0CD041  // PCI interrupt link device
+    
 int isEisaId( uint64_t val);
+const char* GetEisaId( uint64_t val);
+    
+#ifdef __cplusplus
+}
+#endif
 
 /*
  #--Interrupt Controllers--
@@ -73,12 +88,12 @@ int isEisaId( uint64_t val);
  PNP0344  Korean enhanced keyboard 103
  
  #--Parallel Devices--
- PNP0400  Standard LPT printer port
+ 
  PNP0401  ECP printer port
  
  #--Serial Devices--
  PNP0500  Standard PC COM port
- PNP0501  16550A-compatible COM port
+ 
  PNP0502  Multiport serial device (non-intelligent 16550)
  PNP0510  Generic IRDA-compatible device
  PNP0511  Generic IRDA-compatible device
@@ -157,7 +172,7 @@ int isEisaId( uint64_t val);
  PNP0C0C  ACPI power button device
  PNP0C0D  ACPI lid device
  PNP0C0E  ACPI sleep button device
- PNP0C0F  PCI interrupt link device
+ 
  PNP0C10  ACPI system indicator device
  PNP0C11  ACPI thermal zone
  PNP0C12  Device bay controller

@@ -19,17 +19,23 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string>
+#include <dirent.h>
 
 #include <stdlib.h>
-
+#include "JSONConverter.hpp"
 
 #include "DeviceTreeBuilder.hpp"
 
+
 static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 {
-
+    
     FILE *fileptr;
     fileptr = fopen(fromFile, "rb");  // Open the file in binary mode
+    
+    if (fileptr == NULL)
+        return NULL;
+    
     fseek(fileptr, 0, SEEK_END);          // Jump to the end of the file
     *bufSize = ftell(fileptr);             // Get the current byte offset in the file
     rewind(fileptr);                      // Jump back to the beginning of the file
@@ -40,46 +46,115 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
     
     
     return buffer;
-   
+    
 }
 
-
-
-
-
-
-
-
-/*
-static void writeBinFile(const uint8_t* buf, size_t bufSize)
+struct DeviceTreeTester
 {
-    FILE *fptr;
-    
-    if ((fptr = fopen("out.aml","wb")) == NULL)
+  
+    bool operator()(const std::string &amlFilePath , const std::string &jsonToMatch)
     {
-        printf("Error! opening file");
+        printf("Test AML '%s' JSON '%s'\n" , amlFilePath.c_str() , jsonToMatch.c_str() );
         
-        return;
+        size_t bufSize = 0;
+        buffer = readAndFillBuffer(amlFilePath.c_str(), &bufSize);
+        
+        if (buffer == nullptr || bufSize == 0)
+            return false;
+        
+        
+        
+        AMLDecompiler decomp;
+        AMLDecompilerInit(&decomp);
+        
+        DeviceTreeBuilder builder(decomp);
+        
+        AMLParserError err = builder.start( buffer, bufSize);
+        
+        JSONConverter conv(builder.getDeviceTreeRoot() );
+        
+        printf("JSON : %s\n" , conv.getJSON().c_str() );
+        
+        return err == AMLParserError_None;
     }
     
-    fwrite(buf, bufSize, 1, fptr);
     
-    fclose(fptr);
+    ~DeviceTreeTester()
+    {
+        if (buffer)
+            free(buffer);
+    }
+    
+    uint8_t* buffer;
+};
+
+
+
+
+static int ext_match(const char *name, const char *ext)
+{
+    size_t nl = strlen(name), el = strlen(ext);
+    return nl >= el && !strcmp(name + nl - el, ext);
 }
-*/
+
+static std::vector<std::string> constructFileList(const std::string& fromPath , const std::string& extension)
+{
+    std::vector<std::string> ret;
+    
+    
+    DIR* testDir = opendir(fromPath.c_str());
+    
+    if (!testDir)
+    {
+        return ret;
+    }
+    
+    struct dirent * dp = NULL;
+    
+    while ((dp = readdir(testDir)) != NULL)
+    {
+        if (strcmp(dp->d_name, "..") == 0 ||  strcmp(dp->d_name, ".") == 0)
+            continue;
+        
+        
+        if (ext_match(dp->d_name, extension.c_str()))
+        {
+            ret.push_back(dp->d_name);
+        }
+        
+    }
+    
+    closedir(testDir);
+    
+    return ret;
+}
 
 int main(int argc, const char * argv[])
 {
-    /*
-    writeBinFile(b, sizeof(b));
+
+    const char* testDirPath = argv[1];
+    
+    if (!testDirPath)
+    {
+        return 1;
+    }
+    
+    std::vector<std::string > amlFiles = constructFileList(testDirPath, "aml");
+    
+
+    for( const auto &file : amlFiles)
+    {
+        const auto fullPath = testDirPath + file;
+        
+        assert(DeviceTreeTester()( fullPath , fullPath + ".json"));
+    }
+    
     return 0;
-     */
+    
     size_t bufSize = 0;
     
-    //const char* file = "Field.aml";
-    //const char* file = "resTemp.aml";
-    //const char* file = "qemu-dsdt.aml";
-    const char* file = "out.aml";
+    const char* file = argv[1];
+
     uint8_t *dataBuffer = readAndFillBuffer(file , &bufSize);
     
     if (!dataBuffer)
@@ -87,13 +162,23 @@ int main(int argc, const char * argv[])
         printf("Error while reading file '%s'\n" , file);
         return 1;
     }
-    DeviceTreeBuilder decomp;
     
-    AMLParserError err = decomp.start( dataBuffer, bufSize);
+    AMLDecompiler decomp;
+    AMLDecompilerInit(&decomp);
+    
+    DeviceTreeBuilder builder(decomp);
+    
+    AMLParserError err = builder.start( dataBuffer, bufSize);
     
     
-    printf("------- Result (ret code %i) --------------------\n" , err);
-    printf("%s\n" , decomp.getResult().c_str());
+    printf("------- Result for file %s (ret code %i) --------------------\n" , file, err);
+    
+    builder.print();
+    
+    JSONConverter conv(builder.getDeviceTreeRoot() );
+    
+    printf("JSON : %s\n" , conv.getJSON().c_str() );
+    //printf("%s\n" , builder.getResult().c_str());
     
     free(dataBuffer);
     return 0;

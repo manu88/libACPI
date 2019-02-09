@@ -17,9 +17,41 @@
 
 #include "EISAID.h"
 
-
+const char* GetEisaId( uint64_t val)
+{
+    switch (val)
+    {
+        case PNP0A01:
+            return "PNP0A01";
+        case PNP0A03:
+            return "PNP0A03";
+        case PNP0103:
+            return "PNP0103";
+        case PNP0B00:
+            return "PNP0B00";
+        case PNP0303:
+            return "PNP0303";
+        case PNP0F13:
+            return "PNP0F13";
+        case PNP0700:
+            return "PNP0700";
+        case PNP0400:
+            return "PNP0400";
+        case PNP0501:
+            return "PNP0501";
+        case PNP0C0F:
+            return "PNP0C0F";
+            
+        default:
+            break;
+    }
+    
+    return NULL;
+}
 int isEisaId( uint64_t val)
 {
+    return GetEisaId(val) != NULL;
+    /*
     switch (val)
     {
         case PNP0A01:
@@ -27,6 +59,8 @@ int isEisaId( uint64_t val)
         case PNP0103:
         case PNP0B00:
         case PNP0303:
+        case PNP0F13:
+        case PNP0700:
             return 1;
             
             
@@ -35,4 +69,5 @@ int isEisaId( uint64_t val)
     }
     
     return 0;
+     */
 }

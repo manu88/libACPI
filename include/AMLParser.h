@@ -38,14 +38,15 @@ typedef struct _AMLParserState AMLParserState;
 typedef struct
 {
     int   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
+    
 } AMLParserCallbacks;
-
 
 
 typedef struct
 {
     uint8_t assertOnError; // default to NO
 } AMLParserPolicy;
+
 struct _AMLParserState
 {
     AMLParserPolicy parserPolicy;
@@ -66,6 +67,5 @@ int AMLParserInit(AMLParserState* state);
  
 AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize);
 AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize);
-
 
 AMLOperation AMLParserPeekOp( const uint8_t* buffer , size_t bufSize , size_t *advance);

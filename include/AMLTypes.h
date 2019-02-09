@@ -17,17 +17,4 @@
 
 #pragma once
 
-#include "AMLDecompiler.h"
-
-class AMLDecompilerInterface
-{
-public:
-    virtual ~AMLDecompilerInterface()
-    {}
-protected:
-    AMLDecompilerInterface()
-    {}
-    
-};
-
-
+#define SCOPE_STR_SIZE 512

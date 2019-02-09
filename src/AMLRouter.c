@@ -322,7 +322,6 @@ AMLOperation _GetNextOp(const uint8_t* buffer , size_t bufSize , size_t* advance
         case AML_OP_WordPrefix:
             return AML_WordPrefix;
             
-            
         case AML_OP_ExtOpPrefix: // Needs to advance to next byte
             return _GetNextEXTOp(buffer+1, bufSize-1, advance, offset);
             

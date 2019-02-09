@@ -83,8 +83,8 @@ typedef enum
     ACPIObject_Type_Field,
     ACPIObject_Type_Method,
     
-    
     ACPIObject_NumericValue,
+    ACPIObject_StringValue,
     //ACPIObject_Type_DWord, // should remove this one
     
 }ACPIObject_Type;
@@ -136,10 +136,10 @@ typedef enum
     LargeResourceItemsType_QWORDAddressSpaceDescriptor          = 0x0A,
     LargeResourceItemsType_ExtendedAddressSpaceDescriptor       = 0x0B,
     
-    LargeResourceItemsType_ReservedStart                        =  0x0C,
-    LargeResourceItemsType_ReservedEnd                          =  0x7F
+    LargeResourceItemsType_ReservedStart                        = 0x0C,
+    LargeResourceItemsType_ReservedEnd                          = 0x7F
     
-}LargeResourceItemsType;
+} LargeResourceItemsType;
 
 
 typedef enum // 6.4.2 Small Resource Data Type
@@ -172,11 +172,11 @@ typedef struct
     uint8_t ressourceType;
     
     uint8_t typeSpecificFlags;
-    uint64_t  addrSpaceGranularity;
-    uint64_t  addrRangeMin;
-    uint64_t  addrRangeMax;
-    uint64_t  addrTranslationOffset;
-    uint64_t  addrTranslationLength;
+    uint64_t addrSpaceGranularity;
+    uint64_t addrRangeMin;
+    uint64_t addrRangeMax;
+    uint64_t addrTranslationOffset;
+    uint64_t addrTranslationLength;
     uint8_t ressourceSourceIndex;
     uint8_t ressourceSource;
     
@@ -190,6 +190,33 @@ typedef struct
     uint8_t isConsumer:1;
     
 } AddressSpaceDescriptor;
+
+
+//6.4.3.5.3 Word Address Space Descriptor
+typedef struct
+{
+    uint8_t  ressourceType;
+    uint8_t  generalFlags;
+    uint8_t  typeSpecificFlags;
+    uint8_t  ressourceSourceIndex;
+    uint16_t addrSpaceGranularity;
+    uint16_t addrRangeMin;
+    uint16_t addrRangeMax;
+    uint16_t addrTranslationOffset;
+    uint16_t addrTranslationLength;
+    
+    
+} WordAddressSpaceDescriptor;
+
+
+typedef struct
+{
+    uint8_t information;
+    uint16_t rangeMinBaseAddr;
+    uint16_t rangeMaxBaseAddr;
+    uint8_t baseAlign;
+    uint8_t rangeLen;
+} IOPortDescriptor;
 
 
 typedef struct // 6.4.3.4

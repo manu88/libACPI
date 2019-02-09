@@ -15,9 +15,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DecompilerInvalid_Tests_h
-#define DecompilerInvalid_Tests_h
+#ifndef JSONConverter_hpp
+#define JSONConverter_hpp
 
-void DecompilerInvalid_Tests(void);
 
-#endif /* DecompilerInvalid_Tests_h */
+#include <string>
+
+struct TreeNode;
+
+class JSONConverter
+{
+public:
+    JSONConverter( const TreeNode &node );
+    
+    
+    std::string getJSON() const;
+private:
+    const TreeNode &node;
+    
+};
+
+#endif /* JSONConverter_hpp */

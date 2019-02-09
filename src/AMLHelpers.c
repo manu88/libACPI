@@ -20,7 +20,8 @@
 #include <stdio.h>
 #include "AMLHelpers.h"
 #include "AMLByteCode.h"
-
+#include "AMLParser.h"
+#include "AMLTypes.h"
 
 // acpins_is_name(): Evaluates a name character
 // Param:    char character - character from name
@@ -139,7 +140,7 @@ size_t ResolvePath(char *fullpath, const uint8_t *path)
     size_t multi_count = 0;
     size_t current_count = 0;
     
-    memset(fullpath, 0, 512);
+    memset(fullpath, 0, SCOPE_STR_SIZE);
     
     if(path[0] == AML_OP_RootChar)
     {
