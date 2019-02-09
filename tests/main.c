@@ -21,10 +21,12 @@
 #include "Decompiler_Tests.h"
 #include "Helper_Tests.h"
 #include "DecompilerInvalid_Tests.h"
+#include "Eisaid_Tests.h"
 
 int main(int argc, const char * argv[])
 {
     
+    Eisaid_Tests();
     AMLParserTests();
     Helper_Tests();
     DecompilerInvalid_Tests();

@@ -31,11 +31,19 @@ extern "C" {
 #define PNP0700  0x7D041    // PC standard floppy disk controller
 #define PNP0400  0x4D041    // Standard LPT printer port
 #define PNP0501  0x105D041  // A-compatible COM port
-    
 #define PNP0C0F  0xF0CD041  // PCI interrupt link device
+    
+// Pass a 8 bytes char buffer (7 EISAID str + NUll)
+int getEisaidString( uint64_t value , char* toBuff);
+    
+// No null pointers !
+int getValueFromEisaidString(const char* buffer , uint64_t* toVal);
     
 int isEisaId( uint64_t val);
 const char* GetEisaId( uint64_t val);
+    
+    
+    
     
 #ifdef __cplusplus
 }

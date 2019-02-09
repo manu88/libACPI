@@ -46,6 +46,7 @@
 		59459AD2220F0B5F00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
 		59459AD5220F0B7D00DD9396 /* Decompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AD3220F0B7D00DD9396 /* Decompiler.cpp */; };
 		59459AD6220F0D6800DD9396 /* AMLDecompilerInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459ABD21F0C39700DD9396 /* AMLDecompilerInterface.cpp */; };
+		59459AD9220F371200DD9396 /* Eisaid_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459AD8220F371200DD9396 /* Eisaid_Tests.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -132,6 +133,8 @@
 		59459ACD220F0B4F00DD9396 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		59459AD3220F0B7D00DD9396 /* Decompiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Decompiler.cpp; sourceTree = "<group>"; };
 		59459AD4220F0B7D00DD9396 /* Decompiler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Decompiler.hpp; sourceTree = "<group>"; };
+		59459AD7220F371200DD9396 /* Eisaid_Tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Eisaid_Tests.h; sourceTree = "<group>"; };
+		59459AD8220F371200DD9396 /* Eisaid_Tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Eisaid_Tests.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +236,8 @@
 				59459A6C21DF4FB400DD9396 /* Decompiler_Tests.h */,
 				59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */,
 				59459A4B21DE25FC00DD9396 /* main.c */,
+				59459AD7220F371200DD9396 /* Eisaid_Tests.h */,
+				59459AD8220F371200DD9396 /* Eisaid_Tests.c */,
 			);
 			path = tests;
 			sourceTree = "<group>";
@@ -440,6 +445,7 @@
 				59459A6E21DF4FB400DD9396 /* Decompiler_Tests.c in Sources */,
 				59459A6921DE26B200DD9396 /* AMLParser_Tests.c in Sources */,
 				59459AA721F0607D00DD9396 /* DecompilerInvalid_Tests.c in Sources */,
+				59459AD9220F371200DD9396 /* Eisaid_Tests.c in Sources */,
 				59459A9D21EF0D3500DD9396 /* Helper_Tests.c in Sources */,
 				59459A4C21DE25FC00DD9396 /* main.c in Sources */,
 			);
