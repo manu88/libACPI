@@ -92,7 +92,6 @@
 		59459A2921DE25C800DD9396 /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		59459A3421DE25EC00DD9396 /* EISAID.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EISAID.c; sourceTree = "<group>"; };
 		59459A3621DE25EC00DD9396 /* AMLHelpers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMLHelpers.c; sourceTree = "<group>"; };
-		59459A3721DE25EC00DD9396 /* TreeRef.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TreeRef.c; sourceTree = "<group>"; };
 		59459A3921DE25EC00DD9396 /* AMLRouter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMLRouter.c; sourceTree = "<group>"; };
 		59459A3C21DE25EC00DD9396 /* ACPIDesc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ACPIDesc.c; sourceTree = "<group>"; };
 		59459A3E21DE25EC00DD9396 /* AMLHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLHelpers.h; sourceTree = "<group>"; };
@@ -212,7 +211,6 @@
 				59459A7021DF51B800DD9396 /* AMLDecompiler.c */,
 				59459A3E21DE25EC00DD9396 /* AMLHelpers.h */,
 				59459A3621DE25EC00DD9396 /* AMLHelpers.c */,
-				59459A3721DE25EC00DD9396 /* TreeRef.c */,
 				59459A3921DE25EC00DD9396 /* AMLRouter.c */,
 				59459A3F21DE25EC00DD9396 /* AMLParser.c */,
 				59459A3C21DE25EC00DD9396 /* ACPIDesc.c */,
