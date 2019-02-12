@@ -120,9 +120,7 @@ public:
             self->indent();
             self->str << "}\n";
             
-            
             self->decScope();
-//            printf("STR '%s'\n" , self->str.str().c_str());
             
             return 0;
         };
@@ -134,10 +132,7 @@ public:
             
             self->indent();
             self->str << std::string("Name( ") + std::string(name,4)  << "\n";
-            
-            
-            
-            //self->decScope();
+
 
             return 0;
         };
