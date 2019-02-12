@@ -3,7 +3,7 @@ ACPI Parser library written in C. This is a test project for now.
 
 `AMLDecompiler` module provides a sax-like interface for AML parsing.
 
-ACPI Specs can be found [here](http://www.acpi.info/DOWNLOADS/ACPI_5_Errata%20A.pdf)
+ACPI Specs can be found [here](http://www.uefi.org/sites/default/files/resources/ACPI%206_2_A_Sept29.pdf)
 
 # Project examples
 These projects are examples/Usecases for libACPI.

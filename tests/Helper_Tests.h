@@ -15,11 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef Helper_Tests_h
-#define Helper_Tests_h
+#pragma once
 
 #include <stdio.h>
 
 void Helper_Tests(void);
 
-#endif /* Helper_Tests_h */
+

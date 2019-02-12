@@ -58,6 +58,8 @@ typedef struct
     
     int (*onField)(AMLDecompiler*,const ParserContext* context, const ACPIField*);
     
+    int (*startBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
+    int (*endBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     int (*OnBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     
     int (*StartScope)(AMLDecompiler* ,const ParserContext* context, const char* location);

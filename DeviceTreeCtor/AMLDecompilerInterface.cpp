@@ -34,6 +34,17 @@ decomp(decomp)
         return self->onACPIDefinitionBlock(context, desc);
     };
     
+    decomp.callbacks.startBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->StartBuffer(ctx, bufferSize);
+    };
+    decomp.callbacks.endBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->EndBuffer(ctx, bufferSize);
+    };
+    
     decomp.callbacks.OnBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);

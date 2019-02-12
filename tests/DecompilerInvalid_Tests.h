@@ -15,9 +15,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DecompilerInvalid_Tests_h
-#define DecompilerInvalid_Tests_h
+#pragma once
 
 void DecompilerInvalid_Tests(void);
 
-#endif /* DecompilerInvalid_Tests_h */
+

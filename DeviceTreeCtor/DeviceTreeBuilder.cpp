@@ -191,6 +191,21 @@ int DeviceTreeBuilder::onField(const ParserContext* context, const ACPIField*fie
     return 0;
 }
 
+int DeviceTreeBuilder::StartBuffer(const ParserContext* context , size_t bufferSize)
+{
+    assert(bufferStarted == false);
+    bufferStarted = true;
+    printf("Start buffer, current name id '%s'\n" , currentName->id.c_str() );
+    return 0;
+}
+int DeviceTreeBuilder::EndBuffer(const ParserContext* context , size_t bufferSize)
+{
+    assert(bufferStarted );
+    bufferStarted = false;
+    printf("End buffer, current name id '%s'\n" , currentName->id.c_str() );
+    return 0;
+}
+
 int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
 {
 

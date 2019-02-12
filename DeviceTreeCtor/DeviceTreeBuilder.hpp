@@ -27,6 +27,11 @@
 
 #include "AMLDecompilerInterface.hpp"
 
+struct ResourceTemplate
+{
+    std::vector<std::string> a;
+};
+
 struct NameDeclaration
 {
     NameDeclaration(const std::string& n):
@@ -65,6 +70,7 @@ struct NameDeclaration
         Type_AddressSpaceDescriptor,
         Type_MemoryRangeDescriptor32,
         Type_WordAddressSpaceDescriptor,
+        Type_RessourceTemplate,
     } type;
     
     union
@@ -73,7 +79,10 @@ struct NameDeclaration
         MemoryRangeDescriptor32    memoryRangeDesc32;
         AddressSpaceDescriptor     addressSpaceDescriptor;
         WordAddressSpaceDescriptor wordAddressSpaceDescriptor;
+        
     }value;
+    
+    ResourceTemplate resTemplate;
 };
 
 
@@ -175,7 +184,12 @@ protected:
     int OnValue(const ParserContext* context, uint64_t value)override;
     int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)override;
     int onField(const ParserContext* context, const ACPIField*)override;
+    
+    
     int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;
+    int StartBuffer(const ParserContext* context , size_t bufferSize) override;
+    int EndBuffer(const ParserContext* context , size_t bufferSize) override;
+    
     int StartScope(const ParserContext* context, const char* location)override;
     int EndScope(const ParserContext* context, const char* location)override;
     int StartDevice(const ParserContext* context, const ACPIDevice* name)override;
@@ -198,6 +212,8 @@ private:
 
     TreeNode* currentNode = nullptr;
     NameDeclaration* currentName = nullptr;
+    
+    bool bufferStarted = false;
 
 };
 

@@ -136,7 +136,7 @@ static size_t _DecodeWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserCo
     }
     
     
-    return bufferSize;
+    return bufferSize +2 ;
 }
 
 static size_t _DecodeQWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
@@ -285,6 +285,44 @@ static size_t _DecodeIOPortDescriptor(AMLParserState* parser ,ParserContext *ctx
     return bufferSize;
 }
 
+
+static size_t _DecodeSmallItem(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+{
+    assert( ((*bufferPos >> 7) & 1U) == 0); // check if LSB of first byte is not set. If it is, this is not a small item
+    
+    const uint8_t len = *bufferPos & 0b00000111;
+    const uint8_t smallItemName = (*bufferPos - len) >> 3;
+    
+    printf("---- Start Small item --- \n");
+    for(int i=0;i<len;i++)
+    {
+        printf(" %x " , bufferPos[i]);
+        
+    }
+    printf("\n---- ENd Small item --- \n");
+    return len;
+}
+
+static size_t _DecodeLargeItem(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+{
+    assert( (*bufferPos >> 7) & 1U); // check if LSB of first byte is  set. If it is not , this is not a large item!
+    
+    
+    const uint8_t itemType = *bufferPos - 0x80;
+    switch (itemType)
+    {
+            
+        case LargeResourceItemsType_WORDAddressSpaceDescriptor:
+            return _DecodeWORDAddressSpaceDescriptor(parser, ctx, bufferPos+2, bufferSize) +2;
+            break;
+            
+        default:
+            assert(0);
+            break;
+    }
+    return 0;
+}
+
 static size_t _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
 
@@ -292,15 +330,12 @@ static size_t _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,co
     assert(decomp);
     // 6.4.3.5.1
     
-    const uint8_t itemType = *bufferPos; // 0x0A : large (64) / 0x07 Large (32) Item Name
-    //const uint8_t something = bufferPos[1];
+    const uint8_t isLargeItem = (*bufferPos >> 7) & 1U;
     
-    
-    size_t bitOffset = 2;
-    const uint8_t addrSpaceDescriptor = bufferPos[bitOffset+0];
-    
-    const uint8_t varLen1 = bufferPos[bitOffset+1];
-    const uint8_t varLen2 = bufferPos[bitOffset+2];
+    if (!isLargeItem)
+    {
+        return _DecodeSmallItem(parser, ctx, bufferPos, bufferSize); // 6.4.2
+    }
     
     
     union WordConv
@@ -309,11 +344,38 @@ static size_t _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,co
         uint16_t w;
     } conv;
     
+    size_t bitOffset = 2;
+    conv.b[0] = bufferPos[1];
+    conv.b[1] = bufferPos[2];
+    
+    
+    const uint16_t varLen = conv.w;
+    
+    return _DecodeLargeItem(parser, ctx, bufferPos, varLen);
+
+    
+    const uint8_t itemType = *bufferPos; // 0x0A : large (64) / 0x07 Large (32) Item Name
+    //const uint8_t something = bufferPos[1];
+    
+    
+    //size_t bitOffset = 2;
+    const uint8_t addrSpaceDescriptor = bufferPos[bitOffset+0];
+    
+    const uint8_t varLen1 = bufferPos[bitOffset+1];
+    const uint8_t varLen2 = bufferPos[bitOffset+2];
+    
+    /*
+    union WordConv
+    {
+        uint8_t b[2];
+        uint16_t w;
+    } conv;
+    */
     conv.b[0] = bufferPos[bitOffset+1];
     conv.b[1] = bufferPos[bitOffset+2];
     
     
-    const uint16_t varLen = conv.w;
+    //const uint16_t varLen = conv.w;
     
     
     if (itemType == 0x0A)
@@ -323,6 +385,7 @@ static size_t _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,co
             assert(varLen1 >= 0x2B); // says the specs
             return _DecodeQWORDAddressSpaceDescriptor(parser, ctx, bufferPos+bitOffset,varLen/* bufferSize - bitOffset*/) + bitOffset;
         }
+        
         else if (addrSpaceDescriptor == 0x86)
         {
             assert(varLen1 == 0x09);
@@ -392,11 +455,11 @@ static size_t _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,co
              printf(" 0x%x " , bufferPos[i]);
          }
 
- 
+ */
         printf("Other Item Type type 0x%x\n" , itemType);
         assert(0); // to implement
-        return 0;//AMLParserError_UnexpectedToken;
- */
+        
+ 
 //        assert(0);
         return bufferSize;
     }
@@ -414,11 +477,22 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     while (size> 0)
     {
         const uint8_t* newBuf = bufferPos + parsed;
+        
+        if (*newBuf == 0)
+        {
+            for(int i=0;i<size;i++)
+            {
+                printf(" 0x%x " , newBuf[i]);
+            }
+            printf("\n");
+        }
         size_t objectSize = _DecodeBufferObject(parser, ctx, newBuf, size);
         
         size -= objectSize;
         parsed += objectSize;
         
+        if (parsed > bufferSize)
+            break;
         
     }
     //return _DecodeBufferObject(parser, ctx, bufferPos, bufferSize) != 0? AMLParserError_None : AMLParserError_BufferTooShort;
@@ -483,7 +557,30 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
         case ACPIObject_Type_Buffer:
         {
             
+            if (decomp->callbacks.startBuffer)
+            {
+                decomp->callbacks.startBuffer(decomp , &ctx , bufferSize,bufferPos);
+            }
+            
+            
+            printf("---- Start buffer size %zi ----\n" , bufferSize);
+            
+            for(size_t i =0;i<bufferSize;i++)
+            {
+                if (i%8==0)
+                    printf("\n");
+                
+                printf(" 0x%.2x " , bufferPos[i]);
+            }
+            printf("\n");
+            printf("---- End Buffer --- \n");
             AMLParserError err =  _DecodeBufferObjects(parser, &ctx, bufferPos, bufferSize);
+            
+            if (decomp->callbacks.endBuffer)
+            {
+                decomp->callbacks.endBuffer(decomp , &ctx , bufferSize,bufferPos);
+            }
+            
             if(err != AMLParserError_None)
                 return err;
             

@@ -15,8 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JSONConverter_hpp
-#define JSONConverter_hpp
+#pragma once
 
 
 #include <string>
@@ -36,4 +35,4 @@ private:
     
 };
 
-#endif /* JSONConverter_hpp */
+
