@@ -15,7 +15,6 @@
 		59459A5A21DE266500DD9396 /* AMLParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3F21DE25EC00DD9396 /* AMLParser.c */; };
 		59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5C21DE269000DD9396 /* ACPIDesc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A6121DE269100DD9396 /* EISAID.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5D21DE269000DD9396 /* EISAID.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		59459A6221DE269100DD9396 /* TreeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A5E21DE269000DD9396 /* TreeRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A6821DE26B200DD9396 /* ACPI_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6421DE26B200DD9396 /* ACPI_Tests.c */; };
 		59459A6921DE26B200DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
 		59459A6B21DE26BE00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
@@ -101,7 +100,6 @@
 		59459A5121DE263C00DD9396 /* libACPI.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libACPI.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		59459A5C21DE269000DD9396 /* ACPIDesc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPIDesc.h; sourceTree = "<group>"; };
 		59459A5D21DE269000DD9396 /* EISAID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EISAID.h; sourceTree = "<group>"; };
-		59459A5E21DE269000DD9396 /* TreeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeRef.h; sourceTree = "<group>"; };
 		59459A6421DE26B200DD9396 /* ACPI_Tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ACPI_Tests.c; sourceTree = "<group>"; };
 		59459A6521DE26B200DD9396 /* ACPI_Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACPI_Tests.h; sourceTree = "<group>"; };
 		59459A6621DE26B200DD9396 /* AMLParser_Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMLParser_Tests.h; sourceTree = "<group>"; };
@@ -249,7 +247,6 @@
 				59459A8E21E7274200DD9396 /* AMLParser.h */,
 				59459A8D21E7274200DD9396 /* AMLRouter.h */,
 				59459A5D21DE269000DD9396 /* EISAID.h */,
-				59459A5E21DE269000DD9396 /* TreeRef.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -293,7 +290,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59459A6221DE269100DD9396 /* TreeRef.h in Headers */,
 				59459A8F21E7274300DD9396 /* AMLRouter.h in Headers */,
 				59459AC62204175900DD9396 /* AMLTypes.h in Headers */,
 				59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */,
