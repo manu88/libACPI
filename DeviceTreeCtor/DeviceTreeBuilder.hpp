@@ -71,6 +71,7 @@ struct NameDeclaration
         Type_MemoryRangeDescriptor32,
         Type_WordAddressSpaceDescriptor,
         Type_RessourceTemplate,
+        Type_Buffer,
     } type;
     
     union

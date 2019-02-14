@@ -75,6 +75,12 @@ static nlohmann::json serializeName( const NameDeclaration&name)
             res["value"]["ressourceSourceIndex"]   = name.value.wordAddressSpaceDescriptor.ressourceSourceIndex;
             break;
             
+        case NameDeclaration::Type_Buffer:
+            
+            res["value"] = "SOME BUFFER";
+            
+            break;
+            
         default:
             
             assert(false);

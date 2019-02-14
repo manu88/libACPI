@@ -67,6 +67,14 @@ size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
     return (size_t)(bytecount + 1);
 }
 
+uint8_t GetByteValue(const uint8_t* buffer , size_t bufSize , size_t* advance)
+{
+    assert(*buffer == AML_OP_BytePrefix);
+    *advance = 2;
+    return buffer[ 1];
+}
+
+
 /*
  18.2.4 Package Length Encoding
  */

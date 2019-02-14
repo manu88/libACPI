@@ -1,0 +1,34 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 42,
+    "complianceRevision": 20,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": 
+    {
+        "_SB":
+        {
+            "Children": 
+            {
+                "PCI0": 
+                {
+                    "BUF0": 
+                    {
+                      "type": 5,
+                      "value": "SOME BUFFER"
+                    },
+                    "BUF2": 
+                    {
+                      "type": 5,
+                      "value": "SOME BUFFER"
+                    }
+                }
+            }    
+        }
+    }
+  }
+}

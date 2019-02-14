@@ -153,3 +153,6 @@ AMLOperation _GetNextEXTOp(/*AMLParserState* state , */const uint8_t* buffer , s
 AMLOperation _GetNextLOPOp(/*AMLParserState* state , */const uint8_t* buffer , size_t bufSize , size_t* advance ,  size_t offset);
 
 size_t _GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advance ,  size_t offset);
+
+
+uint8_t GetByteValue(const uint8_t* buffer , size_t bufSize , size_t* advance);

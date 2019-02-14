@@ -323,7 +323,7 @@ static size_t _DecodeLargeItem(AMLParserState* parser ,ParserContext *ctx ,const
     return 0;
 }
 
-static size_t _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+static size_t _DecodeBufferObject2(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
 
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
@@ -469,24 +469,41 @@ static size_t _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,co
     return varLen;
 }
 
+static AMLParserError _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+{
+    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
+    assert(decomp);
+    
+    printf("BUFFER IS  '%s' size is %zi\n" , bufferPos , bufferSize);
+    
+    if (decomp->callbacks.OnBuffer)
+    {
+        decomp->callbacks.OnBuffer(decomp, ctx , bufferSize , bufferPos);
+    }
+    
+    return AMLParserError_None;
+}
+
 static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
 
+    
     ssize_t size = bufferSize;
     size_t parsed = 0;
+    
+    printf("Start buffer objects\n");
     while (size> 0)
     {
+        
         const uint8_t* newBuf = bufferPos + parsed;
         
-        if (*newBuf == 0)
-        {
-            for(int i=0;i<size;i++)
-            {
-                printf(" 0x%x " , newBuf[i]);
-            }
-            printf("\n");
-        }
-        size_t objectSize = _DecodeBufferObject(parser, ctx, newBuf, size);
+        size_t adv = 0;
+        const uint8_t bufItemSize = GetByteValue(newBuf, size, &adv);
+        
+        
+        
+        const AMLParserError err =  _DecodeBufferObject(parser, ctx, newBuf + adv, bufItemSize);
+        size_t objectSize = /*_DecodeBufferObject(parser, ctx, newBuf,  bufItemSize)*/ bufItemSize + adv;
         
         size -= objectSize;
         parsed += objectSize;
@@ -495,6 +512,7 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
             break;
         
     }
+    printf("End buffer objects\n");
     //return _DecodeBufferObject(parser, ctx, bufferPos, bufferSize) != 0? AMLParserError_None : AMLParserError_BufferTooShort;
     return AMLParserError_None;
 }
