@@ -19,12 +19,29 @@
                     "BUF0": 
                     {
                       "type": 5,
-                      "value": "SOME BUFFER"
+                      "value": 
+                      [
+                        1,
+                        2,
+                        3,
+                        4
+                      ]
+                    },
+                    "BUF1": {
+                      "type": 5,
+                      "value": [
+                        9,
+                        98,
+                        99,
+                        100,
+                        101,
+                        0
+                      ]
                     },
                     "BUF2": 
                     {
                       "type": 5,
-                      "value": "SOME BUFFER"
+                      "value": "abcde"
                     }
                 }
             }    

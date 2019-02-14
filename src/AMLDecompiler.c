@@ -474,7 +474,7 @@ static AMLParserError _DecodeBufferObject(AMLParserState* parser ,ParserContext 
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
     
-    printf("BUFFER IS  '%s' size is %zi\n" , bufferPos , bufferSize);
+    //printf("BUFFER IS  '%s' size is %zi\n" , bufferPos , bufferSize);
     
     if (decomp->callbacks.OnBuffer)
     {
@@ -491,7 +491,7 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     ssize_t size = bufferSize;
     size_t parsed = 0;
     
-    printf("Start buffer objects\n");
+    //printf("Start buffer objects\n");
     while (size> 0)
     {
         
@@ -503,6 +503,12 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
         
         
         const AMLParserError err =  _DecodeBufferObject(parser, ctx, newBuf + adv, bufItemSize);
+        
+        if (err != AMLParserError_None)
+        {
+            return err;
+        }
+        
         size_t objectSize = /*_DecodeBufferObject(parser, ctx, newBuf,  bufItemSize)*/ bufItemSize + adv;
         
         size -= objectSize;
@@ -512,7 +518,7 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
             break;
         
     }
-    printf("End buffer objects\n");
+    //printf("End buffer objects\n");
     //return _DecodeBufferObject(parser, ctx, bufferPos, bufferSize) != 0? AMLParserError_None : AMLParserError_BufferTooShort;
     return AMLParserError_None;
 }
@@ -580,7 +586,7 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
                 decomp->callbacks.startBuffer(decomp , &ctx , bufferSize,bufferPos);
             }
             
-            
+            /*
             printf("---- Start buffer size %zi ----\n" , bufferSize);
             
             for(size_t i =0;i<bufferSize;i++)
@@ -592,6 +598,7 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
             }
             printf("\n");
             printf("---- End Buffer --- \n");
+             */
             AMLParserError err =  _DecodeBufferObjects(parser, &ctx, bufferPos, bufferSize);
             
             if (decomp->callbacks.endBuffer)

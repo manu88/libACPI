@@ -19,6 +19,27 @@
 #include "DeviceTreeBuilder.hpp"
 
 
+static bool isString(const std::vector<uint8_t> bytes)
+{
+    if (bytes.empty())
+        return false;
+    
+    if (bytes.at(bytes.size()-1) != 0)
+        return false;
+    
+    for(size_t i = 0;i< bytes.size()-1;i++)
+    {
+        
+        if (isprint(  bytes[i])  == 0)
+        {
+            return false;
+        }
+        
+    }
+    
+    return true;
+}
+
 JSONConverter::JSONConverter( const DeviceTree &tree ):
 tree(tree)
 {}
@@ -77,7 +98,15 @@ static nlohmann::json serializeName( const NameDeclaration&name)
             
         case NameDeclaration::Type_Buffer:
             
-            res["value"] = "SOME BUFFER";
+            if (isString(name.rawBuffer))
+            {
+                res["value"] = std::string( reinterpret_cast<const char*>( name.rawBuffer.data() )  );
+            }
+            else
+            {
+                res["value"] = name.rawBuffer;
+            }
+            
             
             break;
             

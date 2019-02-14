@@ -212,7 +212,9 @@ int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize
 
     state = Ready;
     
-    currentName->type = NameDeclaration::Type_Buffer;
+    
+    currentName->setValue(buffer, bufferSize);
+    //currentName->type = NameDeclaration::Type_Buffer;
     
     return 0;
 }
