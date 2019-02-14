@@ -14,7 +14,8 @@ Parses and generates a device tree from an AML file. This tree can then be reres
 ## AML Decompiler
 Intended to work just like `iasl -d`, but not as complete for now :)
 
-
+## What's working
+The 'TestSuite' folder contains asl files, compiled into aml files (with iasl), and describded in JSON files. Basically everything listed in asl files is working.
 
 
 
