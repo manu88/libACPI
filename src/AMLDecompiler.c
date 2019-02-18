@@ -73,69 +73,6 @@ static size_t _DecodeMemoryRangeDescriptor32(AMLParserState* parser ,ParserConte
 }
  */
 
-// 6.4.3.5.3 Word Address Space Descriptor
-/*
-static size_t _DecodeWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
-{
-    
- 
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    
-    WordAddressSpaceDescriptor desc;
-    
-    desc.ressourceType     = bufferPos[3];
-    desc.generalFlags      = bufferPos[4];
-    desc.typeSpecificFlags = bufferPos[5];
-    
-    
-    union WordConv
-    {
-        uint8_t b[2];
-        uint16_t w;
-    } conv;
-    
-    conv.b[0] = bufferPos[6];
-    conv.b[1] = bufferPos[7];
-    
-    desc.addrSpaceGranularity = conv.w;
-    
-    conv.b[0] = bufferPos[8];
-    conv.b[1] = bufferPos[9];
-    
-    desc.addrRangeMin = conv.w;
-    
-    conv.b[0] = bufferPos[10];
-    conv.b[1] = bufferPos[11];
-    
-    desc.addrRangeMax = conv.w;
-    
-    conv.b[0] = bufferPos[12];
-    conv.b[1] = bufferPos[13];
-    
-    desc.addrTranslationOffset = conv.w;
-    
-    conv.b[0] = bufferPos[14];
-    conv.b[1] = bufferPos[15];
-    
-    desc.addrTranslationLength = conv.w;
-    
-    
-    desc.ressourceSourceIndex = bufferPos[16];
-    
-    
-    if(decomp->callbacks.onLargeItem)
-    {
-        decomp->callbacks.onLargeItem(decomp , ctx ,
-                                      LargeResourceItemsType_WORDAddressSpaceDescriptor,
-                                      (const uint8_t*) &desc , sizeof(WordAddressSpaceDescriptor)
-                                      );
-    }
-    
-    
-    return bufferSize +2 ;
-}
- */
 /*
 static size_t _DecodeQWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
@@ -481,62 +418,19 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     }
     
     return err;
-    
-    
-    
-    /*
-    ssize_t size = bufferSize;
-    size_t parsed = 0;
-    
-    //printf("Start buffer objects\n");
-    while (size> 0)
-    {
-        
-        const uint8_t* newBuf = bufferPos + parsed;
-        
-        size_t adv = 0;
-        const uint8_t bufItemSize = GetByteValue(newBuf, size, &adv);
-        
-        
-        AMLBufferAnalysisResults res = { 0};
-        res.ctx = ctx;
-        res.parser = parser;
-        const AMLParserError err =  DecodeBufferObject(newBuf + adv, bufItemSize, &res);
-        
-        if (err != AMLParserError_None)
-        {
-            return err;
-        }
-        
-        size_t objectSize =  bufItemSize + adv;
-        
-        size -= objectSize;
-        parsed += objectSize;
-        
-        if (parsed > bufferSize)
-            break;
-        
-    }
-    //printf("End buffer objects\n");
-    //return _DecodeBufferObject(parser, ctx, bufferPos, bufferSize) != 0? AMLParserError_None : AMLParserError_BufferTooShort;
-    return AMLParserError_None;
-     */
 }
 
 
 static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
 {
-    
     assert(parser);
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
-
-        
+    
     ParserContext ctx;
     ctx.currentScope = decomp->currentScope;
     ctx.nextOp = AML_Unknown;
     
-
     switch (forObjectType)
     {
         case ACPIObject_Type_DefinitionBlock:

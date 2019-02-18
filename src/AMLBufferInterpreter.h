@@ -30,6 +30,9 @@ typedef struct
     
 } ItemClass;
 
+#define MakeItemClass(name , desc, minSize,isLarge) { name , desc, minSize,isLarge }
+
+
 #define MaxItemsPerBuffer 32
 typedef struct
 {
