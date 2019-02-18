@@ -35,10 +35,7 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
     uint8_t *buffer = (uint8_t *)malloc((*bufSize+1)*sizeof(char)); // Enough memory for file + \0
     fread(buffer, *bufSize, 1, fileptr); // Read in the entire file
     fclose(fileptr); // Close the file
-    
-    
     return buffer;
-   
 }
 
 

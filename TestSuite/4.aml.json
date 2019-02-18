@@ -18,7 +18,7 @@
                 {
                     "BUF0": 
                     {
-                      "type": 5,
+                      "type": 1,
                       "value": 
                       [
                         1,
@@ -28,7 +28,7 @@
                       ]
                     },
                     "BUF1": {
-                      "type": 5,
+                      "type": 1,
                       "value": [
                         9,
                         98,
@@ -40,7 +40,7 @@
                     },
                     "BUF2": 
                     {
-                      "type": 5,
+                      "type": 1,
                       "value": "abcde"
                     }
                 }

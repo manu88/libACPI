@@ -34,16 +34,20 @@ decomp(decomp)
         return self->onACPIDefinitionBlock(context, desc);
     };
     
-    decomp.callbacks.startBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
+    
+    
+    decomp.callbacks.startResourceTemplate = [](AMLDecompiler*decomp,  const ParserContext* context , size_t numItems ) ->int
     {
-        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->StartBuffer(ctx, bufferSize);
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(decomp->userData);
+        
+        return self->startResourceTemplate(context, numItems);
     };
     
-    decomp.callbacks.endBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
+    decomp.callbacks.endResourceTemplate = [] (AMLDecompiler*decomp, const ParserContext* context , size_t numItemsParsed, AMLParserError err) ->int
     {
-        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->EndBuffer(ctx, bufferSize);
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(decomp->userData);
+        
+        return self->endResourceTemplate(context, numItemsParsed, err);
     };
     
     decomp.callbacks.OnBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int

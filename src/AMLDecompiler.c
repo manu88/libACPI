@@ -21,7 +21,8 @@
 #include <string.h>
 #include <assert.h>
 #include "AMLHelpers.h"
-
+#include "AMLBufferInterpreter.h"
+#include "ItemParsers.h"
 
 int AMLDecompilerInit(AMLDecompiler* decomp)
 {
@@ -29,7 +30,7 @@ int AMLDecompilerInit(AMLDecompiler* decomp)
     
     return 1;
 }
-
+/*
 static size_t _DecodeMemoryRangeDescriptor32(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
     //assert(bufferSize >= sizeof(MemoryRangeDescriptor32));
@@ -70,14 +71,10 @@ static size_t _DecodeMemoryRangeDescriptor32(AMLParserState* parser ,ParserConte
     
     return bufferSize;
 }
-
-static size_t _DecodeExtendedIRQDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
-{
-    assert(0);
-    return 0;
-}
+ */
 
 // 6.4.3.5.3 Word Address Space Descriptor
+/*
 static size_t _DecodeWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
     
@@ -138,7 +135,8 @@ static size_t _DecodeWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserCo
     
     return bufferSize +2 ;
 }
-
+ */
+/*
 static size_t _DecodeQWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
 {
     
@@ -238,256 +236,255 @@ static size_t _DecodeQWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserC
     }
     return bufferSize;
 }
-
-static size_t _DecodeIRQDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
-{
-    return bufferSize;
-}
-
-static size_t _DecodeIOPortDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
-{
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    
-    // This is a small item
-    
-    IOPortDescriptor desc = {0};
-    desc.information = bufferPos[0];
-    
-    union
-    {
-        uint8_t b[8];
-        uint16_t v;
-    } c;
-    
-    c.b[0] = bufferPos[1];
-    c.b[1] = bufferPos[2];
-    
-    desc.rangeMinBaseAddr = c.v;
-    
-    c.b[0] = bufferPos[3];
-    c.b[1] = bufferPos[4];
-    
-    desc.rangeMaxBaseAddr = c.v;
-    
-    desc.baseAlign = bufferPos[5];
-    desc.rangeLen = bufferPos[6];
-    
-    
-    if(decomp->callbacks.onSmallItem)
-    {
-        decomp->callbacks.onSmallItem(decomp , ctx ,
-                                      SmallResourceItemsType_IOPortDescriptor,
-                                      (const uint8_t*) &desc , sizeof(IOPortDescriptor)
-                                      );
-    }
-    
-    return bufferSize;
-}
-
-
-static size_t _DecodeSmallItem(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
-{
-    assert( ((*bufferPos >> 7) & 1U) == 0); // check if LSB of first byte is not set. If it is, this is not a small item
-    
-    const uint8_t len = *bufferPos & 0b00000111;
-    const uint8_t smallItemName = (*bufferPos - len) >> 3;
-    
-    printf("---- Start Small item --- \n");
-    for(int i=0;i<len;i++)
-    {
-        printf(" %x " , bufferPos[i]);
-        
-    }
-    printf("\n---- ENd Small item --- \n");
-    return len;
-}
-
-static size_t _DecodeLargeItem(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
-{
-    assert( (*bufferPos >> 7) & 1U); // check if LSB of first byte is  set. If it is not , this is not a large item!
-    
-    
-    const uint8_t itemType = *bufferPos - 0x80;
-    switch (itemType)
-    {
-            
-        case LargeResourceItemsType_WORDAddressSpaceDescriptor:
-            return _DecodeWORDAddressSpaceDescriptor(parser, ctx, bufferPos+2, bufferSize) +2;
-            break;
-            
-        default:
-            assert(0);
-            break;
-    }
-    return 0;
-}
-
-static size_t _DecodeBufferObject2(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
-{
-
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    // 6.4.3.5.1
-    
-    const uint8_t isLargeItem = (*bufferPos >> 7) & 1U;
-    
-    if (!isLargeItem)
-    {
-        return _DecodeSmallItem(parser, ctx, bufferPos, bufferSize); // 6.4.2
-    }
-    
-    
-    union WordConv
-    {
-        uint8_t b[2];
-        uint16_t w;
-    } conv;
-    
-    size_t bitOffset = 2;
-    conv.b[0] = bufferPos[1];
-    conv.b[1] = bufferPos[2];
-    
-    
-    const uint16_t varLen = conv.w;
-    
-    return _DecodeLargeItem(parser, ctx, bufferPos, varLen);
-
-    
-    const uint8_t itemType = *bufferPos; // 0x0A : large (64) / 0x07 Large (32) Item Name
-    //const uint8_t something = bufferPos[1];
-    
-    
-    //size_t bitOffset = 2;
-    const uint8_t addrSpaceDescriptor = bufferPos[bitOffset+0];
-    
-    const uint8_t varLen1 = bufferPos[bitOffset+1];
-    const uint8_t varLen2 = bufferPos[bitOffset+2];
-    
-    /*
-    union WordConv
-    {
-        uint8_t b[2];
-        uint16_t w;
-    } conv;
-    */
-    conv.b[0] = bufferPos[bitOffset+1];
-    conv.b[1] = bufferPos[bitOffset+2];
-    
-    
-    //const uint16_t varLen = conv.w;
-    
-    
-    if (itemType == 0x0A)
-    {
-        if(addrSpaceDescriptor == 0x8A) // spec : 6.4.3.5.1
-        {
-            assert(varLen1 >= 0x2B); // says the specs
-            return _DecodeQWORDAddressSpaceDescriptor(parser, ctx, bufferPos+bitOffset,varLen/* bufferSize - bitOffset*/) + bitOffset;
-        }
-        
-        else if (addrSpaceDescriptor == 0x86)
-        {
-            assert(varLen1 == 0x09);
-            assert(varLen2 == 0);
-            
-            return _DecodeMemoryRangeDescriptor32(parser, ctx, bufferPos+bitOffset,  varLen/* bufferSize - bitOffset*/);
-        }
-        else if (addrSpaceDescriptor == 0x87) // 6.4.3.5.2 DWord Address Space Descriptor
-        {
-            assert(0);
-        }
-        else if (addrSpaceDescriptor == 0x88) // 6.4.3.5.3 Word Address Space Descriptor
-        {
-            assert(varLen1 == 0x0D);
-            assert(varLen2 == 0);
-            
-            return _DecodeWORDAddressSpaceDescriptor(parser, ctx, bufferPos+bitOffset,  varLen/* bufferSize - bitOffset*/) + bitOffset +4;
-        }
-        else if (addrSpaceDescriptor == 0x89)
-        {
-            assert(varLen1 >= 0x06);
-            assert(varLen2 >= 0);
-            return _DecodeExtendedIRQDescriptor(parser, ctx, bufferPos+bitOffset,varLen/* bufferSize - bitOffset*/);
-        }
-        else if( addrSpaceDescriptor == 0x22) // 6.4.2.1 IRQ Descriptor
-        {
-            return _DecodeIRQDescriptor(parser, ctx, bufferPos+bitOffset, varLen);
-        }
-        else if( addrSpaceDescriptor == 0x47) // 6.4.2.5 I/O Port Descriptor
-        {
-            return _DecodeIOPortDescriptor(parser, ctx, bufferPos+bitOffset, varLen);
-        }
-        else // This is a regular buffer
-        {
-            const uint8_t bufSize = bufferPos[1];
-            
-            const uint8_t* buffer = bufferPos+2;
-            
-            if (decomp->callbacks.OnBuffer)
-            {
-                decomp->callbacks.OnBuffer(decomp, ctx , bufSize , buffer);
-            }
-            /*
-            for(int i=0;i<bufferSize;i++)
-            {
-                if (i%8==0)
-                    printf("\n");
-                
-                printf(" 0x%x " , bufferPos[i]);
-            }
-            printf("\n");
-            
-            printf("Other addr space type 0x%x\n" , addrSpaceDescriptor);
-            
-            assert(decomp->parserPolicy.assertOnError == 0);
-            return AMLParserError_UnexpectedToken;*/
-        }
-    }
-    else
-    {
-/*
-         for(int i=0;i<bufferSize;i++)
-         {
-             if (i%8==0)
-                 printf("\n");
-         
-             printf(" 0x%x " , bufferPos[i]);
-         }
-
  */
-        printf("Other Item Type type 0x%x\n" , itemType);
-        assert(0); // to implement
-        
- 
-//        assert(0);
-        return bufferSize;
-    }
-    
-    
-    
-    return varLen;
-}
 
-static AMLParserError _DecodeBufferObject(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+
+
+
+
+AMLParserError Parse_Reserved0(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    
-    //printf("BUFFER IS  '%s' size is %zi\n" , bufferPos , bufferSize);
-    
-    if (decomp->callbacks.OnBuffer)
-    {
-        decomp->callbacks.OnBuffer(decomp, ctx , bufferSize , bufferPos);
-    }
-    
+    assert(0);
     return AMLParserError_None;
 }
 
-static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+AMLParserError Parse_BitMemoryRangeDescriptor24(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+AMLParserError Parse_GenericRegisterDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+AMLParserError Parse_Reserved1(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+AMLParserError Parse_VendorDefinedDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError Parse_MemoryRangeDescriptor32(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError Parse_FixedLocationMemoryRangeDescriptor32(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+
+AMLParserError Parse_ExtendedIRQDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+AMLParserError Parse_QWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError Parse_ExtendedAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+
+/* SMALL items */
+
+AMLParserError ParseSmall_Reserved(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError ParseSmall_IRQFormatDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError ParseSmall_DMAFormatDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError ParseSmall_StartDependentFunctionsDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError ParseSmall_EndDependentFunctionsDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError ParseSmall_FixedLocationIOPortDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+
+AMLParserError ParseSmall_VendorDefinedDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+AMLParserError ParseSmall_EndTagDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    return AMLParserError_None;
+}
+
+
+/* **** **** **** **** **** **** **** */
+
+AMLParserError Parse_ReservedStartCToF(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    assert(0);
+    return AMLParserError_None;
+}
+
+// MUST MATCH SmallResourceItemsType order !
+static const ParserItemMethod smallItemMethods[] =
+{
+    ParseSmall_Reserved,
+    ParseSmall_Reserved,
+    ParseSmall_Reserved,
+    ParseSmall_Reserved,
+    
+    ParseSmall_IRQFormatDescriptor,
+    ParseSmall_DMAFormatDescriptor,
+    ParseSmall_StartDependentFunctionsDescriptor,
+    ParseSmall_EndDependentFunctionsDescriptor,
+    ParseSmall_IOPortDescriptor,
+    ParseSmall_FixedLocationIOPortDescriptor,
+    ParseSmall_Reserved,
+    ParseSmall_Reserved,
+    ParseSmall_Reserved,
+    ParseSmall_Reserved,
+    ParseSmall_VendorDefinedDescriptor,
+    ParseSmall_EndTagDescriptor,
+    
+};
+
+
+// MUST MATCH LargeResourceItemsType order !
+static const ParserItemMethod largeItemMethods[] =
+{
+    Parse_Reserved0,
+    Parse_BitMemoryRangeDescriptor24,
+    Parse_GenericRegisterDescriptor,
+    Parse_Reserved1,
+    Parse_VendorDefinedDescriptor,
+    Parse_MemoryRangeDescriptor32,
+    Parse_FixedLocationMemoryRangeDescriptor32,
+    Parse_DWORDAddressSpaceDescriptor,
+    Parse_WORDAddressSpaceDescriptor,
+    Parse_ExtendedIRQDescriptor,
+    Parse_QWORDAddressSpaceDescriptor,
+    Parse_ExtendedAddressSpaceDescriptor,
+    Parse_ReservedStartCToF,
+    Parse_ReservedStartCToF,
+    Parse_ReservedStartCToF,
+    Parse_ReservedStartCToF
+};
+
+static AMLParserError _CallbackForItem(AMLDecompiler* decomp, AMLParserState* parser ,ParserContext *ctx,const ItemEntry*entry )
+{
+    assert(decomp);
+    assert(parser);
+    assert(ctx);
+    assert(entry);
+    assert(entry->bufferPos != NULL);
+    assert(entry->isa != NULL);
+    
+    if (entry->isa->isLarge)
+    {
+        LargeResourceItemsType realItemType = entry->isa->itemName - 0x80;
+        
+        return largeItemMethods[realItemType](decomp , ctx, entry->bufferPos + 3 , entry->size);
+//        decomp->callbacks.onLargeItem(decomp,ctx, realItemType, entry->bufferPos , entry->size);
+    }
+    else // small item
+    {
+        SmallResourceItemsType realItemType = entry->isa->itemName >> 3;
+        
+        return smallItemMethods[realItemType](decomp , ctx , entry->bufferPos+1, entry->size);
+    }
+    
+    return 0;
+}
+
+static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
 {
 
+    assert(parser);
+    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
+    assert(decomp);
     
+    size_t advance = 0;
+    uint8_t s =  GetByteValue(buffer, bufferSize, &advance);
+    
+    const uint8_t* bufferPos = buffer + advance;
+    bufferSize -= advance;
+    
+    assert( bufferSize == s);
+    AMLBufferAnalysisResults res = { 0};
+    res.ctx = ctx;
+    res.parser = parser;
+    const AMLParserError err =  DecodeBufferObject(bufferPos, bufferSize, &res);
+    
+    if (err == AMLParserError_None )
+    {
+        if (res.numItems == 0) // This is a regular buffer, not a resource template
+        {
+            if (decomp->callbacks.OnBuffer)
+            {
+                decomp->callbacks.OnBuffer(decomp, ctx , bufferSize , bufferPos);
+            }
+        }
+        else
+        {
+            assert(res.entries[res.numItems-1].type == 0x79);// END tag
+            assert(res.numItems <= MaxItemsPerBuffer);
+            
+            decomp->callbacks.startResourceTemplate(decomp, ctx , res.numItems);
+            
+            for( size_t i=0;i<res.numItems;i++)
+            {
+                const AMLParserError errCallback = _CallbackForItem(decomp,parser, ctx, res.entries + i);
+                if ( errCallback != AMLParserError_None)
+                {
+                    decomp->callbacks.endResourceTemplate(decomp, ctx , i,errCallback);
+                    return errCallback;
+                }
+                
+            }
+            
+            decomp->callbacks.endResourceTemplate(decomp, ctx , res.numItems , AMLParserError_None);
+        }
+    }
+    
+    return err;
+    
+    
+    
+    /*
     ssize_t size = bufferSize;
     size_t parsed = 0;
     
@@ -501,15 +498,17 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
         const uint8_t bufItemSize = GetByteValue(newBuf, size, &adv);
         
         
-        
-        const AMLParserError err =  _DecodeBufferObject(parser, ctx, newBuf + adv, bufItemSize);
+        AMLBufferAnalysisResults res = { 0};
+        res.ctx = ctx;
+        res.parser = parser;
+        const AMLParserError err =  DecodeBufferObject(newBuf + adv, bufItemSize, &res);
         
         if (err != AMLParserError_None)
         {
             return err;
         }
         
-        size_t objectSize = /*_DecodeBufferObject(parser, ctx, newBuf,  bufItemSize)*/ bufItemSize + adv;
+        size_t objectSize =  bufItemSize + adv;
         
         size -= objectSize;
         parsed += objectSize;
@@ -521,14 +520,14 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     //printf("End buffer objects\n");
     //return _DecodeBufferObject(parser, ctx, bufferPos, bufferSize) != 0? AMLParserError_None : AMLParserError_BufferTooShort;
     return AMLParserError_None;
+     */
 }
 
 
-int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
+static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
 {
     
     assert(parser);
-
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
 
@@ -581,30 +580,11 @@ int _AllocateElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,co
         case ACPIObject_Type_Buffer:
         {
             
-            if (decomp->callbacks.startBuffer)
-            {
-                decomp->callbacks.startBuffer(decomp , &ctx , bufferSize,bufferPos);
-            }
             
-            /*
-            printf("---- Start buffer size %zi ----\n" , bufferSize);
             
-            for(size_t i =0;i<bufferSize;i++)
-            {
-                if (i%8==0)
-                    printf("\n");
-                
-                printf(" 0x%.2x " , bufferPos[i]);
-            }
-            printf("\n");
-            printf("---- End Buffer --- \n");
-             */
             AMLParserError err =  _DecodeBufferObjects(parser, &ctx, bufferPos, bufferSize);
             
-            if (decomp->callbacks.endBuffer)
-            {
-                decomp->callbacks.endBuffer(decomp , &ctx , bufferSize,bufferPos);
-            }
+            
             
             if(err != AMLParserError_None)
                 return err;
@@ -771,7 +751,7 @@ AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , 
     
     parser.userData = decomp;
     
-    parser.callbacks.AllocateElement = _AllocateElement;
+    parser.callbacks.OnElement = _OnElement;
     
     AMLParserError ret =  AMLParserProcessBuffer(&parser , buffer , bufferSize);
     decomp->errorPos = parser.errorPos;

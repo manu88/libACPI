@@ -29,7 +29,7 @@ extern "C" {
 /*
  This is an intermediate module that helps the AML bytecode interpretation.
  */
-typedef struct
+typedef struct _ParserContext
 {
     
     ACPIObject_Type lastObjectType;
@@ -46,6 +46,9 @@ typedef struct _AMLDecompiler AMLDecompiler;
 typedef struct
 {
     
+    int (*startResourceTemplate)(AMLDecompiler*, const ParserContext* context , size_t numItems );
+    int (*endResourceTemplate)(AMLDecompiler*, const ParserContext* context , size_t numItemsParsed, AMLParserError err);
+    
     int (*onLargeItem)(AMLDecompiler*,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     int (*onSmallItem)(AMLDecompiler*,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     
@@ -58,8 +61,7 @@ typedef struct
     
     int (*onField)(AMLDecompiler*,const ParserContext* context, const ACPIField*);
     
-    int (*startBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
-    int (*endBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
+    
     int (*OnBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     
     int (*StartScope)(AMLDecompiler* ,const ParserContext* context, const char* location);

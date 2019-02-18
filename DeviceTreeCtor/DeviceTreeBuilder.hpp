@@ -27,9 +27,68 @@
 
 #include "AMLDecompilerInterface.hpp"
 
+
+enum ValueType
+{
+    Type_NumericValue               = 0,
+    Type_Buffer                     = 1,
+    Type_RessourceTemplate          = 10,
+    Type_AddressSpaceDescriptor     = 11,
+    Type_MemoryRangeDescriptor32    = 12,
+    Type_WordAddressSpaceDescriptor = 13,
+    Type_IOPortDescriptor,
+    Type_DWordAddressSpaceDescriptor,
+    
+};
+
+struct RessourceItem
+{
+    void setValue(const AddressSpaceDescriptor& desc)
+    {
+        type = Type_AddressSpaceDescriptor;
+        value.addressSpaceDescriptor = desc;
+    }
+    
+    void setValue(const MemoryRangeDescriptor32 &desc)
+    {
+        type = Type_MemoryRangeDescriptor32;
+        value.memoryRangeDesc32 = desc;
+    }
+    
+    void setValue(const WordAddressSpaceDescriptor &desc)
+    {
+        type = Type_WordAddressSpaceDescriptor;
+        value.wordAddressSpaceDescriptor = desc;
+    }
+    
+    void setValue(const DWordAddressSpaceDescriptor &desc)
+    {
+        type = Type_DWordAddressSpaceDescriptor;
+        value.dwordAddressSpaceDescriptor = desc;
+    }
+    
+    void setValue(const IOPortDescriptor& desc)
+    {
+        type = Type_IOPortDescriptor;
+        value.ioPortDescriptor = desc;
+    }
+    
+    union
+    {
+        MemoryRangeDescriptor32    memoryRangeDesc32;
+        AddressSpaceDescriptor     addressSpaceDescriptor;
+        WordAddressSpaceDescriptor wordAddressSpaceDescriptor;
+        IOPortDescriptor           ioPortDescriptor;
+        DWordAddressSpaceDescriptor dwordAddressSpaceDescriptor;
+        
+    } value;
+    
+    ValueType type;
+};
+
 struct ResourceTemplate
 {
-    std::vector<std::string> a;
+    std::vector<RessourceItem> items;
 };
 
 struct NameDeclaration
@@ -57,49 +116,43 @@ struct NameDeclaration
     void setValue( uint64_t val)
     {
         type = Type_NumericValue;
-        value.value64 = val;
+        value64 = val;
     }
     
-    void setValue(const AddressSpaceDescriptor& desc)
+    
+    
+    void addTemplateItem( const RessourceItem& item)
     {
-        type = Type_AddressSpaceDescriptor;
-        value.addressSpaceDescriptor = desc;
+        assert(type == Type_RessourceTemplate);
+    
+        resTemplate.items.push_back(item);
     }
     
-    void setValue(const MemoryRangeDescriptor32 &desc)
-    {
-        type = Type_MemoryRangeDescriptor32;
-        value.memoryRangeDesc32 = desc;
-    }
-    
-    void setValue(const WordAddressSpaceDescriptor &desc)
-    {
-        type = Type_WordAddressSpaceDescriptor;
-        value.wordAddressSpaceDescriptor = desc;
-    }
+    ValueType type;
+/*
     enum ValueType
     {
-        Type_NumericValue,
+        Type_NumericValue = 0,
+        Type_Buffer = 1,
+        Type_RessourceTemplate = 10,
         Type_AddressSpaceDescriptor,
         Type_MemoryRangeDescriptor32,
         Type_WordAddressSpaceDescriptor,
-        Type_RessourceTemplate,
-        Type_Buffer,
+        
     } type;
-    
+  */
+    /*
     union
     {
-        uint64_t value64;
+        
         MemoryRangeDescriptor32    memoryRangeDesc32;
         AddressSpaceDescriptor     addressSpaceDescriptor;
         WordAddressSpaceDescriptor wordAddressSpaceDescriptor;
-        
-        
-        
     }value;
+    */
     
+    uint64_t value64;
     ResourceTemplate resTemplate;   // type = Type_RessourceTemplate
-    
     std::vector<uint8_t> rawBuffer; // type = Type_Buffer
 };
 
@@ -197,16 +250,21 @@ public:
     }
 protected:
     int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc) override;
+    
+    
+    int startResourceTemplate( const ParserContext* context , size_t numItems ) override;
+    int endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err) override;
     int onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override;
     int onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override;
+    
+    
     int OnValue(const ParserContext* context, uint64_t value)override;
     int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)override;
     int onField(const ParserContext* context, const ACPIField*)override;
     
     
     int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;
-    int StartBuffer(const ParserContext* context , size_t bufferSize) override;
-    int EndBuffer(const ParserContext* context , size_t bufferSize) override;
+    
     
     int StartScope(const ParserContext* context, const char* location)override;
     int EndScope(const ParserContext* context, const char* location)override;
@@ -217,9 +275,12 @@ protected:
     int startMethod(const ParserContext* context, const char* name)override;
     int endMethod(const ParserContext* context, const char* name)override;
     
-    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor* desc) override;
-    int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32* desc) override;
-    int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor* desc);
+    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc) override;
+    int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override;
+    int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc);
+    int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc);
+    
+    int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc);
 private:
     
     std::stack<std::string> _scopes;
@@ -231,7 +292,7 @@ private:
     TreeNode* currentNode = nullptr;
     NameDeclaration* currentName = nullptr;
     
-    bool bufferStarted = false;
+    
 
 };
 

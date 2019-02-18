@@ -208,14 +208,32 @@ typedef struct
     
 } WordAddressSpaceDescriptor;
 
+//6.4.3.5.2 DWord Address Space Descriptor
+typedef struct
+{
+    uint8_t  ressourceType;
+    uint8_t  generalFlags;
+    uint8_t  typeSpecificFlags;
+    
+    uint32_t addrSpaceGranularity;
+    uint32_t addrRangeMin;
+    uint32_t addrRangeMax;
+    uint32_t addrTranslationOffset;
+    uint32_t addrTranslationLength;
+    
+    
+} DWordAddressSpaceDescriptor;
+
 
 typedef struct
 {
-    uint8_t information;
+    
+    //uint8_t information;
     uint16_t rangeMinBaseAddr;
     uint16_t rangeMaxBaseAddr;
     uint8_t baseAlign;
     uint8_t rangeLen;
+    uint8_t isDecoder:1;
 } IOPortDescriptor;
 
 

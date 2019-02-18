@@ -37,7 +37,7 @@ typedef struct _AMLParserState AMLParserState;
  */
 typedef struct
 {
-    int   (*AllocateElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
+    int   (*OnElement)(AMLParserState* parser , ACPIObject_Type forObjectType  , const uint8_t* bufferPos , size_t bufferSize);
     
 } AMLParserCallbacks;
 

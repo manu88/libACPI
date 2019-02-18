@@ -44,6 +44,87 @@ JSONConverter::JSONConverter( const DeviceTree &tree ):
 tree(tree)
 {}
 
+static nlohmann::json serializeIOPortDescriptor( const IOPortDescriptor &desc)
+{
+    nlohmann::json ret;
+    
+    
+    ret["isDecoder"] = desc.isDecoder;
+    ret["rangeMinBaseAddr"] = desc.rangeMinBaseAddr;
+    ret["rangeMaxBaseAddr"] = desc.rangeMaxBaseAddr;
+    ret["baseAlign"] = desc.baseAlign;
+    ret["rangeLen"] = desc.rangeLen;
+    
+    return ret;
+}
+
+static nlohmann::json serializeDWordAddressSpaceDescriptor(const DWordAddressSpaceDescriptor& desc)
+{
+    nlohmann::json ret;
+    
+    
+    ret["ressourceType"] = desc.ressourceType;
+    ret["generalFlags"] = desc.generalFlags;
+    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+    ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
+    ret["addrRangeMin"] = desc.addrRangeMin;
+    ret["addrRangeMax"] = desc.addrRangeMax;
+    ret["addrTranslationOffset"] = desc.addrTranslationOffset;
+    ret["addrTranslationLength"] = desc.addrTranslationLength;
+    
+    return ret;
+}
+
+static nlohmann::json serializeWordAddressSpaceDescriptor(const WordAddressSpaceDescriptor& desc)
+{
+    nlohmann::json ret;
+    
+    
+    ret["ressourceType"] = desc.ressourceType;
+    ret["generalFlags"] = desc.generalFlags;
+    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+    ret["ressourceSourceIndex"] = desc.ressourceSourceIndex;
+    ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
+    ret["addrRangeMin"] = desc.addrRangeMin;
+    ret["addrRangeMax"] = desc.addrRangeMax;
+    ret["addrTranslationOffset"] = desc.addrTranslationOffset;
+    ret["addrTranslationLength"] = desc.addrTranslationLength;
+    
+    return ret;
+}
+
+static nlohmann::json serializeResourseTemplate( const ResourceTemplate&resTemplate)
+{
+    nlohmann::json res;
+    
+    
+    for( const auto& item : resTemplate.items)
+    {
+        nlohmann::json it;
+        it["type"] = item.type;
+        
+        switch (item.type)
+        {
+            case Type_WordAddressSpaceDescriptor:
+                it["value"] = serializeWordAddressSpaceDescriptor(item.value.wordAddressSpaceDescriptor);
+                break;
+                
+            case Type_IOPortDescriptor:
+                it["value"] = serializeIOPortDescriptor(item.value.ioPortDescriptor);
+                break;
+                
+            case Type_DWordAddressSpaceDescriptor:
+                it["value"] = serializeDWordAddressSpaceDescriptor(item.value.dwordAddressSpaceDescriptor);
+                break;
+            default:
+                assert(0);
+                break;
+        }
+        
+        res.push_back(it);
+    }
+    return res;
+}
 static nlohmann::json serializeName( const NameDeclaration&name)
 {
     nlohmann::json res;
@@ -51,19 +132,20 @@ static nlohmann::json serializeName( const NameDeclaration&name)
     res["type"] = name.type;
     switch (name.type)
     {
-        case NameDeclaration::Type_NumericValue:
-            res["value"] = name.value.value64;
+        case ValueType::Type_NumericValue:
+            res["value"] = name.value64;
             res["eisaid"] = name.isEisaid;
             break;
             
-        case NameDeclaration::Type_MemoryRangeDescriptor32:
+            /*
+        case ValueType::Type_MemoryRangeDescriptor32:
             res["value"]["rangeBaseAddr"]   = name.value.memoryRangeDesc32.rangeBaseAddr;
             res["value"]["rangeLength"]     = name.value.memoryRangeDesc32.rangeLength;
             res["value"]["writeStatus"]     = name.value.memoryRangeDesc32.writeStatus;
             
             break;
             
-        case NameDeclaration::Type_AddressSpaceDescriptor:
+        case ValueType::Type_AddressSpaceDescriptor:
             
             res["value"]["ressourceType"]         = name.value.addressSpaceDescriptor.ressourceType;
             res["value"]["typeSpecificFlags"]     = name.value.addressSpaceDescriptor.typeSpecificFlags;
@@ -83,7 +165,7 @@ static nlohmann::json serializeName( const NameDeclaration&name)
             
             break;
             
-        case NameDeclaration::Type_WordAddressSpaceDescriptor:
+        case ValueType::Type_WordAddressSpaceDescriptor:
             
             res["value"]["ressourceType"]          = name.value.wordAddressSpaceDescriptor.ressourceType;
             res["value"]["generalFlags"]           = name.value.wordAddressSpaceDescriptor.generalFlags;
@@ -95,8 +177,8 @@ static nlohmann::json serializeName( const NameDeclaration&name)
             res["value"]["addrTranslationLength"]  = name.value.wordAddressSpaceDescriptor.addrTranslationLength;
             res["value"]["ressourceSourceIndex"]   = name.value.wordAddressSpaceDescriptor.ressourceSourceIndex;
             break;
-            
-        case NameDeclaration::Type_Buffer:
+            */
+        case ValueType::Type_Buffer:
             
             if (isString(name.rawBuffer))
             {
@@ -110,6 +192,12 @@ static nlohmann::json serializeName( const NameDeclaration&name)
             
             break;
             
+        case ValueType::Type_RessourceTemplate:
+        {
+            res["value"] = serializeResourseTemplate( name.resTemplate );
+            
+        }
+            break;
         default:
             
             assert(false);

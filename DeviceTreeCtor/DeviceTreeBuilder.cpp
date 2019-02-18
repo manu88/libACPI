@@ -109,11 +109,11 @@ static void printDev(TreeNode* node ,int indent)
         
         if (name.id == "_HID")
         {
-            printf("%s:%s",name.id.c_str() ,isEisaId(name.value.value64)? GetEisaId(name.value.value64): std::to_string(name.value.value64).c_str() );
+            printf("%s:%s",name.id.c_str() ,isEisaId(name.value64)? GetEisaId(name.value64): std::to_string(name.value64).c_str() );
         }
         else
         {
-            printf("%s:%llx (type %i)",name.id.c_str() ,name.value.value64 , name.type );
+            printf("%s:%llx (type %i)",name.id.c_str() ,name.value64 , name.type );
         }
         printf("\n");
     }
@@ -150,21 +150,34 @@ void DeviceTreeBuilder::print()
 }
 
 
+int DeviceTreeBuilder::startResourceTemplate( const ParserContext* context , size_t numItems )
+{
+    assert(currentName);
+    currentName->type = ValueType::Type_RessourceTemplate;
+    return 0;
+}
+int DeviceTreeBuilder::endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err)
+{
+    return 0;
+}
+
 int DeviceTreeBuilder::onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
 {
     switch (itemType)
     {
         case LargeResourceItemsType_MemoryRangeDescriptor32:
             assert(bufferSize == sizeof(MemoryRangeDescriptor32));
-            return onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32*>(buffer));
+            return onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32&>(*buffer));
             
         case LargeResourceItemsType_QWORDAddressSpaceDescriptor:
             assert(bufferSize == sizeof(AddressSpaceDescriptor));
-            return onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const AddressSpaceDescriptor*>(buffer));
+            return onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const AddressSpaceDescriptor&>(*buffer));
             
         case LargeResourceItemsType_WORDAddressSpaceDescriptor:
-            assert(bufferSize == sizeof(WordAddressSpaceDescriptor) );
-            return onWORDAddressSpaceDescriptor(context, reinterpret_cast<const WordAddressSpaceDescriptor*>(buffer));
+            return onWORDAddressSpaceDescriptor(context, reinterpret_cast<const WordAddressSpaceDescriptor&>(*buffer));
+            
+        case LargeResourceItemsType_DWORDAddressSpaceDescriptor:
+            return onDWORDAddressSpaceDescriptor(context, reinterpret_cast<const DWordAddressSpaceDescriptor&>(*buffer));
         default:
             assert(0);
             break;
@@ -174,6 +187,16 @@ int DeviceTreeBuilder::onLargeItem(const ParserContext* context, LargeResourceIt
 
 int DeviceTreeBuilder::onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
 {
+    switch (itemType)
+    {
+        case SmallResourceItemsType_IOPortDescriptor:
+            
+            return onIOPortDescriptor(context, reinterpret_cast<const IOPortDescriptor&>(*buffer));
+            
+        default:
+            assert(0);
+            break;
+    }
     return 0;
 }
 
@@ -191,30 +214,15 @@ int DeviceTreeBuilder::onField(const ParserContext* context, const ACPIField*fie
     return 0;
 }
 
-int DeviceTreeBuilder::StartBuffer(const ParserContext* context , size_t bufferSize)
-{
-    assert(bufferStarted == false);
-    bufferStarted = true;
-    //printf("Start buffer, current name id '%s'\n" , currentName->id.c_str() );
-    return 0;
-}
-int DeviceTreeBuilder::EndBuffer(const ParserContext* context , size_t bufferSize)
-{
-    assert(bufferStarted );
-    bufferStarted = false;
-    //printf("End buffer, current name id '%s'\n" , currentName->id.c_str() );
-    
-    return 0;
-}
+
 
 int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
 {
 
     state = Ready;
     
-    
     currentName->setValue(buffer, bufferSize);
-    //currentName->type = NameDeclaration::Type_Buffer;
+
     
     return 0;
 }
@@ -310,38 +318,69 @@ int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
     return 0;
 }
 
-int DeviceTreeBuilder::onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor* desc)
+int DeviceTreeBuilder::onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc)
 {
-    assert(desc);
+    
     state = Ready;
     assert(currentName);
     if(currentName)
     {
-        currentName->setValue(*desc);
+        RessourceItem item;
+        item.setValue(desc);
+        currentName->addTemplateItem(item);
     }
     return 0;
 }
 
-int DeviceTreeBuilder::onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32* desc)
+
+int DeviceTreeBuilder::onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc)
 {
-    assert(desc);
-    state = Ready;
     assert(currentName);
     if(currentName)
     {
-        currentName->setValue(*desc);
+        RessourceItem item;
+        item.setValue(desc);
+        currentName->addTemplateItem(item);
     }
     return 0;
 }
 
-int DeviceTreeBuilder::onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor* desc)
+int DeviceTreeBuilder::onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc)
 {
-    assert(desc);
     state = Ready;
     assert(currentName);
     if(currentName)
     {
-        currentName->setValue(*desc);
+        RessourceItem item;
+        item.setValue(desc);
+        currentName->addTemplateItem(item);
+    }
+    return 0;
+}
+
+int DeviceTreeBuilder::onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc)
+{
+    state = Ready;
+    assert(currentName);
+    if(currentName)
+    {
+        RessourceItem item;
+        item.setValue(desc);
+        currentName->addTemplateItem(item);
+    }
+    return 0;
+}
+
+int DeviceTreeBuilder::onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc)
+{
+    
+    state = Ready;
+    assert(currentName);
+    if(currentName)
+    {
+        RessourceItem item;
+        item.setValue(desc);
+        currentName->addTemplateItem(item);
     }
     return 0;
 }

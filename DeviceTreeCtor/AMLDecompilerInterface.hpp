@@ -29,15 +29,19 @@ protected:
   
 //
     virtual int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc) = 0;
+    
+    virtual int startResourceTemplate( const ParserContext* context , size_t numItems ) = 0;
+    virtual int endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err) = 0;
+    
     virtual int onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)= 0;
     virtual int onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)= 0;
+    
+    
     virtual int OnValue(const ParserContext* context, uint64_t value)= 0;
 
     virtual int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)= 0;
     virtual int onField(const ParserContext* context, const ACPIField*)= 0;
     
-    virtual int StartBuffer(const ParserContext* context , size_t bufferSize) = 0;
-    virtual int EndBuffer(const ParserContext* context , size_t bufferSize) = 0;
     
     virtual int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)= 0;
     
@@ -52,9 +56,9 @@ protected:
     virtual int endMethod(const ParserContext* context, const char* name)= 0;
     
     
-    virtual int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor* desc) = 0;
+    virtual int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc) = 0;
     
-    virtual int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32* desc) = 0;
+    virtual int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) = 0;
     
 //
     AMLDecompiler &decomp;

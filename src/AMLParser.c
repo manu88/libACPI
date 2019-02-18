@@ -115,7 +115,7 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
 
     
     
-    if(state->callbacks.AllocateElement(state , ACPIObject_Type_DefinitionBlock  ,(const uint8_t*) &defBlk , sizeof(defBlk)))
+    if(state->callbacks.OnElement(state , ACPIObject_Type_DefinitionBlock  ,(const uint8_t*) &defBlk , sizeof(defBlk)))
     {
         return AMLParserError_None;
     }
@@ -154,7 +154,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             const uint8_t* startPos = buffer  + *advancedBy;
             //const uint8_t VarNumElements = *startPos;
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
             if (err != AMLParserError_None)
             {
                 return err;
@@ -172,7 +172,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
                 return AMLParserError_UnexpectedToken;
             }
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Name ,namePos , 4 );
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Name ,namePos , 4 );
             if (err != AMLParserError_None)
                 return err;
             
@@ -195,7 +195,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             assert(startDevice);
             //assert(*sizeVal <= bufSize);
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
             if (err != AMLParserError_None)
                 return err;
             
@@ -214,7 +214,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const uint8_t* startScope = buffer +  *advancedBy;
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
             if (err != AMLParserError_None)
             {
                 return err;
@@ -250,7 +250,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             *advancedBy += GetInteger(regLen,bufSize-*advancedBy, &reg.length);
             
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_OperationRegion , (const uint8_t*)&reg , sizeof(ACPIOperationRegion) );
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_OperationRegion , (const uint8_t*)&reg , sizeof(ACPIOperationRegion) );
             if (err != AMLParserError_None)
                 return err;
             
@@ -267,7 +267,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             uint8_t* fieldPos = (uint8_t* ) buffer + *advancedBy;
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
             if (err != AMLParserError_None)
                 return err;
             
@@ -285,7 +285,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const uint8_t* startPos = buffer + *advancedBy;
             
-            AMLParserError err = state->callbacks.AllocateElement(state , ACPIObject_Type_Method , startPos , methodSize);
+            AMLParserError err = state->callbacks.OnElement(state , ACPIObject_Type_Method , startPos , methodSize);
             if (err != AMLParserError_None)
                 return err;
             
@@ -303,7 +303,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const uint8_t* startBuffer = buffer + *advancedBy;
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Buffer , startBuffer , bufferSizePackage);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Buffer , startBuffer , bufferSizePackage);
             if (err != AMLParserError_None)
             {
                 return err;
@@ -321,7 +321,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             const uint8_t* valPosition = buffer-1;
             const size_t valSize = 0;
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize +1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize +1);
             if (err != AMLParserError_None)
                 return err;
             
@@ -335,7 +335,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 1;// sizeof(ACPIDWord);
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
                 return err;
             
@@ -349,7 +349,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 2;// sizeof(ACPIDWord);
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
                 return err;
             
@@ -364,7 +364,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 4;
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
                 return err;
             
@@ -378,7 +378,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 8;
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
                 return err;
             
@@ -394,7 +394,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = strlen( (const char*)valPosition);
             
-            AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_StringValue , valPosition , valSize);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_StringValue , valPosition , valSize);
             if (err != AMLParserError_None)
                 return err;
             
@@ -435,7 +435,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
     size_t pos = advancedByte;
     bufSize -= advancedByte;
     
-    AMLParserError err_ = state->callbacks.AllocateElement(state, ACPIObject_Type_Root  , buffer+ pos , bufSize);
+    AMLParserError err_ = state->callbacks.OnElement(state, ACPIObject_Type_Root  , buffer+ pos , bufSize);
     if (err_ != AMLParserError_None)
     {
         return err_;
@@ -486,7 +486,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 
                 uint8_t* fieldPos = (uint8_t* ) buffer + pos + advancedByte;
                 
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
+                AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
                 if (err != AMLParserError_None)
                     return err;
                 
@@ -523,7 +523,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 advancedByte += GetInteger(regLen,bufSize-advancedByte, &reg.length);
                 
                 
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_OperationRegion , (const uint8_t*)&reg , sizeof(ACPIOperationRegion) );
+                AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_OperationRegion , (const uint8_t*)&reg , sizeof(ACPIOperationRegion) );
                 if (err != AMLParserError_None)
                     return err;
                 
@@ -543,7 +543,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
                 const uint8_t* startPos = buffer + pos + advancedByte;
                 //const uint8_t VarNumElements = *startPos;
 
-                AMLParserError err = state->callbacks.AllocateElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
+                AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
                 if (err != AMLParserError_None)
                     return err;
                 
