@@ -26,17 +26,27 @@ public:
         
     }
     
+    void writeHexArg(uint8_t v)
+    {
+        content << "0x"<< std::uppercase<< std::hex<< std::setw(2) << std::setfill('0') << v;
+    }
+    
+    void writeHexArg(uint16_t v)
+    {
+        content << "0x"<< std::uppercase<< std::hex<< std::setw(4) << std::setfill('0') << v;
+    }
+    
     void writeHexArg(uint32_t v)
     {
         content << "0x"<< std::uppercase << std::hex<< std::setw(8) << std::setfill('0') << v;
     }
+    
     
     void writeHexArg(uint64_t v)
     {
         content << "0x"<< std::uppercase<< std::hex<< std::setw(16) << std::setfill('0') << v;
     }
     
-
     void writeNumValue( uint64_t v)
     {
         if( v == 0)
@@ -49,7 +59,7 @@ public:
         }
         else
         {
-            content << std::hex << v;
+            writeHexArg(v);
         }
     }
     void writeNumValue( uint32_t v)
@@ -64,7 +74,7 @@ public:
         }
         else
         {
-            content << std::hex << v;
+            writeHexArg(v);
         }
     }
     void writeNumValue( uint16_t v)
@@ -79,7 +89,7 @@ public:
         }
         else
         {
-            content << std::hex << v;
+            writeHexArg(v);
         }
     }
     void writeNumValue( uint8_t v)
@@ -94,7 +104,7 @@ public:
         }
         else
         {
-            content << std::hex << v;
+            writeHexArg(v);
         }
     }
     /*
@@ -178,9 +188,6 @@ public:
         decScope();
         return 0;
     }
-    
-    
-    
     
     int startResourceTemplate( const ParserContext* context , size_t numItems ) override
     {
