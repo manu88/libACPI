@@ -58,6 +58,23 @@ static nlohmann::json serializeIOPortDescriptor( const IOPortDescriptor &desc)
     return ret;
 }
 
+static nlohmann::json serializeQWordAddressSpaceDescriptor(const QWordAddressSpaceDescriptor& desc)
+{
+    nlohmann::json ret;
+    
+    
+    ret["ressourceType"] = desc.ressourceType;
+    ret["generalFlags"] = desc.generalFlags;
+    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+    ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
+    ret["addrRangeMin"] = desc.addrRangeMin;
+    ret["addrRangeMax"] = desc.addrRangeMax;
+    ret["addrTranslationOffset"] = desc.addrTranslationOffset;
+    ret["addrTranslationLength"] = desc.addrTranslationLength;
+    
+    return ret;
+}
+
 static nlohmann::json serializeDWordAddressSpaceDescriptor(const DWordAddressSpaceDescriptor& desc)
 {
     nlohmann::json ret;
@@ -115,6 +132,12 @@ static nlohmann::json serializeResourseTemplate( const ResourceTemplate&resTempl
                 
             case Type_DWordAddressSpaceDescriptor:
                 it["value"] = serializeDWordAddressSpaceDescriptor(item.value.dwordAddressSpaceDescriptor);
+                break;
+                
+                
+            case Type_QWordAddressSpaceDescriptor:
+                it["value"] = serializeQWordAddressSpaceDescriptor(item.value.qwordAddressSpaceDescriptor);
+                
                 break;
             default:
                 assert(0);

@@ -1,0 +1,49 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 12,
+    "complianceRevision": 120,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": 
+    {
+        "_SB":
+        {
+            "Children": 
+            {
+                "PCI0": 
+                {
+                  "_HID":
+                  {
+                      "eisaid": true,
+                      "type": 0,
+                      "value": 51040321
+                  },
+                  "CRES": 
+                  {
+                      "type": 10,
+                      "value": [
+                {
+                  "type": 16,
+                  "value": {
+                    "addrRangeMax": 1099511627775,
+                    "addrRangeMin": 549755813888,
+                    "addrSpaceGranularity": 0,
+                    "addrTranslationLength": 549755813888,
+                    "addrTranslationOffset": 0,
+                    "generalFlags": 12,
+                    "ressourceType": 0,
+                    "typeSpecificFlags": 3
+                  }
+                }
+              ]
+                  }
+                }
+            }    
+        }
+    }
+  }
+}

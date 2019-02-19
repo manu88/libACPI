@@ -124,3 +124,59 @@ AMLParserError Parse_DWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Pars
     return AMLParserError_None;
     
 }
+
+AMLParserError Parse_QWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    QWordAddressSpaceDescriptor desc;
+    
+    desc.ressourceType     = buffer[0];
+    desc.generalFlags      = buffer[1];
+    desc.typeSpecificFlags = buffer[2];
+    
+    
+    union WordConv
+    {
+        uint8_t b[8];
+        uint64_t w;
+    } conv;
+    
+    for(int i=0;i<8;i++)
+    {
+        conv.b[i] = buffer[3+i];
+    }
+    
+    desc.addrSpaceGranularity = conv.w;
+    
+    for(int i=0;i<8;i++)
+    {
+        conv.b[i] = buffer[11+i];
+    }
+    
+    
+    desc.addrRangeMin = conv.w;
+    
+    for(int i=0;i<8;i++)
+    {
+        conv.b[i] = buffer[19+i];
+    }
+    
+    desc.addrRangeMax = conv.w;
+    
+    for(int i=0;i<8;i++)
+    {
+        conv.b[i] = buffer[27+i];
+    }
+    
+    desc.addrTranslationOffset = conv.w;
+    
+    for(int i=0;i<8;i++)
+    {
+        conv.b[i] = buffer[35+i];
+    }
+    
+    desc.addrTranslationLength = conv.w;
+    
+    decomp->callbacks.onLargeItem(decomp,context, LargeResourceItemsType_QWORDAddressSpaceDescriptor,(const uint8_t*) &desc , sizeof(desc));
+    
+    return AMLParserError_None;
+}

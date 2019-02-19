@@ -61,6 +61,7 @@ static const ItemClass items[] =
     MakeItemClass(0x79 , "EndTag",             1,    0), // 6.4.2.5 I/O Port Descriptor
     MakeItemClass(0x88 , "WordAddressSpace" ,  0x0D, 1), // 6.4.3.5.3 Word Address Space Descriptor
     MakeItemClass(0x87 , "DWordAddressSpace" , 23  , 1), // 6.4.3.5.2 DWord Address Space Descriptor
+    MakeItemClass(0x8A , "QWordAddressSpace" , 43  , 1), // 6.4.3.5.1 QWord Address Space Descriptor
     
 };
 

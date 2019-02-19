@@ -56,7 +56,7 @@ protected:
     virtual int endMethod(const ParserContext* context, const char* name)= 0;
     
     
-    virtual int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc) = 0;
+    virtual int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) = 0;
     
     virtual int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) = 0;
     

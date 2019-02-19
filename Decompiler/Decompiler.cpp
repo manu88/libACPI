@@ -120,6 +120,21 @@ public:
         decScope();
         return 0;
     }
+    
+    
+    
+    
+    int startResourceTemplate( const ParserContext* context , size_t numItems ) override
+    {
+        return 0;
+    }
+    
+    int endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err)override
+    {
+        return 0;
+    }
+    
+    
     int StartDevice(const ParserContext* context, const ACPIDevice* device)override
     {
         incScope();
@@ -157,11 +172,11 @@ public:
     {
         return 0;
     }
-    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor* desc) override
+    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc) override
     {
         return 0;
     }
-    int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32* desc) override
+    int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override
     {
         return 0;
     }

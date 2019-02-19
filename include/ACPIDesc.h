@@ -224,6 +224,22 @@ typedef struct
     
 } DWordAddressSpaceDescriptor;
 
+//6.4.3.5.1 QWord Address Space Descriptor
+typedef struct
+{
+    uint8_t  ressourceType;
+    uint8_t  generalFlags;
+    uint8_t  typeSpecificFlags;
+    
+    uint64_t addrSpaceGranularity;
+    uint64_t addrRangeMin;
+    uint64_t addrRangeMax;
+    uint64_t addrTranslationOffset;
+    uint64_t addrTranslationLength;
+    
+    
+} QWordAddressSpaceDescriptor;
+
 
 typedef struct
 {

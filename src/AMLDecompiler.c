@@ -224,11 +224,7 @@ AMLParserError Parse_ExtendedIRQDescriptor(AMLDecompiler*decomp,const ParserCont
     assert(0);
     return AMLParserError_None;
 }
-AMLParserError Parse_QWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
-{
-    assert(0);
-    return AMLParserError_None;
-}
+
 
 AMLParserError Parse_ExtendedAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {

@@ -170,8 +170,7 @@ int DeviceTreeBuilder::onLargeItem(const ParserContext* context, LargeResourceIt
             return onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32&>(*buffer));
             
         case LargeResourceItemsType_QWORDAddressSpaceDescriptor:
-            assert(bufferSize == sizeof(AddressSpaceDescriptor));
-            return onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const AddressSpaceDescriptor&>(*buffer));
+            return onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const QWordAddressSpaceDescriptor&>(*buffer));
             
         case LargeResourceItemsType_WORDAddressSpaceDescriptor:
             return onWORDAddressSpaceDescriptor(context, reinterpret_cast<const WordAddressSpaceDescriptor&>(*buffer));
@@ -318,7 +317,7 @@ int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
     return 0;
 }
 
-int DeviceTreeBuilder::onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc)
+int DeviceTreeBuilder::onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc)
 {
     
     state = Ready;

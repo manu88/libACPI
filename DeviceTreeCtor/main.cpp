@@ -162,7 +162,7 @@ int main(int argc, const char * argv[])
     {
         const auto fullPath = testDirPath + file;
         
-        assert(DeviceTreeTester()( fullPath , fullPath + ".json"));
+         assert(DeviceTreeTester()( fullPath , fullPath + ".json"));
     }
     
     return 0;

@@ -33,20 +33,22 @@ enum ValueType
     Type_NumericValue               = 0,
     Type_Buffer                     = 1,
     Type_RessourceTemplate          = 10,
-    Type_AddressSpaceDescriptor     = 11,
+    //Type_AddressSpaceDescriptor     = 11,
     Type_MemoryRangeDescriptor32    = 12,
     Type_WordAddressSpaceDescriptor = 13,
     Type_IOPortDescriptor,
     Type_DWordAddressSpaceDescriptor,
+    Type_QWordAddressSpaceDescriptor,
     
 };
 
 struct RessourceItem
 {
-    void setValue(const AddressSpaceDescriptor& desc)
+    
+    void setValue(const QWordAddressSpaceDescriptor& desc)
     {
-        type = Type_AddressSpaceDescriptor;
-        value.addressSpaceDescriptor = desc;
+        type = Type_QWordAddressSpaceDescriptor;
+        value.qwordAddressSpaceDescriptor = desc;
     }
     
     void setValue(const MemoryRangeDescriptor32 &desc)
@@ -80,6 +82,7 @@ struct RessourceItem
         WordAddressSpaceDescriptor wordAddressSpaceDescriptor;
         IOPortDescriptor           ioPortDescriptor;
         DWordAddressSpaceDescriptor dwordAddressSpaceDescriptor;
+        QWordAddressSpaceDescriptor qwordAddressSpaceDescriptor;
         
     } value;
     
@@ -275,7 +278,7 @@ protected:
     int startMethod(const ParserContext* context, const char* name)override;
     int endMethod(const ParserContext* context, const char* name)override;
     
-    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc) override;
+    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override;
     int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override;
     int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc);
     int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc);
