@@ -23,24 +23,6 @@
 
 int getEisaidString( uint64_t value , char* toBuff)
 {
-    if (value == 0)
-        return 0;
-    /*
-     let vendor="$1 & 0xFFFF"
-     let device="$1 >> 16"
-     let device_1="$device & 0xFF"
-     let device_2="$device >> 8"
-     let vendor_rev="(($vendor & 0xFF) << 8) | $vendor >> 8"
-     let vendor_1="(($vendor_rev >> 10)&0x1f)+64"
-     let vendor_2="(($vendor_rev >> 5)&0x1f)+64"
-     let vendor_3="(($vendor_rev >> 0)&0x1f)+64"
-     vendor_1=`printf "%x" $vendor_1|xxd -r -p`
-     vendor_2=`printf "%x" $vendor_2|xxd -r -p`
-     vendor_3=`printf "%x" $vendor_3|xxd -r -p`
-     printf "EisaId string for 0x%08x: %s%s%s%02X%02X\n" "$1" $vendor_1 $vendor_2 $vendor_3 $device_1 $device_2
-     */
-    
-    
     const uint64_t vendor  = value & 0xFFFF;
     const uint64_t device = value >> 16;
     const uint8_t device1 = device & 0xff;
@@ -50,7 +32,6 @@ int getEisaidString( uint64_t value , char* toBuff)
     const uint8_t vendor1   = ((vendorRev >> 10)&0x1f)+64;
     const uint8_t vendor2   = ((vendorRev >> 5)&0x1f)+64;
     const uint8_t vendor3   = ((vendorRev >> 0)&0x1f)+64;
-    
     
     int ret = snprintf(toBuff, 8, "%c%c%c%.2X%.2X" ,  vendor1 , vendor2 , vendor3 , device1 , device2);
     
@@ -80,7 +61,7 @@ int getValueFromEisaidString(const char* buffer , uint64_t* toVal)
     *toVal = conv.v;
     return 1;
 }
-
+/*
 const char* GetEisaId( uint64_t val)
 {
     switch (val)
@@ -112,7 +93,7 @@ const char* GetEisaId( uint64_t val)
     
     return NULL;
 }
-
+*/
 int isUpperCase(int ch)
 {
     return (ch >= 'A' && ch <= 'Z');
