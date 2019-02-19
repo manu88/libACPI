@@ -1,6 +1,6 @@
 
 rm *.aml 2> /dev/null
-rm *.aml 2> /dev/null
+rm *.dsl 2> /dev/null
 
 cp ../TestSuite/*.aml .
 
