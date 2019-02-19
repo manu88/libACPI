@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include "AMLDecompilerInterface.hpp"
 
 
@@ -134,4 +135,42 @@ decomp(decomp)
         return self->onLargeItem(context, itemType, buffer, bufferSize);
     };
     
+}
+
+int AMLDecompilerInterface::onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
+{
+    switch (itemType)
+    {
+        case LargeResourceItemsType_MemoryRangeDescriptor32:
+            assert(bufferSize == sizeof(MemoryRangeDescriptor32));
+            return onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32&>(*buffer));
+            
+        case LargeResourceItemsType_QWORDAddressSpaceDescriptor:
+            return onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const QWordAddressSpaceDescriptor&>(*buffer));
+            
+        case LargeResourceItemsType_WORDAddressSpaceDescriptor:
+            return onWORDAddressSpaceDescriptor(context, reinterpret_cast<const WordAddressSpaceDescriptor&>(*buffer));
+            
+        case LargeResourceItemsType_DWORDAddressSpaceDescriptor:
+            return onDWORDAddressSpaceDescriptor(context, reinterpret_cast<const DWordAddressSpaceDescriptor&>(*buffer));
+        default:
+            assert(0);
+            break;
+    }
+    return 0;
+}
+
+int AMLDecompilerInterface::onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
+{
+    switch (itemType)
+    {
+        case SmallResourceItemsType_IOPortDescriptor:
+            
+            return onIOPortDescriptor(context, reinterpret_cast<const IOPortDescriptor&>(*buffer));
+            
+        default:
+            assert(0);
+            break;
+    }
+    return 0;
 }

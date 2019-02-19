@@ -257,8 +257,8 @@ protected:
     
     int startResourceTemplate( const ParserContext* context , size_t numItems ) override;
     int endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err) override;
-    int onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override;
-    int onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override;
+    //int onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override;
+    //int onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override;
     
     
     int OnValue(const ParserContext* context, uint64_t value)override;
@@ -280,10 +280,10 @@ protected:
     
     int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override;
     int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override;
-    int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc);
-    int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc);
+    int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc) override;
+    int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc)override;
     
-    int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc);
+    int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc)override;
 private:
     
     std::stack<std::string> _scopes;

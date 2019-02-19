@@ -7,6 +7,7 @@
 //
 
 #include <string>
+#include <iomanip>
 //#include <iostream>
 #include <sstream>
 #include "Decompiler.hpp"
@@ -25,6 +26,16 @@ public:
         
     }
     
+    void writeHexArg(uint32_t v)
+    {
+        content << "0x"<< std::uppercase << std::hex<< std::setw(8) << std::setfill('0') << v;
+    }
+    
+    void writeHexArg(uint64_t v)
+    {
+        content << "0x"<< std::uppercase<< std::hex<< std::setw(16) << std::setfill('0') << v;
+    }
+    
 
     void writeNumValue( uint64_t v)
     {
@@ -38,7 +49,52 @@ public:
         }
         else
         {
-            content << v;
+            content << std::hex << v;
+        }
+    }
+    void writeNumValue( uint32_t v)
+    {
+        if( v == 0)
+        {
+            content << "Zero";
+        }
+        else if (v==1)
+        {
+            content << "One";
+        }
+        else
+        {
+            content << std::hex << v;
+        }
+    }
+    void writeNumValue( uint16_t v)
+    {
+        if( v == 0)
+        {
+            content << "Zero";
+        }
+        else if (v==1)
+        {
+            content << "One";
+        }
+        else
+        {
+            content << std::hex << v;
+        }
+    }
+    void writeNumValue( uint8_t v)
+    {
+        if( v == 0)
+        {
+            content << "Zero";
+        }
+        else if (v==1)
+        {
+            content << "One";
+        }
+        else
+        {
+            content << std::hex << v;
         }
     }
     /*
@@ -63,6 +119,7 @@ public:
         
         return 0;
     }
+    /*
     int onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override
     {
         return 0;
@@ -71,6 +128,7 @@ public:
     {
         return 0;
     }
+     */
     int OnValue(const ParserContext* context, uint64_t value)override
     {
         
@@ -126,11 +184,21 @@ public:
     
     int startResourceTemplate( const ParserContext* context , size_t numItems ) override
     {
+        
+        content << " ResourceTemplate ()"  << std::endl;
+        indent();
+        content << "{" << std::endl;
+        incScope();
         return 0;
     }
     
     int endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err)override
     {
+        decScope();
+        indent();
+        content << "}) // ENDOF ressourceTemplate" << std::endl;
+        decScope();
+        
         return 0;
     }
     
@@ -172,15 +240,43 @@ public:
     {
         return 0;
     }
-    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const AddressSpaceDescriptor& desc) override
+    int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override
     {
-        return 0;
-    }
-    int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override
-    {
+        indent();content << "QWordMemory(SOME ARGS," << std::endl;
+        indent();writeHexArg(desc.addrSpaceGranularity);  content << "," << std::endl;
+        indent();writeHexArg(desc.addrRangeMin);  content << "," << std::endl;
+        indent();writeHexArg(desc.addrRangeMax);  content << "," << std::endl;
+        indent();writeHexArg(desc.addrTranslationOffset);  content << "," << std::endl;
+        indent();writeHexArg(desc.addrTranslationLength);  content << "," << std::endl;
+
+        indent();content << "SOME OTHER ARGS" << ")" << std::endl;
+        
         return 0;
     }
     
+    
+    
+    int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override
+    {
+        indent();content << "Memory32Fixed(SOME ARGS," << std::endl;
+        indent();writeHexArg(desc.rangeBaseAddr);  content << "," << std::endl;
+        indent();writeHexArg(desc.rangeLength);  content << "," << std::endl;
+        indent();content << ")" << std::endl;
+        return 0;
+    }
+    
+    int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc) override
+    {
+        return 0;
+    }
+    int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) override
+    {
+        return 0;
+    }
+    int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) override
+    {
+        return 0;
+    }
     
     void indent()
     {

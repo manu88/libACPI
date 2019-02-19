@@ -33,8 +33,8 @@ protected:
     virtual int startResourceTemplate( const ParserContext* context , size_t numItems ) = 0;
     virtual int endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err) = 0;
     
-    virtual int onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)= 0;
-    virtual int onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)= 0;
+    virtual int onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
+    virtual int onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     
     
     virtual int OnValue(const ParserContext* context, uint64_t value)= 0;
@@ -57,8 +57,10 @@ protected:
     
     
     virtual int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) = 0;
-    
     virtual int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) = 0;
+    virtual int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc) = 0;
+    virtual int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) = 0;
+    virtual int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) = 0;
     
 //
     AMLDecompiler &decomp;

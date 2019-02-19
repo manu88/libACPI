@@ -160,7 +160,7 @@ int DeviceTreeBuilder::endResourceTemplate(const ParserContext* context , size_t
 {
     return 0;
 }
-
+/*
 int DeviceTreeBuilder::onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
 {
     switch (itemType)
@@ -198,7 +198,7 @@ int DeviceTreeBuilder::onSmallItem(const ParserContext* context, SmallResourceIt
     }
     return 0;
 }
-
+*/
 
 
 int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACPIOperationRegion* reg)
