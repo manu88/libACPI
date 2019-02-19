@@ -212,11 +212,7 @@ AMLParserError Parse_MemoryRangeDescriptor32(AMLDecompiler*decomp,const ParserCo
     return AMLParserError_None;
 }
 
-AMLParserError Parse_FixedLocationMemoryRangeDescriptor32(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
-{
-    assert(0);
-    return AMLParserError_None;
-}
+
 
 
 AMLParserError Parse_ExtendedIRQDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)

@@ -92,6 +92,16 @@ static nlohmann::json serializeDWordAddressSpaceDescriptor(const DWordAddressSpa
     return ret;
 }
 
+static nlohmann::json serializeMemoryRangeDescriptor32(const MemoryRangeDescriptor32& desc)
+{
+    nlohmann::json ret;
+    
+    ret["rangeBaseAddr"] = desc.rangeBaseAddr;
+    ret["rangeLength"] = desc.rangeLength;
+    ret["writeStatus"] = desc.writeStatus;
+    
+    return ret;
+}
 static nlohmann::json serializeWordAddressSpaceDescriptor(const WordAddressSpaceDescriptor& desc)
 {
     nlohmann::json ret;
@@ -137,7 +147,9 @@ static nlohmann::json serializeResourseTemplate( const ResourceTemplate&resTempl
                 
             case Type_QWordAddressSpaceDescriptor:
                 it["value"] = serializeQWordAddressSpaceDescriptor(item.value.qwordAddressSpaceDescriptor);
-                
+                break;
+            case Type_MemoryRangeDescriptor32:
+                it["value"] = serializeMemoryRangeDescriptor32(item.value.memoryRangeDesc32);
                 break;
             default:
                 assert(0);

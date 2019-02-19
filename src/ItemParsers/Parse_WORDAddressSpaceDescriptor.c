@@ -180,3 +180,40 @@ AMLParserError Parse_QWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Pars
     
     return AMLParserError_None;
 }
+
+
+AMLParserError Parse_FixedLocationMemoryRangeDescriptor32(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    MemoryRangeDescriptor32 desc;
+    
+    desc.writeStatus = (buffer[0] >> 7) & 1U;
+    
+    union Conv32
+    {
+        uint8_t b[4];
+        uint32_t v;
+    }c;
+    
+    
+    c.b[0] = buffer[1];
+    c.b[1] = buffer[2];
+    c.b[2] = buffer[3];
+    c.b[3] = buffer[4];
+    
+    desc.rangeBaseAddr = c.v;
+    
+    c.b[0] = buffer[5];
+    c.b[1] = buffer[6];
+    c.b[2] = buffer[7];
+    c.b[3] = buffer[8];
+    
+    desc.rangeLength = c.v;
+    
+    if(decomp->callbacks.onLargeItem)
+    {
+        decomp->callbacks.onLargeItem(decomp , context ,
+                                      LargeResourceItemsType_MemoryRangeDescriptor32,
+                                      (const uint8_t*) &desc , sizeof(MemoryRangeDescriptor32));
+    }
+    return AMLParserError_None;
+}

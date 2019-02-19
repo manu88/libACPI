@@ -57,11 +57,12 @@ static size_t ItemClassGetBufferSize(const ItemClass* itemClass,const uint8_t*bu
 
 static const ItemClass items[] =
 {
-    MakeItemClass(0x47 , "IOPort",             7,    0), // 6.4.2.5 I/O Port Descriptor
-    MakeItemClass(0x79 , "EndTag",             1,    0), // 6.4.2.5 I/O Port Descriptor
-    MakeItemClass(0x88 , "WordAddressSpace" ,  0x0D, 1), // 6.4.3.5.3 Word Address Space Descriptor
-    MakeItemClass(0x87 , "DWordAddressSpace" , 23  , 1), // 6.4.3.5.2 DWord Address Space Descriptor
-    MakeItemClass(0x8A , "QWordAddressSpace" , 43  , 1), // 6.4.3.5.1 QWord Address Space Descriptor
+    MakeItemClass(0x47 , "IOPort",                     7,    0), // 6.4.2.5     I/O Port Descriptor
+    MakeItemClass(0x79 , "EndTag",                     1,    0), // 6.4.2.8     End Tag
+    MakeItemClass(0x86 , "32BitFixedMemoryRangeDesc" , 9   , 1), // 6.4.3.4     32-Bit Fixed Memory Range Descriptor
+    MakeItemClass(0x87 , "DWordAddressSpace" ,         23  , 1), // 6.4.3.5.2   DWord Address Space Descriptor
+    MakeItemClass(0x88 , "WordAddressSpace" ,          0x0D, 1), // 6.4.3.5.3   Word Address Space Descriptor
+    MakeItemClass(0x8A , "QWordAddressSpace" ,         43  , 1), // 6.4.3.5.1   QWord Address Space Descriptor
     
 };
 
