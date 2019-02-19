@@ -144,7 +144,9 @@ public:
         
         if (isEisaId(value))
         {
-            content << "EisaId (\"" << GetEisaId(value) << "\")";
+            char eisaid[8] = {0};
+            assert(getEisaidString(value, eisaid));
+            content << "EisaId (\"" << eisaid << "\")";
         }
         else
         {

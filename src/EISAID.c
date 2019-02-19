@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+#include <ctype.h> // isprint
 #include <stdio.h> // snprintf
 #include <stdlib.h> // strtoll
 #include <string.h> // strlen
@@ -23,6 +23,8 @@
 
 int getEisaidString( uint64_t value , char* toBuff)
 {
+    if (value == 0)
+        return 0;
     /*
      let vendor="$1 & 0xFFFF"
      let device="$1 >> 16"
@@ -110,8 +112,26 @@ const char* GetEisaId( uint64_t val)
     
     return NULL;
 }
+
+int isUpperCase(int ch)
+{
+    return (ch >= 'A' && ch <= 'Z');
+}
 int isEisaId( uint64_t val)
 {
+    char buf[8] = {0};
+    if (getEisaidString(val, buf)
+        &&  isUpperCase(buf[0]) &&  isUpperCase(buf[1]) &&  isUpperCase(buf[2])
+        )
+    {
+        uint64_t retVal = 0;
+        if (getValueFromEisaidString(buf, &retVal) && retVal == val)
+        {
+            
+            return 1;
+        }
+    }
+    return 0;
     return GetEisaId(val) != NULL;
     /*
     switch (val)

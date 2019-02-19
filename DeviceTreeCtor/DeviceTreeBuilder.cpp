@@ -109,7 +109,18 @@ static void printDev(TreeNode* node ,int indent)
         
         if (name.id == "_HID")
         {
-            printf("%s:%s",name.id.c_str() ,isEisaId(name.value64)? GetEisaId(name.value64): std::to_string(name.value64).c_str() );
+            if (isEisaId(name.value64) )
+            {
+                char eisaid[8] = {0};
+                assert(getEisaidString(name.value64, eisaid));
+                printf("%s:%s",name.id.c_str() ,eisaid);
+            }
+            else
+            {
+                printf("%s:0x%llx",name.id.c_str() ,name.value64);
+            }
+            
+            //printf("%s:%s",name.id.c_str() ,isEisaId(name.value64)? GetEisaId(name.value64): std::to_string(name.value64).c_str() );
         }
         else
         {

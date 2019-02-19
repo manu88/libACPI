@@ -25,6 +25,7 @@ static void WorkingTests()
 {
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0103));
         assert(getEisaidString(PNP0103 , eisaid));
         assert(strcmp(eisaid, "PNP0103") == 0);
         
@@ -34,6 +35,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0A03));
         assert(getEisaidString(PNP0A03 , eisaid));
         assert(strcmp(eisaid, "PNP0A03") == 0);
         
@@ -43,6 +45,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0A01));
         assert(getEisaidString(PNP0A01 , eisaid));
         assert(strcmp(eisaid, "PNP0A01") == 0);
         
@@ -52,6 +55,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0B00));
         assert(getEisaidString(PNP0B00 , eisaid));
         assert(strcmp(eisaid, "PNP0B00") == 0);
         
@@ -61,6 +65,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0303));
         assert(getEisaidString(PNP0303 , eisaid));
         assert(strcmp(eisaid, "PNP0303") == 0);
         
@@ -70,6 +75,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0F13));
         assert(getEisaidString(PNP0F13 , eisaid));
         assert(strcmp(eisaid, "PNP0F13") == 0);
         
@@ -79,6 +85,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0700));
         assert(getEisaidString(PNP0700 , eisaid));
         assert(strcmp(eisaid, "PNP0700") == 0);
         
@@ -88,6 +95,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0400));
         assert(getEisaidString(PNP0400 , eisaid));
         assert(strcmp(eisaid, "PNP0400") == 0);
         
@@ -97,6 +105,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0501));
         assert(getEisaidString(PNP0501 , eisaid));
         assert(strcmp(eisaid, "PNP0501") == 0);
         
@@ -106,6 +115,7 @@ static void WorkingTests()
     }
     {
         char eisaid[8] = {0};
+        assert(isEisaId(PNP0C0F));
         assert(getEisaidString(PNP0C0F , eisaid));
         assert(strcmp(eisaid, "PNP0C0F") == 0);
         
@@ -129,6 +139,8 @@ static void NotWorkingTests()
 
 void Eisaid_Tests()
 {
+    assert(isEisaId(0) == 0);
+    assert(isEisaId(1) == 0);
     NotWorkingTests();
     WorkingTests();
     

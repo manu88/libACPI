@@ -38,9 +38,10 @@ int getEisaidString( uint64_t value , char* toBuff);
     
 // No null pointers !
 int getValueFromEisaidString(const char* buffer , uint64_t* toVal);
-    
+
+
 int isEisaId( uint64_t val);
-const char* GetEisaId( uint64_t val);
+//const char* GetEisaId( uint64_t val);
     
     
     
