@@ -67,6 +67,8 @@ typedef enum
    CMOS                 =  5,
    PCIBARTarget         =  6,
     
+    //In addition, OEMs may define Operation Regions types 0x80 to 0xFF.
+    
 } ACPIRegionType;
 
 typedef enum
@@ -281,8 +283,19 @@ typedef struct
 
 typedef struct
 {
-    char name[5];
-    
+    char name[5]; // 4 + NULL byte
+    uint8_t accessType:4;
+    /*
+     0 AnyAcc
+     1 ByteAcc
+     2 WordAcc
+     3 DWordAcc
+     4 QWordAcc
+     5 BufferAcc
+     6 Reserved
+     */
+    uint8_t lockRule:1; /* 0 NoLock 1 Lock */
+    uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
     
 } ACPIField;
 /*

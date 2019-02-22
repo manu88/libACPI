@@ -171,59 +171,32 @@ int DeviceTreeBuilder::endResourceTemplate(const ParserContext* context , size_t
 {
     return 0;
 }
-/*
-int DeviceTreeBuilder::onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
-{
-    switch (itemType)
-    {
-        case LargeResourceItemsType_MemoryRangeDescriptor32:
-            assert(bufferSize == sizeof(MemoryRangeDescriptor32));
-            return onMemoryRangeDescriptor32(context, reinterpret_cast<const MemoryRangeDescriptor32&>(*buffer));
-            
-        case LargeResourceItemsType_QWORDAddressSpaceDescriptor:
-            return onQWORDAddressSpaceDescriptor(context, reinterpret_cast<const QWordAddressSpaceDescriptor&>(*buffer));
-            
-        case LargeResourceItemsType_WORDAddressSpaceDescriptor:
-            return onWORDAddressSpaceDescriptor(context, reinterpret_cast<const WordAddressSpaceDescriptor&>(*buffer));
-            
-        case LargeResourceItemsType_DWORDAddressSpaceDescriptor:
-            return onDWORDAddressSpaceDescriptor(context, reinterpret_cast<const DWordAddressSpaceDescriptor&>(*buffer));
-        default:
-            assert(0);
-            break;
-    }
-    return 0;
-}
-
-int DeviceTreeBuilder::onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
-{
-    switch (itemType)
-    {
-        case SmallResourceItemsType_IOPortDescriptor:
-            
-            return onIOPortDescriptor(context, reinterpret_cast<const IOPortDescriptor&>(*buffer));
-            
-        default:
-            assert(0);
-            break;
-    }
-    return 0;
-}
-*/
-
 
 int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACPIOperationRegion* reg)
 {
     
+    
+    currentNode->_opRegions.push_back(*reg);
     return 0;
 }
 
 int DeviceTreeBuilder::onField(const ParserContext* context, const ACPIField*field)
 {
-
+    currentNode->_fields.push_back(*field);
     return 0;
 }
 
+int DeviceTreeBuilder::startMethod(const ParserContext* context, const char* name)
+{
+    
+    return 0;
+}
+
+int DeviceTreeBuilder::endMethod(const ParserContext* context, const char* name)
+{
+    
+    return 0;
+}
 
 
 int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
@@ -296,15 +269,7 @@ int DeviceTreeBuilder::EndName(const ParserContext* context, const char* name)
     
     return 0;
 }
-int DeviceTreeBuilder::startMethod(const ParserContext* context, const char* name)
-{
 
-    return 0;
-}
-int DeviceTreeBuilder::endMethod(const ParserContext* context, const char* name)
-{
-    return 0;
-}
 
 
 int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc)

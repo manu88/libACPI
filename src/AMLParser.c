@@ -227,21 +227,36 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         {
             const uint8_t* namePos = buffer;
             
+            
+            
             ACPIOperationRegion reg;
             assert(IsName(*namePos));
             
             ExtractName(namePos, 4, reg.name);
             reg.name[4] = 0;
-            //printf("OpRegion name '%.4s'\n" , reg.name);
-            *advancedBy +=4;
             
+            *advancedBy +=4;
+            /*
+            for(int i=0;i<8;i++)
+            {
+                if (i%8==0)
+                    printf("\n");
+                
+                printf(" 0x%x ", buffer[ *advancedBy +i]);
+            }
+            
+            printf("\n");
+             */
             /*
              uint64_t regSpaceVal = 0;
              uint64_t regOffsetVal = 0;
              uint64_t regLenVal = 0;
              */
-            const uint8_t* regSpace = buffer + *advancedBy;
-            *advancedBy += GetInteger(regSpace,bufSize-*advancedBy, &reg.space);
+            reg.space = buffer[ *advancedBy ];
+            *advancedBy +=1;
+            
+            
+            //*advancedBy += GetInteger(regSpace,bufSize-*advancedBy, &reg.space);
             
             const uint8_t* regOffset = buffer +  *advancedBy;
             *advancedBy += GetInteger(regOffset,bufSize-*advancedBy, &reg.offset);

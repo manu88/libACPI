@@ -1,0 +1,57 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 2,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": {
+      "_SB": {
+        "Children": {
+
+          "PCI1": 
+          {
+            "Fields": {
+              "PCIC": {
+                "accessType": 0,
+                "lockRule": 0,
+                "updateRule": 0
+              }
+            },
+            
+          "OperationRegions": 
+          {
+            "PCIC": 
+            {
+              "length": 4,
+              "offset": 0,
+              "space": 2
+            }
+          },
+            "_HID": {
+              "eisaid": true,
+              "type": 0,
+              "value": 19032334
+            },
+            "CRES": {
+              "type": 10,
+              "value": [
+                {
+                  "type": 12,
+                  "value": {
+                    "rangeBaseAddr": 4275044352,
+                    "rangeLength": 1024,
+                    "writeStatus": 0
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

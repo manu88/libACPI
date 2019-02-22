@@ -39,6 +39,7 @@ enum ValueType
     Type_IOPortDescriptor,
     Type_DWordAddressSpaceDescriptor,
     Type_QWordAddressSpaceDescriptor,
+    //Type_OperationRegion
     
 };
 
@@ -159,15 +160,16 @@ struct NameDeclaration
     std::vector<uint8_t> rawBuffer; // type = Type_Buffer
 };
 
-
+/*
 struct Device
 {
     std::string id;
     std::string scope;
     
     std::vector<NameDeclaration> _names;
+    
 };
-
+*/
 struct TreeNode
 {
     
@@ -209,6 +211,8 @@ struct TreeNode
     
     
     std::vector<NameDeclaration> _names;
+    std::vector<ACPIOperationRegion> _opRegions;
+    std::vector<ACPIField> _fields;
 };
 
 struct DeviceTree

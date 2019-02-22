@@ -113,7 +113,7 @@ int isEisaId( uint64_t val)
         }
     }
     return 0;
-    return GetEisaId(val) != NULL;
+    //return GetEisaId(val) != NULL;
     /*
     switch (val)
     {

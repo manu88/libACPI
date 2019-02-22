@@ -568,6 +568,16 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             break;
         case ACPIObject_Type_OperationRegion:
         {
+            for(int i=0;i<bufferSize;i++)
+            {
+                if (i%8==0)
+                    printf("\n");
+                
+                printf(" 0x%x ", bufferPos[i]);
+            }
+            
+            printf("\n");
+            
             assert( bufferSize == sizeof(ACPIOperationRegion));
             assert(bufferPos);
             const ACPIOperationRegion* reg = (const ACPIOperationRegion*)  bufferPos;
@@ -587,6 +597,11 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             {
                 ExtractName(bufferPos, 4, field.name);
                 field.name[4] = 0;
+                
+                
+                
+                const uint8_t bytes = bufferPos[ 4];
+                assert(bytes < 128); // bit7 : Reserved (must be 0)
                 decomp->callbacks.onField(decomp ,&ctx , &field);
             }
             

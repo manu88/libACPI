@@ -242,6 +242,26 @@ static nlohmann::json serializeName( const NameDeclaration&name)
     
     return res;
 }
+static nlohmann::json serializeField( const ACPIField&field)
+{
+    nlohmann::json ret;
+    
+    ret["accessType"] = field.accessType;
+    ret["lockRule"] = field.lockRule;
+    ret["updateRule"] = field.updateRule;
+    
+    return ret;
+}
+static nlohmann::json serializeOperationRegion( const ACPIOperationRegion&reg)
+{
+    nlohmann::json ret;
+    
+    
+    ret["space"] = reg.space;
+    ret["offset"] = reg.offset;
+    ret["length"] = reg.length;
+    return ret;
+}
 
 static nlohmann::json serializeNode( const TreeNode&node)
 {
@@ -255,6 +275,15 @@ static nlohmann::json serializeNode( const TreeNode&node)
     for( const auto &child : node.children)
     {
         res["Children"][child.get()->id] = serializeNode(*child);
+    }
+    
+    for(const auto &opReg : node._opRegions)
+    {
+        res["OperationRegions"][opReg.name] = serializeOperationRegion(opReg);
+    }
+    for( const auto &field : node._fields)
+    {
+        res["Fields"][field.name] = serializeField(field);
     }
     
     return res;
