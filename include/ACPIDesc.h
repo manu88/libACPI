@@ -281,9 +281,7 @@ typedef struct
     uint8_t serializeFlag:1;
     
     
-    // bit 0-2: ArgCount (0-7)
-    // bit 3: SerializeFlag (0 not serialized , 1 serialized
-    // bit 4-7: SyncLevel (0x00-0x0f)
+    
     
     
 } ACPIMethod;

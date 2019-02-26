@@ -110,18 +110,18 @@ decomp(decomp)
         return self->onField(context, field);
     };
     
-    decomp.callbacks.startMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIMethod* method) -> int
+    decomp.callbacks.onMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIMethod* method) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->startMethod(context, method);
+        return self->onMethod(context, method);
     };
-    
+    /*
     decomp.callbacks.endMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
         return self->endMethod(context, location);
     };
-    
+    */
     decomp.callbacks.onSmallItem = [] (AMLDecompiler*_decomp,const ParserContext* context,
                                        SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize) -> int
     {

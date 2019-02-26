@@ -523,6 +523,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             if(   ctx.nextOp !=  AML_QWordPrefix
                && ctx.nextOp !=  AML_OneOp
                && ctx.nextOp !=  AML_ZeroOp
+               && ctx.nextOp !=  AML_OnesOp
                && ctx.nextOp !=  AML_DWordPrefix
                && ctx.nextOp !=  AML_BufferOp
                && ctx.nextOp !=  AML_BytePrefix
@@ -617,18 +618,24 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
             
             const uint8_t methodFlags = bufferPos[nameSize];
+            // bit 0-2: ArgCount (0-7)
+            // bit 3: SerializeFlag (0 not serialized , 1 serialized
+            // bit 4-7: SyncLevel (0x00-0x0f)
             
+            method.argCount      = methodFlags & 0b00000111;
+            method.serializeFlag = methodFlags & 0b00001000;
+            method.syncLevel     = methodFlags & 0b11110000;
             
-            
-            if (decomp->callbacks.startMethod)
+            if (decomp->callbacks.onMethod)
             {
-                decomp->callbacks.startMethod(decomp ,&ctx , &method);
+                decomp->callbacks.onMethod(decomp ,&ctx , &method);
             }
-            
+            /*
             if (decomp->callbacks.endMethod)
             {
                 decomp->callbacks.endMethod(decomp ,&ctx , &method);
             }
+             */
         }
             break;
         case ACPIObject_Type_Root:

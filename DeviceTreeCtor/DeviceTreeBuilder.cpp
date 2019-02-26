@@ -80,6 +80,7 @@ AMLDecompilerInterface(decomp),
 state(BuilderState::Ready)
 {
     decomp.parserPolicy.assertOnError = 1;
+    _scopes.push("");
 }
 
 static void printDefBlock( const ACPIDefinitionBlock& defBlock)
@@ -175,30 +176,25 @@ int DeviceTreeBuilder::endResourceTemplate(const ParserContext* context , size_t
 int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACPIOperationRegion* reg)
 {
     
-    
-    currentNode->_opRegions.push_back(*reg);
+    assert(!currentNode.empty());
+    currentNode.top()->_opRegions.push_back(*reg);
+    //currentNode->_opRegions.push_back(*reg);
     return 0;
 }
 
 int DeviceTreeBuilder::onField(const ParserContext* context, const ACPIField*field)
 {
-    currentNode->_fields.push_back(*field);
+    currentNode.top()->_fields.push_back(*field);
     return 0;
 }
 
-int DeviceTreeBuilder::startMethod(const ParserContext* context, const ACPIMethod* method)
+int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod* method)
 {
+    assert(!currentNode.empty());
     assert(method->name[4] == 0);
-    currentNode->_methods.push_back(*method);
+    currentNode.top()->_methods.push_back(*method);
     return 0;
 }
-
-int DeviceTreeBuilder::endMethod(const ParserContext* context, const char* name)
-{
-    
-    return 0;
-}
-
 
 int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
 {
@@ -213,7 +209,7 @@ int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize
 
 int DeviceTreeBuilder::StartDevice(const ParserContext* context, const ACPIDevice* device)
 {
-    currentNode = _deviceTree.getNodeForPathAndCreateIfNeeded(device->name, _scopes.empty()? "" :  _scopes.top());
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device->name, _scopes.empty()? "" :  _scopes.top()) );
     //printf("Start Device named '%s' current scope '%s' -> %s \n" , device->name , _scopes.top().c_str() , currentNode? "found":"Not found" );
     
     //assert(node);
@@ -223,10 +219,10 @@ int DeviceTreeBuilder::StartDevice(const ParserContext* context, const ACPIDevic
 int DeviceTreeBuilder::StartScope(const ParserContext* context, const char* location)
 {
     
-    currentNode = _deviceTree.getNodeForPathAndCreateIfNeeded(location, _scopes.empty()? "" :  _scopes.top());
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(location, _scopes.empty()? "" :  _scopes.top()) );
     
     _scopes.push( (_scopes.empty()? "" :  _scopes.top() )+  location);
-    assert(currentNode);
+    assert(!currentNode.empty());
 
     return 0;
 }
@@ -240,7 +236,8 @@ int DeviceTreeBuilder::EndScope(const ParserContext* context, const char* locati
 
 int DeviceTreeBuilder::EndDevice(const ParserContext* context, const ACPIDevice* device)
 {
-    currentNode = nullptr;
+    currentNode.pop();
+    //currentNode = nullptr;
     return 0;
 }
 
@@ -250,11 +247,11 @@ int DeviceTreeBuilder::StartName(const ParserContext* context, const char* name)
 
     state = WaitingNameValue;
     
-    assert(currentNode);
+    assert(!currentNode.empty());
     
     
-    currentNode->_names.push_back(NameDeclaration(name) );
-    currentName = &currentNode->_names.back();
+    currentNode.top()->_names.push_back(NameDeclaration(name) );
+    currentName = &currentNode.top()->_names.back();
     
     return 0;
 }
@@ -363,5 +360,8 @@ int DeviceTreeBuilder::onWORDAddressSpaceDescriptor( const ParserContext* contex
 
 AMLParserError DeviceTreeBuilder::start(const uint8_t* buffer , size_t size)
 {
+    
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded("" ,  "") );
+    
     return AMLDecompilerStart(&decomp, buffer, size);
 }

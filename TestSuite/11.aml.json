@@ -1,0 +1,42 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 2,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": 
+    {
+      "EC0": 
+      {
+        "Methods": 
+        {
+          "_REG": 
+          {
+            "argCount": 2,
+            "serializeFlag": 0,
+            "syncLevel": 0
+          }
+        },
+        "REGC": 
+        {
+          "eisaid": false,
+          "type": 0,
+          "value": 18446744073709551615
+        }
+      }
+    },
+    "Methods": 
+    {
+      "ECAV": 
+      {
+        "argCount": 0,
+        "serializeFlag": 0,
+        "syncLevel": 0
+      }
+    }
+  }
+}

@@ -281,8 +281,8 @@ protected:
     int EndDevice(const ParserContext* context, const ACPIDevice* name)override;
     int StartName(const ParserContext* context, const char* name)override;
     int EndName(const ParserContext* context, const char* name)override;
-    int startMethod(const ParserContext* context, const ACPIMethod* method)override;
-    int endMethod(const ParserContext* context, const char* name)override;
+    int onMethod(const ParserContext* context, const ACPIMethod* method)override;
+    
     
     int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override;
     int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override;
@@ -295,10 +295,7 @@ private:
     std::stack<std::string> _scopes;
     DeviceTree _deviceTree;
     
-    
-    
-
-    TreeNode* currentNode = nullptr;
+    std::stack<TreeNode*> currentNode;// = nullptr;
     NameDeclaration* currentName = nullptr;
     
     

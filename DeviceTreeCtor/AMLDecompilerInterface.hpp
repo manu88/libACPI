@@ -53,8 +53,8 @@ protected:
     virtual int StartName(const ParserContext* context, const char* name)= 0;
     virtual int EndName(const ParserContext* context, const char* name)= 0;
     
-    virtual int startMethod(const ParserContext* context, const ACPIMethod* method)= 0;
-    virtual int endMethod(const ParserContext* context, const char* name)= 0;
+    virtual int onMethod(const ParserContext* context, const ACPIMethod* method)= 0;
+    //virtual int endMethod(const ParserContext* context, const char* name)= 0;
     
     
     virtual int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) = 0;
