@@ -263,6 +263,17 @@ static nlohmann::json serializeOperationRegion( const ACPIOperationRegion&reg)
     return ret;
 }
 
+static nlohmann::json serializeMethod( const ACPIMethod& method)
+{
+    nlohmann::json ret;
+    
+    ret["argCount"] = method.argCount;
+    ret["syncLevel"] = method.syncLevel;
+    ret["serializeFlag"] = method.serializeFlag;
+    
+    return ret;
+}
+
 static nlohmann::json serializeNode( const TreeNode&node)
 {
     nlohmann::json res;
@@ -284,6 +295,11 @@ static nlohmann::json serializeNode( const TreeNode&node)
     for( const auto &field : node._fields)
     {
         res["Fields"][field.name] = serializeField(field);
+    }
+    
+    for( const auto &method : node._methods)
+    {
+        res["Methods"][method.name] = serializeMethod(method);
     }
     
     return res;

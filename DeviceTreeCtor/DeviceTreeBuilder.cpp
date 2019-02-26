@@ -186,9 +186,10 @@ int DeviceTreeBuilder::onField(const ParserContext* context, const ACPIField*fie
     return 0;
 }
 
-int DeviceTreeBuilder::startMethod(const ParserContext* context, const char* name)
+int DeviceTreeBuilder::startMethod(const ParserContext* context, const ACPIMethod* method)
 {
-    
+    assert(method->name[4] == 0);
+    currentNode->_methods.push_back(*method);
     return 0;
 }
 

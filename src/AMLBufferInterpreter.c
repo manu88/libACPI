@@ -128,7 +128,8 @@ AMLParserError DecodeBufferObject(const uint8_t* buffer , size_t bufferSize, AML
     }
     else
     {
-        assert(0);
+        //assert(0);
+        results->numItems = 0; // this is a plain buffer
         //printf("Type for 0x%x Not found \n" , buffer[0] );
     }
     

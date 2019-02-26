@@ -21,7 +21,13 @@
                 "updateRule": 0
               }
             },
-            
+            "Methods": {
+              "_S1D": {
+                "argCount": 0,
+                "serializeFlag": 0,
+                "syncLevel": 0
+              }
+            },
           "OperationRegions": 
           {
             "PCIC": 

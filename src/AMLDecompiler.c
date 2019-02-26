@@ -568,6 +568,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             break;
         case ACPIObject_Type_OperationRegion:
         {
+            /*
             for(int i=0;i<bufferSize;i++)
             {
                 if (i%8==0)
@@ -577,7 +578,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             }
             
             printf("\n");
-            
+            */
             assert( bufferSize == sizeof(ACPIOperationRegion));
             assert(bufferPos);
             const ACPIOperationRegion* reg = (const ACPIOperationRegion*)  bufferPos;
@@ -609,14 +610,24 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             break;
         case ACPIObject_Type_Method:
         {
+            ACPIMethod method = {0};
+            
+            const uint8_t nameSize = ExtractName(bufferPos, 4, method.name);
+            method.name[4] = 0;
+            
+            
+            const uint8_t methodFlags = bufferPos[nameSize];
+            
+            
+            
             if (decomp->callbacks.startMethod)
             {
-                decomp->callbacks.startMethod(decomp ,&ctx , NULL);
+                decomp->callbacks.startMethod(decomp ,&ctx , &method);
             }
             
             if (decomp->callbacks.endMethod)
             {
-                decomp->callbacks.endMethod(decomp ,&ctx , NULL);
+                decomp->callbacks.endMethod(decomp ,&ctx , &method);
             }
         }
             break;

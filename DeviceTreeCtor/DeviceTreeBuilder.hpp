@@ -95,6 +95,7 @@ struct ResourceTemplate
     std::vector<RessourceItem> items;
 };
 
+
 struct NameDeclaration
 {
     NameDeclaration(const std::string& n):
@@ -213,6 +214,7 @@ struct TreeNode
     std::vector<NameDeclaration> _names;
     std::vector<ACPIOperationRegion> _opRegions;
     std::vector<ACPIField> _fields;
+    std::vector<ACPIMethod> _methods;
 };
 
 struct DeviceTree
@@ -279,7 +281,7 @@ protected:
     int EndDevice(const ParserContext* context, const ACPIDevice* name)override;
     int StartName(const ParserContext* context, const char* name)override;
     int EndName(const ParserContext* context, const char* name)override;
-    int startMethod(const ParserContext* context, const char* name)override;
+    int startMethod(const ParserContext* context, const ACPIMethod* method)override;
     int endMethod(const ParserContext* context, const char* name)override;
     
     int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override;

@@ -73,7 +73,7 @@ typedef struct
     int (*StartName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
-    int (*startMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    int (*startMethod)(AMLDecompiler* ,const ParserContext* context, const ACPIMethod* method);
     int (*endMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
 } AMLDecompilerCallbacks;
