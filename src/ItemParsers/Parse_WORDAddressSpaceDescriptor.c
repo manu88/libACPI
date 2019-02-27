@@ -24,7 +24,10 @@ AMLParserError Parse_WORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Parse
     WordAddressSpaceDescriptor desc = {0};
     
     desc.ressourceType     = buffer[0];
-    desc.generalFlags      = buffer[1];
+    
+    desc.generalFlags = buffer[1];
+    
+    
     desc.typeSpecificFlags = buffer[2];
     
     
@@ -71,7 +74,7 @@ AMLParserError Parse_DWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Pars
 {
     DWordAddressSpaceDescriptor desc = {0};
     
-    desc.ressourceType     = buffer[0];
+    desc.resourceType     = buffer[0];
     desc.generalFlags      = buffer[1];
     desc.typeSpecificFlags = buffer[2];
     
@@ -129,9 +132,29 @@ AMLParserError Parse_QWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Pars
 {
     QWordAddressSpaceDescriptor desc;
     
-    desc.ressourceType     = buffer[0];
+    desc.resourceType = buffer[0];
+
+    
+    
     desc.generalFlags      = buffer[1];
+    
+    assert((desc.generalFlags & 0b11110000) == 0);
+    // bits 7_4 are reserved and bust be zero
+    
+    desc.maf        = (desc.generalFlags & 0b00001000)? 1:0;
+    desc.mif        = (desc.generalFlags & 0b00000100)? 1:0;
+    desc.decodeType = (desc.generalFlags & 0b00000010)? 1:0;
+    desc.isConsumer = (desc.generalFlags & 0b00000001)? 1:0;
+    
     desc.typeSpecificFlags = buffer[2];
+    
+    
+    assert((desc.typeSpecificFlags & 0b11000000) == 0); // must be zero
+    
+    desc.specificFlags.TTP = (desc.typeSpecificFlags & 0b00100000)? 1:0;
+    desc.specificFlags.MTP = desc.typeSpecificFlags & 0b00011000;
+    desc.specificFlags.MEM = desc.typeSpecificFlags & 0b00000110;
+    desc.specificFlags.RW =  (desc.typeSpecificFlags & 0b00000001)? 1:0;
     
     
     union WordConv

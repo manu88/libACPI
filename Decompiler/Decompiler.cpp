@@ -8,13 +8,30 @@
 
 #include <string>
 #include <iomanip>
+#include <vector>
 //#include <iostream>
 #include <sstream>
 #include "Decompiler.hpp"
 #include "AMLDecompilerInterface.hpp"
 #include "EISAID.h"
 
-
+static bool isString(const uint8_t* buffer,size_t bufferSize )
+{
+    assert(bufferSize);
+    
+    if ( buffer[bufferSize-1] != 0)
+        return false;
+    
+    for(size_t i = 0;i< bufferSize-1;i++)
+    {
+        if (isprint(  buffer[i])  == 0)
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
 
 
 class DecompilerImpl : public AMLDecompilerInterface
@@ -56,6 +73,10 @@ public:
         else if (v==1)
         {
             content << "One";
+        }
+        else if (v==0xFFFFFFFFFFFFFFFF)
+        {
+            content << "Ones";
         }
         else
         {
@@ -169,6 +190,40 @@ public:
     }
     int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override
     {
+        
+        
+        content << "Buffer(";
+        
+        if (isString(buffer, bufferSize))
+        {
+            content << ")";
+            content << "{\"";
+            content << (const char*) buffer;
+            content << "\"";
+        }
+        else
+        {
+            content << std::to_string(bufferSize) << ")";
+            content << " ";
+            content << "{";
+            
+            bool first = true;
+            for( size_t i=0; i<bufferSize;i++)
+            {
+                if (!first)
+                {
+                    content << ",";
+                }
+                content << "0x" << std::hex <<(int) buffer[i];
+                //writeHexArg(buffer[i]);
+                
+                if (first)
+                    first = false;
+            }
+        }
+        content << "}";
+        
+        EndName();
         return 0;
     }
     int StartScope(const ParserContext* context, const char* location)override
@@ -237,28 +292,48 @@ public:
         content << "Name" << "(" << name << ",";
         return 0;
     }
-    int EndName(const ParserContext* context, const char* name)override
+    
+    void EndName()
     {
+        content << ")\n";
+        decScope();
+    }
+    
+    int onMethod(const ParserContext* context, const ACPIMethod* method) override
+    {
+        incScope();
+        indent();
+        content << "Method" << "(" << method->name << ",";
+        content << std::to_string( method->argCount );
+        content << ")" << "\n";
+        decScope();
         return 0;
     }
-    int startMethod(const ParserContext* context, const char* name)override
-    {
-        return 0;
-    }
-    int endMethod(const ParserContext* context, const char* name)override
-    {
-        return 0;
-    }
+    
     int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override
     {
-        indent();content << "QWordMemory(SOME ARGS," << std::endl;
+        indent();content << "QWordMemory(" ;
+        
+        content << (desc.isConsumer == 0? " ResourceProducer,":"");
+        content << (desc.decodeType == 0? " PosDecode,":"");
+        content << (desc.mif? " MinFixed,":"");
+        content << (desc.maf? " MaxFixed,":"");
+        content << (desc.specificFlags.MEM== 2? " Cacheable,":"");
+        content << (desc.specificFlags.RW== 1? " ReadWrite,":"");
+        content << std::endl;
+        
         indent();writeHexArg(desc.addrSpaceGranularity);  content << "," << std::endl;
         indent();writeHexArg(desc.addrRangeMin);  content << "," << std::endl;
         indent();writeHexArg(desc.addrRangeMax);  content << "," << std::endl;
         indent();writeHexArg(desc.addrTranslationOffset);  content << "," << std::endl;
         indent();writeHexArg(desc.addrTranslationLength);  content << "," << std::endl;
 
-        indent();content << "SOME OTHER ARGS" << ")" << std::endl;
+        indent();
+        content << ",, _Y01, ";
+        content << (desc.specificFlags.TTP== 0? " AddressRangeMemory,":"");
+        content << (desc.specificFlags.MTP== 0? " TypeStatic":"");
+        
+        content <<  ")" << std::endl;
         
         return 0;
     }

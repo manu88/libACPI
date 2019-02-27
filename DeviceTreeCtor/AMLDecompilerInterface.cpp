@@ -75,11 +75,13 @@ decomp(decomp)
         return self->StartName(context, name);
     };
     
+    /*
     decomp.callbacks.EndName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
         return self->EndName(context, name);
     };
+     */
     
     decomp.callbacks.StartScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
     {

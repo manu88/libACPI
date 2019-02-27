@@ -71,7 +71,7 @@ typedef struct
     int (*EndDevice)(AMLDecompiler* ,const ParserContext* context, const ACPIDevice* name);
     
     int (*StartName)(AMLDecompiler* ,const ParserContext* context, const char* name);
-    int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    //int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
     int (*onMethod)(AMLDecompiler* ,const ParserContext* context, const ACPIMethod* method);
     //int (*endMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);

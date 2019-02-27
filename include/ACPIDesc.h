@@ -171,7 +171,7 @@ typedef struct
      192-255 Hardware Vendor Defined
      */
     
-    uint8_t ressourceType;
+    uint8_t resourceType;
     
     uint8_t typeSpecificFlags;
     uint64_t addrSpaceGranularity;
@@ -198,8 +198,13 @@ typedef struct
 typedef struct
 {
     uint8_t  ressourceType;
+    
     uint8_t  generalFlags;
+    
+    
+    
     uint8_t  typeSpecificFlags;
+    
     uint8_t  ressourceSourceIndex;
     uint16_t addrSpaceGranularity;
     uint16_t addrRangeMin;
@@ -213,7 +218,7 @@ typedef struct
 //6.4.3.5.2 DWord Address Space Descriptor
 typedef struct
 {
-    uint8_t  ressourceType;
+    uint8_t  resourceType;
     uint8_t  generalFlags;
     uint8_t  typeSpecificFlags;
     
@@ -226,11 +231,46 @@ typedef struct
     
 } DWordAddressSpaceDescriptor;
 
+//6.4.3.5.5 Resource Type Specific Flags
+typedef struct
+{
+    uint8_t TTP:1; // 1 TypeTranslation / 0 TypeStatic
+    
+    /*
+     0 AddressRangeMemory
+     1 AddressRangeReserved
+     2 AddressRangeACPI
+     3 AddressRangeNVS
+     */
+    uint8_t MTP:2;
+    
+    /*
+     0 The memory is non-cacheable.
+     1 The memory is cacheable.
+     2 The memory is cacheable and supports write combining.
+     3 The memory is cacheable and prefetchable.
+     */
+    uint8_t MEM:2;
+    
+    /*
+     1 This memory range is read-write.
+     0 This memory range is read-only.
+     */
+    uint8_t RW:1;
+} ResourceType0Flags;
+
 //6.4.3.5.1 QWord Address Space Descriptor
 typedef struct
 {
-    uint8_t  ressourceType;
+    
+    uint8_t  resourceType;
     uint8_t  generalFlags;
+    
+    uint8_t maf:1;
+    uint8_t mif:1;
+    uint8_t decodeType:1;
+    uint8_t isConsumer:1;
+    
     uint8_t  typeSpecificFlags;
     
     uint64_t addrSpaceGranularity;
@@ -238,6 +278,8 @@ typedef struct
     uint64_t addrRangeMax;
     uint64_t addrTranslationOffset;
     uint64_t addrTranslationLength;
+    
+    ResourceType0Flags specificFlags;
     
     
 } QWordAddressSpaceDescriptor;

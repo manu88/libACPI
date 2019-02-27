@@ -76,8 +76,7 @@ TreeNode* DeviceTree::getNodeForPath( const std::string &path , const std::strin
 }
 
 DeviceTreeBuilder::DeviceTreeBuilder(AMLDecompiler& decomp):
-AMLDecompilerInterface(decomp),
-state(BuilderState::Ready)
+AMLDecompilerInterface(decomp)
 {
     decomp.parserPolicy.assertOnError = 1;
     _scopes.push("");
@@ -198,9 +197,6 @@ int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod* 
 
 int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
 {
-
-    state = Ready;
-    
     currentName->setValue(buffer, bufferSize);
 
     
@@ -243,10 +239,6 @@ int DeviceTreeBuilder::EndDevice(const ParserContext* context, const ACPIDevice*
 
 int DeviceTreeBuilder::StartName(const ParserContext* context, const char* name)
 {
-    //assert( state != WaitingNameValue);
-
-    state = WaitingNameValue;
-    
     assert(!currentNode.empty());
     
     
@@ -258,16 +250,12 @@ int DeviceTreeBuilder::StartName(const ParserContext* context, const char* name)
 
 
 
-
+/*
 int DeviceTreeBuilder::EndName(const ParserContext* context, const char* name)
 {
-    assert( state != WaitingNameValue);
-    
-    state = Ready;
-    
     return 0;
 }
-
+*/
 
 
 int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc)
@@ -278,9 +266,7 @@ int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, cons
 
 int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
 {
-    state = Ready;
-    
-    
+
     if(currentName)
     {
         currentName->setValue(value);
@@ -293,8 +279,6 @@ int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
 
 int DeviceTreeBuilder::onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc)
 {
-    
-    state = Ready;
     assert(currentName);
     if(currentName)
     {
@@ -320,7 +304,6 @@ int DeviceTreeBuilder::onIOPortDescriptor( const ParserContext* context , const 
 
 int DeviceTreeBuilder::onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc)
 {
-    state = Ready;
     assert(currentName);
     if(currentName)
     {
@@ -333,7 +316,6 @@ int DeviceTreeBuilder::onMemoryRangeDescriptor32( const ParserContext* context ,
 
 int DeviceTreeBuilder::onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc)
 {
-    state = Ready;
     assert(currentName);
     if(currentName)
     {
@@ -346,8 +328,6 @@ int DeviceTreeBuilder::onDWORDAddressSpaceDescriptor( const ParserContext* conte
 
 int DeviceTreeBuilder::onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc)
 {
-    
-    state = Ready;
     assert(currentName);
     if(currentName)
     {

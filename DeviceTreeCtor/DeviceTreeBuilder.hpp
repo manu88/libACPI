@@ -233,15 +233,6 @@ class DeviceTreeBuilder : public AMLDecompilerInterface
 public:
     DeviceTreeBuilder(AMLDecompiler &decomp);
 
-    
-    enum BuilderState
-    {
-        Ready = 0,
-        WaitingNameValue = 1,
-    };
-    
-    BuilderState state;
-    
     AMLParserError start(const uint8_t* buffer , size_t size);
     
     std::string getResult() const
@@ -280,7 +271,7 @@ protected:
     int StartDevice(const ParserContext* context, const ACPIDevice* name)override;
     int EndDevice(const ParserContext* context, const ACPIDevice* name)override;
     int StartName(const ParserContext* context, const char* name)override;
-    int EndName(const ParserContext* context, const char* name)override;
+    //int EndName(const ParserContext* context, const char* name)override;
     int onMethod(const ParserContext* context, const ACPIMethod* method)override;
     
     

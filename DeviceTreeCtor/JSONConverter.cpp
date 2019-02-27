@@ -19,7 +19,7 @@
 #include "DeviceTreeBuilder.hpp"
 
 
-static bool isString(const std::vector<uint8_t> bytes)
+static bool isString(const std::vector<uint8_t> &bytes)
 {
     if (bytes.empty())
         return false;
@@ -29,12 +29,10 @@ static bool isString(const std::vector<uint8_t> bytes)
     
     for(size_t i = 0;i< bytes.size()-1;i++)
     {
-        
         if (isprint(  bytes[i])  == 0)
         {
             return false;
         }
-        
     }
     
     return true;
@@ -58,12 +56,27 @@ static nlohmann::json serializeIOPortDescriptor( const IOPortDescriptor &desc)
     return ret;
 }
 
+static nlohmann::json serializeResourceType0Flags(const ResourceType0Flags& desc)
+{
+    nlohmann::json ret;
+    
+    
+    ret["TTP"] = desc.TTP;
+    ret["MTP"] = desc.MTP;
+    ret["MEM"] = desc.MEM;
+    ret["RW"] = desc.RW;
+    
+    return ret;
+}
+
+
 static nlohmann::json serializeQWordAddressSpaceDescriptor(const QWordAddressSpaceDescriptor& desc)
 {
     nlohmann::json ret;
     
     
-    ret["ressourceType"] = desc.ressourceType;
+    ret["ressourceType"] = desc.resourceType;
+    //serializeResourceType(desc.resType);
     ret["generalFlags"] = desc.generalFlags;
     ret["typeSpecificFlags"] = desc.typeSpecificFlags;
     ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
@@ -80,7 +93,7 @@ static nlohmann::json serializeDWordAddressSpaceDescriptor(const DWordAddressSpa
     nlohmann::json ret;
     
     
-    ret["ressourceType"] = desc.ressourceType;
+    ret["ressourceType"] = desc.resourceType;
     ret["generalFlags"] = desc.generalFlags;
     ret["typeSpecificFlags"] = desc.typeSpecificFlags;
     ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;

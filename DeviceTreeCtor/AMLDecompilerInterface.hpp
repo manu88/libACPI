@@ -51,7 +51,7 @@ protected:
     virtual int StartDevice(const ParserContext* context, const ACPIDevice* name)= 0;
     virtual int EndDevice(const ParserContext* context, const ACPIDevice* name)= 0;
     virtual int StartName(const ParserContext* context, const char* name)= 0;
-    virtual int EndName(const ParserContext* context, const char* name)= 0;
+    //virtual int EndName(const ParserContext* context, const char* name)= 0;
     
     virtual int onMethod(const ParserContext* context, const ACPIMethod* method)= 0;
     //virtual int endMethod(const ParserContext* context, const char* name)= 0;

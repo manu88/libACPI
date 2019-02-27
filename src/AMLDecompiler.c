@@ -514,7 +514,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
 
             char name[5] = {0};
             const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
-            ExtractName(namePosition, 5, name);
+            const uint8_t nameSize = ExtractName(namePosition, 5, name);
             name[4] = 0;
             
             size_t adv = 0;
@@ -538,6 +538,17 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             {
                 decomp->callbacks.StartName(decomp ,&ctx , name);
             }
+            /*
+            // advance bufferPos to skip the name
+            AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + nameSize, bufferSize-nameSize);
+            if(err != AMLParserError_None)
+                return err;
+            
+            if (decomp->callbacks.EndName)
+            {
+                decomp->callbacks.EndName(decomp ,&ctx , name);
+            }
+            */
         }
             break;
         case ACPIObject_NumericValue:
