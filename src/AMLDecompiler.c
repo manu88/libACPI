@@ -633,7 +633,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         {
             ACPIMethod method = {0};
             
-            const uint8_t nameSize = ExtractName(bufferPos, 4, method.name);
+            uint8_t nameSize = ExtractName(bufferPos, 4, method.name);
             method.name[4] = 0;
             
             
@@ -645,6 +645,13 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             method.argCount      = methodFlags & 0b00000111;
             method.serializeFlag = methodFlags & 0b00001000;
             method.syncLevel     = methodFlags & 0b11110000;
+            
+            nameSize++;
+            
+            assert( bufferSize - nameSize >= 0); // remains some data for the method? Can be 0?
+            method.bodySize = bufferSize - nameSize;
+            method.bodyDef  = method.bodySize?( bufferPos + nameSize) : NULL;
+            
             
             if (decomp->callbacks.onMethod)
             {

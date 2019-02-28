@@ -22,8 +22,8 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include "AMLTypes.h"
-#include "AMLParser.h"
+#include <AMLTypes.h>
+#include <AMLParser.h>
 
 
 /*

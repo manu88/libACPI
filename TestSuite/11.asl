@@ -1,22 +1,13 @@
-DefinitionBlock ("", "DSDT", 2, "BXPC", "BXDSDT", 1)
+DefinitionBlock ("", "DSDT", 20, "BXPC", "BXDSDT", 42)
 {
-    Device(EC0) 
-    {
-        Name(REGC,Ones)
-        Method(_REG,2) 
-        {
-            If(Lequal(Arg0, 3)) 
-            {
-                Store(Arg1, REGC)
-            }
-        } 
-    }
 
-    Method(ECAV,0) 
+    Scope (_SB)
     {
-        Return(One)
+        Device (PCI0)
+        {
+            Name (BUF0, Buffer(4) {0x01,0x02,0x03,0x79,0x79,0x79})
+        }
     }
-        
 
 }
 

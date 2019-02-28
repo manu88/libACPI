@@ -1,8 +1,8 @@
 {
   "def": {
     "OEMId": "BXPC",
-    "OEMRev": 1,
-    "complianceRevision": 2,
+    "OEMRev": 42,
+    "complianceRevision": 20,
     "creatorID": 1280593481,
     "tableId": "BXDSDT",
     "tableSignature": "DSDT"
@@ -10,33 +10,28 @@
   "tree": {
     "Children": 
     {
-      "EC0": 
-      {
-        "Methods": 
+        "_SB":
         {
-          "_REG": 
-          {
-            "argCount": 2,
-            "serializeFlag": 0,
-            "syncLevel": 0
-          }
-        },
-        "REGC": 
-        {
-          "eisaid": false,
-          "type": 0,
-          "value": 18446744073709551615
+            "Children": 
+            {
+                "PCI0": 
+                {
+                    "BUF0": 
+                    {
+                      "type": 1,
+                      "value": 
+                      [
+                        1,
+                        2,
+                        3,
+                        121,
+                        121,
+                        121
+                      ]
+                    }
+                }
+            }    
         }
-      }
-    },
-    "Methods": 
-    {
-      "ECAV": 
-      {
-        "argCount": 0,
-        "serializeFlag": 0,
-        "syncLevel": 0
-      }
     }
   }
 }

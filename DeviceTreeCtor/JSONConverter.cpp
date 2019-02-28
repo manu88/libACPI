@@ -284,6 +284,15 @@ static nlohmann::json serializeMethod( const ACPIMethod& method)
     ret["syncLevel"] = method.syncLevel;
     ret["serializeFlag"] = method.serializeFlag;
     
+    if (method.bodyDef != nullptr )
+    {
+        ret["body"] ="some";
+    }
+    else
+    {
+        ret["body"] = nullptr;
+    }
+    
     return ret;
 }
 

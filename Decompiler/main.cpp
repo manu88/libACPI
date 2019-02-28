@@ -53,7 +53,14 @@ int main(int argc, const char * argv[])
     
     if (buffer )
     {
+        /*
+        for (int i=0;i<bufSize;i++)
+        {
+            printf(" 0x%x " , buffer[i]);
+        }
         
+        printf("\n");
+         */
         AML::Decompiler decomp;
         
         auto ret = decomp.process(buffer, bufSize);

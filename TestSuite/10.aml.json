@@ -1,37 +1,64 @@
 {
   "def": {
     "OEMId": "BXPC",
-    "OEMRev": 42,
-    "complianceRevision": 20,
+    "OEMRev": 1,
+    "complianceRevision": 2,
     "creatorID": 1280593481,
     "tableId": "BXDSDT",
     "tableSignature": "DSDT"
   },
   "tree": {
-    "Children": 
-    {
-        "_SB":
-        {
-            "Children": 
+    "Children": {
+      "_SB": {
+        "Children": {
+
+          "PCI1": 
+          {
+            "Fields": {
+              "PCIC": {
+                "accessType": 3,
+                "lockRule": 0,
+                "updateRule": 0
+              }
+            },
+            "Methods": {
+              "_S1D": {
+                "argCount": 0,
+                "serializeFlag": 0,
+                "syncLevel": 0,
+                "body": "some"
+              }
+            },
+          "OperationRegions": 
+          {
+            "PCIC": 
             {
-                "PCI0": 
+              "length": 4,
+              "offset": 0,
+              "space": 2
+            }
+          },
+            "_HID": {
+              "eisaid": true,
+              "type": 0,
+              "value": 19032334
+            },
+            "CRES": {
+              "type": 10,
+              "value": [
                 {
-                    "BUF0": 
-                    {
-                      "type": 1,
-                      "value": 
-                      [
-                        1,
-                        2,
-                        3,
-                        121,
-                        121,
-                        121
-                      ]
-                    }
+                  "type": 12,
+                  "value": {
+                    "rangeBaseAddr": 4275044352,
+                    "rangeLength": 1024,
+                    "writeStatus": 0
+                  }
                 }
-            }    
+              ]
+            }
+          }
         }
+      }
     }
   }
 }

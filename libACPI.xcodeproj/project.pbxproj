@@ -40,7 +40,7 @@
 		59459ABB21F0C01200DD9396 /* DeviceTreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AB921F0C01200DD9396 /* DeviceTreeBuilder.cpp */; };
 		59459ABE21F0C39700DD9396 /* AMLDecompilerInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459ABD21F0C39700DD9396 /* AMLDecompilerInterface.cpp */; };
 		59459AC421F347EA00DD9396 /* JSONConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AC221F347EA00DD9396 /* JSONConverter.cpp */; };
-		59459AC62204175900DD9396 /* AMLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459AC52204175900DD9396 /* AMLTypes.h */; };
+		59459AC62204175900DD9396 /* AMLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459AC52204175900DD9396 /* AMLTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459ACE220F0B4F00DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459ACD220F0B4F00DD9396 /* main.cpp */; };
 		59459AD2220F0B5F00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
 		59459AD5220F0B7D00DD9396 /* Decompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AD3220F0B7D00DD9396 /* Decompiler.cpp */; };

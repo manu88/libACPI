@@ -327,7 +327,8 @@ typedef struct
     
     
     
-    
+    const uint8_t* bodyDef;
+    size_t bodySize;
     
 } ACPIMethod;
 
@@ -337,6 +338,9 @@ typedef struct
     uint64_t space;
     uint64_t offset;
     uint64_t length;
+    
+    
+    
     
 } ACPIOperationRegion;
 
