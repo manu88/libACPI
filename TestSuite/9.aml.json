@@ -16,7 +16,7 @@
           {
             "Fields": {
               "PCIC": {
-                "accessType": 0,
+                "accessType": 3,
                 "lockRule": 0,
                 "updateRule": 0
               }

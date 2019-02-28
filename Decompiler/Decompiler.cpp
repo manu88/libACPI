@@ -180,14 +180,77 @@ public:
         return 0;
     }
     
-    int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)override
+    
+    int onField(const ParserContext* context, const ACPIField* field)override
     {
+        incScope();
+        
+        auto updateRuleDesc = [](uint8_t updateRule) -> std::string
+        {
+            switch (updateRule)
+            {
+                case 0:
+                    return "Preserve";
+                case 1:
+                    return "WriteAsOnes";
+                case 2:
+                    return "WriteAsZeros";
+                
+                default:
+                    break;
+            }
+            assert(false);
+            return "";
+        };
+        
+        auto accessTypeDesc = [](uint8_t accessType) -> std::string
+        {
+            switch(accessType)
+            {
+                case 0:
+                    return "AnyAcc";
+                case 1:
+                    return "ByteAcc";
+                case 2:
+                    return "WordAcc";
+                case 3:
+                    return "DWordAcc";
+                case 4:
+                    return "QWordAcc";
+                case 5:
+                    return "BufferAcc";
+                    /*
+                case 6:
+                    return "Reserved";
+                     */
+            }
+            
+            assert(false);
+            return "";
+        };
+        
+        indent();content << "Field (";
+        
+        
+        content << field->name << ",";
+        
+        content << accessTypeDesc( field->accessType) << ",";
+        content << (field->lockRule? "Lock":"NoLock") << ",";
+        content << updateRuleDesc(field->updateRule);
+        content << ")" << std::endl;
+        
+        indent(); content << "{" << std::endl;
+        incScope();
+        
+        indent(); content << "// Some Stuff" << std::endl;
+        
+        decScope();
+        indent(); content << "}" << std::endl;
+        
+        decScope();
         return 0;
     }
-    int onField(const ParserContext* context, const ACPIField*)override
-    {
-        return 0;
-    }
+    
     int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override
     {
         
@@ -306,6 +369,16 @@ public:
         content << "Method" << "(" << method->name << ",";
         content << std::to_string( method->argCount );
         content << ")" << "\n";
+        
+        indent(); content << "{" << std::endl;
+        incScope();
+        
+        indent(); content << "// Some Stuff" << std::endl;
+        
+        decScope();
+        indent(); content << "}" << std::endl;
+        
+        
         decScope();
         return 0;
     }
@@ -329,7 +402,7 @@ public:
         indent();writeHexArg(desc.addrTranslationLength);  content << "," << std::endl;
 
         indent();
-        content << ",, _Y01, ";
+        content << ",,, "; // empty args
         content << (desc.specificFlags.TTP== 0? " AddressRangeMemory,":"");
         content << (desc.specificFlags.MTP== 0? " TypeStatic":"");
         
@@ -342,10 +415,62 @@ public:
     
     int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override
     {
-        indent();content << "Memory32Fixed(SOME ARGS," << std::endl;
+        indent();content << "Memory32Fixed(";
+        
+        content << (desc.writeStatus == 0? " ReadOnly,":"");
+        content << std::endl;
         indent();writeHexArg(desc.rangeBaseAddr);  content << "," << std::endl;
         indent();writeHexArg(desc.rangeLength);  content << "," << std::endl;
         indent();content << ")" << std::endl;
+        return 0;
+    }
+    
+    int onOperationRegion(const ParserContext* context, const ACPIOperationRegion* region)override
+    {
+        auto regionSpaceGetStr = [] (uint64_t space) -> std::string
+        {
+            switch (space)
+            {
+                case SystemMemory:
+                    return "SystemMemory";
+                case SystemIO:
+                    return "SystemIO";
+                case PCI_Config:
+                    return "PCI_Config";
+                case EmbeddedControl:
+                    return "EmbeddedControl";
+                case SMBus:
+                    return "SMBus";
+                case CMOS:
+                    return "CMOS";
+                case PCIBARTarget:
+                    return "PCIBARTarget";
+                    
+                default:
+                    break;
+            }
+        
+            return std::to_string(space);
+        };
+        
+        incScope();
+        indent();content << "OperationRegion(";
+        content << region->name << ",";
+        
+        
+        content << regionSpaceGetStr( region->space);
+        
+        
+        content << ",";
+        writeNumValue(region->offset);
+        content << ",";
+        
+        writeHexArg(region->length);
+        
+        content << ")" << std::endl;
+        
+        
+        decScope();
         return 0;
     }
     

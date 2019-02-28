@@ -57,6 +57,9 @@ typedef enum
     
 } DeviceIdentifiers;
 
+
+//17.5.44 Field (Declare Field Objects)
+
 typedef enum
 {
    SystemMemory         =  0,

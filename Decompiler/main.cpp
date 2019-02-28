@@ -53,6 +53,7 @@ int main(int argc, const char * argv[])
     
     if (buffer )
     {
+        
         AML::Decompiler decomp;
         
         auto ret = decomp.process(buffer, bufSize);

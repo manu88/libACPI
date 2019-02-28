@@ -608,13 +608,22 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             ACPIField field;
             if(decomp->callbacks.onField)
             {
-                ExtractName(bufferPos, 4, field.name);
+                const uint8_t nameSize = ExtractName(bufferPos, 4, field.name);
                 field.name[4] = 0;
                 
                 
                 
-                const uint8_t bytes = bufferPos[ 4];
-                assert(bytes < 128); // bit7 : Reserved (must be 0)
+                const uint8_t bytes = bufferPos[ nameSize];
+                
+                
+                // bit 0-3: accessType
+                // bit 4: lock Rule
+                // bit 5-6: update rule
+                field.accessType = bytes & 0b00001111;
+                field.lockRule   = bytes & 0b00010000;
+                field.updateRule = bytes & 0b01100000;
+                
+                assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
                 decomp->callbacks.onField(decomp ,&ctx , &field);
             }
             
