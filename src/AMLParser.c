@@ -77,6 +77,7 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
     if (op != AML_Char)
     {
         state->errorPos = buffer;
+        //assert(state->parserPolicy.assertOnError == 0);
         return AMLParserError_UnexpectedToken;
     }
 
@@ -157,6 +158,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_VarPackage , startPos , varSize );
             if (err != AMLParserError_None)
             {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
             }
             *advancedBy += 2;//varSize;
@@ -174,8 +176,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Name ,namePos , 4 );
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             *advancedBy +=4;
             
         }
@@ -197,8 +201,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Device , startDevice , deviceSize/*-advancedByte*/);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             *advancedBy += deviceSize;
         }
             break;
@@ -217,6 +223,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Scope , startScope , scopeSize);
             if (err != AMLParserError_None)
             {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
             }
             *advancedBy +=  scopeSize;
@@ -267,7 +274,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_OperationRegion , (const uint8_t*)&reg , sizeof(ACPIOperationRegion) );
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
+            }
             
         }
             break;
@@ -284,8 +294,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Field ,fieldPos , fieldSize );
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             *advancedBy += fieldSize;
         }
             break;
@@ -302,8 +314,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state , ACPIObject_Type_Method , startPos , methodSize);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             
             *advancedBy += methodSize;
         }
@@ -322,6 +336,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Buffer , startBuffer , bufferSizePackage);
             if (err != AMLParserError_None)
             {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
             }
             *advancedBy +=  bufferSizePackage;
@@ -339,8 +354,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize +1);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             
             *advancedBy += valSize;
         }
@@ -353,8 +370,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             
             *advancedBy += valSize;
         }
@@ -367,8 +386,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             
             *advancedBy += valSize;
             
@@ -382,8 +403,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             
             *advancedBy += valSize;
         }
@@ -396,8 +419,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             
             *advancedBy += valSize;
         }
@@ -412,8 +437,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_StringValue , valPosition , valSize);
             if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
                 return err;
-            
+            }
             
             *advancedBy += valSize;
 
@@ -421,9 +448,23 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         }
             break;
             
+        case AML_MutexOp:
+        {
+            char name[5] = {0};
+            
+            const uint8_t nameSize =  ExtractName(buffer, 4, name);
+            
+            // bit 0-3: SyncLevel (0x00-0x0f)
+            // bit 4-7: Reserved (must be 0)
+            const uint8_t syncFlags = buffer[nameSize];
+            assert( (syncFlags & 0b1111000) == 0);
+            *advancedBy += nameSize +1;
+        }
+            break;
+            
         case AML_Char:
             printf("Char '%c'\n" , *buffer);
-            assert(0);
+            //assert(0);
         case AML_Int:
             break;
         case AML_Unknown:
@@ -433,6 +474,29 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             break;
             
+        case AML_AliasOp:
+        {
+            printf("%s\n" , buffer);
+            char name1[5] = {0};
+            char name2[5] = {0};
+            const uint8_t name1Size = ExtractName(buffer, 4, name1);
+            const uint8_t name2Size = ExtractName(buffer + name1Size, 4, name2);
+            
+            *advancedBy += name1Size + name2Size;
+        }
+            break;
+        case AML_ProcessorOp:
+        {
+            size_t adv = 0;
+            size_t len = _GetPackageLength(buffer, bufSize, &adv, 0);
+            
+            *advancedBy += len;
+        }
+            break;
+            /* Unimplemented operators*/
+            /*
+        
+            */
         default:
             assert(0);
     }
@@ -458,6 +522,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
     AMLParserError err_ = state->callbacks.OnElement(state, ACPIObject_Type_Root  , buffer+ pos , bufSize);
     if (err_ != AMLParserError_None)
     {
+        assert(state->parserPolicy.assertOnError == 0);
         return err_;
     }
     
@@ -474,6 +539,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
         
         if (retOperation != AMLParserError_None)
         {
+            assert(state->parserPolicy.assertOnError == 0);
             return retOperation;
         }
         advancedByte += advancedOf;

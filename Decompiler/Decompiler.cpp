@@ -225,8 +225,8 @@ public:
                      */
             }
             
-            assert(false);
-            return "";
+            //assert(false);
+            return "Reserved";
         };
         
         indent();content << "Field (";
@@ -525,6 +525,8 @@ bool AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
         return 0;
     }
     
+    //decomp.parserPolicy.assertOnError = 1;
+    
     DecompilerImpl impl(decomp);
     
     AMLParserError err = AMLDecompilerStart(&decomp, buffer, bufferSize);
@@ -536,6 +538,10 @@ bool AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
         
         result = impl.content.str();
         
+    }
+    else
+    {
+        printf("AML::Decompiler  Error : current ASL is \n %s \n" ,impl.content.str().c_str() );
     }
     return err == AMLParserError_None;
 }
