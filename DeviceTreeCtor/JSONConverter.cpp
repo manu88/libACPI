@@ -46,12 +46,11 @@ static nlohmann::json serializeIOPortDescriptor( const IOPortDescriptor &desc)
 {
     nlohmann::json ret;
     
-    
-    ret["isDecoder"] = desc.isDecoder;
+    ret["isDecoder"]        = desc.isDecoder;
     ret["rangeMinBaseAddr"] = desc.rangeMinBaseAddr;
     ret["rangeMaxBaseAddr"] = desc.rangeMaxBaseAddr;
-    ret["baseAlign"] = desc.baseAlign;
-    ret["rangeLen"] = desc.rangeLen;
+    ret["baseAlign"]        = desc.baseAlign;
+    ret["rangeLen"]         = desc.rangeLen;
     
     return ret;
 }
@@ -75,13 +74,13 @@ static nlohmann::json serializeQWordAddressSpaceDescriptor(const QWordAddressSpa
     nlohmann::json ret;
     
     
-    ret["ressourceType"] = desc.resourceType;
+    ret["ressourceType"]         = desc.resourceType;
     //serializeResourceType(desc.resType);
-    ret["generalFlags"] = desc.generalFlags;
-    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
-    ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
-    ret["addrRangeMin"] = desc.addrRangeMin;
-    ret["addrRangeMax"] = desc.addrRangeMax;
+    ret["generalFlags"]          = desc.generalFlags;
+    ret["typeSpecificFlags"]     = desc.typeSpecificFlags;
+    ret["addrSpaceGranularity"]  = desc.addrSpaceGranularity;
+    ret["addrRangeMin"]          = desc.addrRangeMin;
+    ret["addrRangeMax"]          = desc.addrRangeMax;
     ret["addrTranslationOffset"] = desc.addrTranslationOffset;
     ret["addrTranslationLength"] = desc.addrTranslationLength;
     

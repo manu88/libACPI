@@ -30,153 +30,21 @@ int AMLDecompilerInit(AMLDecompiler* decomp)
     
     return 1;
 }
-/*
-static size_t _DecodeMemoryRangeDescriptor32(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+
+
+static void setState( AMLDecompiler* decomp, AMLState newState)
 {
-    //assert(bufferSize >= sizeof(MemoryRangeDescriptor32));
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    
-    MemoryRangeDescriptor32 desc;
-    
-    desc.writeStatus = (bufferPos[3 ] >> 7) & 1U;
-    
-    union Conv32
-    {
-        uint8_t b[4];
-        uint32_t v;
-    }c;
-    
-    
-    c.b[0] = bufferPos[4];
-    c.b[1] = bufferPos[5];
-    c.b[2] = bufferPos[6];
-    c.b[3] = bufferPos[7];
-    
-    desc.rangeBaseAddr = c.v;
-    
-    c.b[0] = bufferPos[8];
-    c.b[1] = bufferPos[9];
-    c.b[2] = bufferPos[10];
-    c.b[3] = bufferPos[11];
-    
-    desc.rangeLength = c.v;
-    
-    if(decomp->callbacks.onLargeItem)
-    {
-        decomp->callbacks.onLargeItem(decomp , ctx ,
-                                      LargeResourceItemsType_MemoryRangeDescriptor32,
-                                      (const uint8_t*) &desc , sizeof(MemoryRangeDescriptor32));
-    }
-    
-    return bufferSize;
+    decomp->state = newState;
 }
- */
 
-/*
-static size_t _DecodeQWORDAddressSpaceDescriptor(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* bufferPos , size_t bufferSize)
+static int exceptState( AMLDecompiler* decomp, AMLState state)
 {
-    
-    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
-    assert(decomp);
-    //assert(bufferSize >= sizeof(AddressSpaceDescriptor));
-    
-    size_t bitOffset = 0;
-    AddressSpaceDescriptor addSpaceDesc;
-    addSpaceDesc.ressourceType = bufferPos[bitOffset+3];
-    
-    const uint8_t generalFlags = bufferPos[bitOffset+4];
-    
-    //Bits[7:4]Reserved (must be 0)
-    assert(((generalFlags >> 7) & 1U) == 0);
-    assert(((generalFlags >> 6) & 1U) == 0);
-    assert(((generalFlags >> 5) & 1U) == 0);
-    assert(((generalFlags >> 4) & 1U) == 0);
-    
-    addSpaceDesc.maf        = (generalFlags >> 3) & 1U;
-    addSpaceDesc.mif        = (generalFlags >> 2) & 1U;
-    addSpaceDesc.decodeType = (generalFlags >> 1) & 1U;
-    addSpaceDesc.isConsumer = (generalFlags >> 0) & 1U;
-    
-    addSpaceDesc.typeSpecificFlags = bufferPos[bitOffset+5];
-    
-    
-    union
+    if (decomp->parserPolicy.assertOnInvalidState)
     {
-        uint8_t b[8];
-        uint64_t v;
-    } c;
-    
-    c.b[0] = bufferPos[bitOffset+6];
-    c.b[1] = bufferPos[bitOffset+7];
-    c.b[2] = bufferPos[bitOffset+8];
-    c.b[3] = bufferPos[bitOffset+9];
-    c.b[4] = bufferPos[bitOffset+10];
-    c.b[5] = bufferPos[bitOffset+11];
-    c.b[6] = bufferPos[bitOffset+12];
-    c.b[7] = bufferPos[bitOffset+13];
-    
-    addSpaceDesc.addrSpaceGranularity = c.v;
-    
-    c.b[0] = bufferPos[bitOffset+14];
-    c.b[1] = bufferPos[bitOffset+15];
-    c.b[2] = bufferPos[bitOffset+16];
-    c.b[3] = bufferPos[bitOffset+17];
-    c.b[4] = bufferPos[bitOffset+18];
-    c.b[5] = bufferPos[bitOffset+19];
-    c.b[6] = bufferPos[bitOffset+20];
-    c.b[7] = bufferPos[bitOffset+21];
-    addSpaceDesc.addrRangeMin = c.v;
-    
-    c.b[0] = bufferPos[bitOffset+22];
-    c.b[1] = bufferPos[bitOffset+23];
-    c.b[2] = bufferPos[bitOffset+24];
-    c.b[3] = bufferPos[bitOffset+25];
-    c.b[4] = bufferPos[bitOffset+26];
-    c.b[5] = bufferPos[bitOffset+27];
-    c.b[6] = bufferPos[bitOffset+28];
-    c.b[7] = bufferPos[bitOffset+29];
-    addSpaceDesc.addrRangeMax = c.v;
-    
-    //translation
-    c.b[0] = bufferPos[bitOffset+30];
-    c.b[1] = bufferPos[bitOffset+31];
-    c.b[2] = bufferPos[bitOffset+32];
-    c.b[3] = bufferPos[bitOffset+33];
-    c.b[4] = bufferPos[bitOffset+34];
-    c.b[5] = bufferPos[bitOffset+35];
-    c.b[6] = bufferPos[bitOffset+36];
-    c.b[7] = bufferPos[bitOffset+37];
-    addSpaceDesc.addrTranslationOffset = c.v;
-    
-    c.b[0] = bufferPos[bitOffset+38];
-    c.b[1] = bufferPos[bitOffset+39];
-    c.b[2] = bufferPos[bitOffset+40];
-    c.b[3] = bufferPos[bitOffset+41];
-    c.b[4] = bufferPos[bitOffset+42];
-    c.b[5] = bufferPos[bitOffset+43];
-    c.b[6] = bufferPos[bitOffset+44];
-    c.b[7] = bufferPos[bitOffset+45];
-    addSpaceDesc.addrTranslationLength = c.v;
-    
-    addSpaceDesc.ressourceSourceIndex = bufferPos[bitOffset+46];
-    addSpaceDesc.ressourceSource = bufferPos[bitOffset+47];
-    
-    
-    
-    if(decomp->callbacks.onLargeItem)
-    {
-        decomp->callbacks.onLargeItem(decomp , ctx ,
-                                      LargeResourceItemsType_QWORDAddressSpaceDescriptor,
-                                      (const uint8_t*) &addSpaceDesc , sizeof(AddressSpaceDescriptor)
-                                      );
+        assert(decomp->state == state);
     }
-    return bufferSize;
+    return decomp->state == state;
 }
- */
-
-
-
 
 
 AMLParserError Parse_Reserved0(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
@@ -212,15 +80,11 @@ AMLParserError Parse_MemoryRangeDescriptor32(AMLDecompiler*decomp,const ParserCo
     return AMLParserError_None;
 }
 
-
-
-
 AMLParserError Parse_ExtendedIRQDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
     assert(0);
     return AMLParserError_None;
 }
-
 
 AMLParserError Parse_ExtendedAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
@@ -439,57 +303,69 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
         case ACPIObject_Type_Scope:
         {
-            char name[SCOPE_STR_SIZE];
-
-            size_t advanced = ResolvePath(name,  bufferPos);
-
-            if (decomp->callbacks.StartScope)
+            if( exceptState(decomp, AMLState_Unknown))
             {
-                decomp->callbacks.StartScope(decomp ,&ctx , name);
+                setState(decomp, AMLState_StartedScope);
+                
+                
+                char name[SCOPE_STR_SIZE];
+
+                size_t advanced = ResolvePath(name,  bufferPos);
+
+                if (decomp->callbacks.StartScope)
+                {
+                    decomp->callbacks.StartScope(decomp ,&ctx , name);
+                }
+                
+                strncpy(decomp->currentScope, name, SCOPE_STR_SIZE);
+                
+                AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
+                if(err != AMLParserError_None)
+                {
+                    setState(decomp, AMLState_Unknown);
+                    return err;
+                }
+                if (decomp->callbacks.EndScope)
+                {
+                    decomp->callbacks.EndScope(decomp ,&ctx , name);
+                }
+                
+                setState(decomp, AMLState_Unknown);
             }
-            
-            strncpy(decomp->currentScope, name, SCOPE_STR_SIZE);
-            
-            AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
-            if(err != AMLParserError_None)
-                return err;
-            
-            if (decomp->callbacks.EndScope)
+            else
             {
-                decomp->callbacks.EndScope(decomp ,&ctx , name);
+                return AMLParserError_InvalidState;
             }
-            
-            
+
         }
             break;
         
         case ACPIObject_Type_Buffer:
         {
-            
-            
-            
-            AMLParserError err =  _DecodeBufferObjects(parser, &ctx, bufferPos, bufferSize);
-            
-            
-            
-            if(err != AMLParserError_None)
-                return err;
-            
-            
+            if (exceptState(decomp, AMLState_WaitingNameValue))
+            {
+                AMLParserError err =  _DecodeBufferObjects(parser, &ctx, bufferPos, bufferSize);
+                setState(decomp, AMLState_Unknown);
+                
+                if(err != AMLParserError_None)
+                {
+                    return err;
+                }
+            }
+            else if (decomp->parserPolicy.pedantic)
+            {
+                return AMLParserError_InvalidState;
+            }
         }
             break;
+            
         case ACPIObject_Type_Device:
         {
+            setState(decomp, AMLState_StartedDevice);
             ACPIDevice dev;
             
             const uint8_t nameSize = ExtractName(bufferPos, bufferSize, dev.name);
             dev.name[4] = 0;
-            //printf("Device '%.4s' - " , dev.id);
-            
-            
-            //for(int i=0;i<indent;i++)printf("\t");
-            //printf("--Start Device '%s' \n" , name);
-            
             
             if (decomp->callbacks.StartDevice)
             {
@@ -498,8 +374,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             // advance bufferPos to skip the name
             AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + nameSize, bufferSize-nameSize);
             if(err != AMLParserError_None)
+            {
                 return err;
-            
+            }
             
             if (decomp->callbacks.EndDevice)
             {
@@ -511,7 +388,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
         case ACPIObject_Type_Name:
         {
-
+            
             char name[5] = {0};
             const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
             const uint8_t nameSize = ExtractName(namePosition, 5, name);
@@ -538,36 +415,47 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             {
                 decomp->callbacks.StartName(decomp ,&ctx , name);
             }
-            /*
-            // advance bufferPos to skip the name
-            AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + nameSize, bufferSize-nameSize);
-            if(err != AMLParserError_None)
-                return err;
             
-            if (decomp->callbacks.EndName)
-            {
-                decomp->callbacks.EndName(decomp ,&ctx , name);
-            }
-            */
-        }
-            break;
-        case ACPIObject_NumericValue:
-        {
-            uint64_t w;
-            GetInteger(bufferPos,bufferSize, &w);
-            
-            if (decomp->callbacks.OnValue)
-            {
-                decomp->callbacks.OnValue(decomp,&ctx , w);
-            }
+            setState(decomp, AMLState_WaitingNameValue);
 
         }
             break;
-        case ACPIObject_StringValue:
+            
+        case ACPIObject_Type_NumericValue:
+        {
+            if (exceptState(decomp, AMLState_WaitingNameValue))
+            {
+                uint64_t w;
+                GetInteger(bufferPos,bufferSize, &w);
+                
+                if (decomp->callbacks.OnValue)
+                {
+                    decomp->callbacks.OnValue(decomp,&ctx , w);
+                }
+                setState(decomp, AMLState_Unknown);
+            }
+            else if (decomp->parserPolicy.pedantic)
+            {
+                    return AMLParserError_InvalidState;
+            }
+            
+        }
+            break;
+            
+        case ACPIObject_Type_StringValue:
         {
             if (decomp->callbacks.OnString)
             {
                 decomp->callbacks.OnString(decomp, &ctx , (const char*) bufferPos);
+            }
+        }
+            break;
+            
+        case ACPIObject_Type_Package:
+        {
+            if (decomp->callbacks.onPackage)
+            {
+                decomp->callbacks.onPackage( decomp , &ctx , (const ACPIPackage*) bufferPos);
             }
         }
             break;
@@ -705,46 +593,3 @@ AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , 
     return ret;
     
 }
-
-/*
- static AMLParserError _DidReadDefBlock(AMLParserState* parser,const ACPIDefinitionBlock* desc)
- {
- assert(parser);
- assert(desc);
- 
- 
- AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
- assert(decomp);
- //doc->desc = *desc;
- //doc->hasDesc = 1;
- 
- // DefinitionBlock ("", "DSDT", 10, "IDOEM", "SOMEAID", 0x00001234)
- printf("DefinitionBlock (\"\", \"%s\", %u ,\"%s\",\"%s\", 0x%x)\n" ,
- desc->tableSignature ,
- desc->complianceRevision ,
- desc->OEMId,
- desc->tableId,
- desc->OEMRev
- );
- 
- return AMLParserError_None;
- }
- */
-
-/*
- static AMLParserError _DidReadDevice(AMLParserState* parser  ,const ACPIDevice*device)
- {
- assert(parser);
- assert(device);
- 
- 
- AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
- assert(decomp);
- 
- //memcpy(&doc->devices[ ACPIDocumentGetDevicesCount(doc)], device, sizeof(ACPIDevice));
- //doc->devices[doc->devicesCount] = *device;
- //doc->devicesCount++;
- 
- return AMLParserError_None;
- }
- */

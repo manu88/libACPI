@@ -63,6 +63,9 @@ protected:
     virtual int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) = 0;
     virtual int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) = 0;
     
+    virtual int onPackage( const ParserContext*context , const ACPIPackage& package) = 0;
+
+    
 //
     AMLDecompiler &decomp;
 };

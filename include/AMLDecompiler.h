@@ -74,10 +74,20 @@ typedef struct
     //int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
     int (*onMethod)(AMLDecompiler* ,const ParserContext* context, const ACPIMethod* method);
+    
+    int (*onPackage)(AMLDecompiler* ,const ParserContext* context, const ACPIPackage* package);
     //int (*endMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
 } AMLDecompilerCallbacks;
 
+    
+typedef enum
+{
+    AMLState_Unknown,
+    AMLState_StartedScope,
+    AMLState_StartedDevice,
+    AMLState_WaitingNameValue,
+} AMLState;
 
 
 struct _AMLDecompiler
@@ -87,6 +97,8 @@ struct _AMLDecompiler
     char currentScope[SCOPE_STR_SIZE];
     void* userData;
     const uint8_t* errorPos;
+    
+    AMLState state;
 };
 
 

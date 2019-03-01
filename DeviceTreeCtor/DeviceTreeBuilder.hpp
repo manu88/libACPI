@@ -281,6 +281,8 @@ protected:
     int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc)override;
     
     int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc)override;
+    
+    int onPackage( const ParserContext*context , const ACPIPackage& package) override;
 private:
     
     std::stack<std::string> _scopes;

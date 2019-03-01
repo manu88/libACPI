@@ -56,11 +56,16 @@ int main(int argc, const char * argv[])
         /*
         for (int i=0;i<bufSize;i++)
         {
-            printf(" 0x%x " , buffer[i]);
+            if (i%8==0)
+                printf("\n");
+            
+            //printf(" 0x%x " , buffer[i]);
+            printf(" 0x%.2x (%c) " , buffer[i], (isprint( buffer[i]) ?buffer[i]: ' ' ));
         }
         
+        
         printf("\n");
-         */
+        */
         AML::Decompiler decomp;
         
         auto ret = decomp.process(buffer, bufSize);

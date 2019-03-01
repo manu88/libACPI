@@ -88,8 +88,10 @@ typedef enum
     ACPIObject_Type_Field,
     ACPIObject_Type_Method,
     
-    ACPIObject_NumericValue,
-    ACPIObject_StringValue,
+    ACPIObject_Type_NumericValue,
+    ACPIObject_Type_StringValue,
+    
+    ACPIObject_Type_Package,
     //ACPIObject_Type_DWord, // should remove this one
     
 }ACPIObject_Type;
@@ -361,6 +363,16 @@ typedef struct
     uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
     
 } ACPIField;
+
+
+
+typedef struct
+{
+    uint8_t numElements;
+    const uint8_t* buffer;
+    size_t bufSize;
+    
+} ACPIPackage;
 /*
 static inline size_t ACPIDeviceGetNamesCount(const ACPIDevice* dev)
 {
@@ -380,3 +392,27 @@ static inline size_t ACPIDeviceGetNamesCount(const ACPIDevice* dev)
 
 
 
+
+/* Extra types */
+
+// 9.10.2 _FDI (Floppy Disk Information)
+typedef struct
+{
+    uint8_t  driveNumber;               //BYTE
+    uint8_t  deviceType;                //BYTE
+    uint16_t maximumCylinderNumber;     //WORD
+    uint16_t maximumSectorNumber;       //WORD
+    uint16_t maximumHeadNumber;         //WORD
+    uint8_t  disk_specify_1;            //BYTE
+    uint8_t  disk_specify_2;            //BYTE
+    uint8_t  disk_motor_wait;           //BYTE
+    uint8_t  disk_sector_siz;           //BYTE
+    uint8_t  disk_eot;                  //BYTE
+    uint8_t  disk_rw_gap;               //BYTE
+    uint8_t  disk_dtl;                  //BYTE
+    uint8_t  disk_formt_gap;            //BYTE
+    uint8_t  disk_fill;                 //BYTE
+    uint8_t  disk_head_sttl;            //BYTE
+    uint8_t  disk_motor_strt;           //BYTE
+    
+} FloppyDiskInformation;

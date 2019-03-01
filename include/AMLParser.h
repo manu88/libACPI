@@ -26,6 +26,10 @@ typedef enum
     AMLParserError_BufferTooShort,
     AMLParserError_UnexpectedToken,
     AMLParserError_ElementAllocError,
+    AMLParserError_InvalidState,
+    
+    
+    
     AMLParserUserAbord, // might be returned from Callbacks
     
 } AMLParserError;
@@ -44,7 +48,9 @@ typedef struct
 
 typedef struct
 {
-    uint8_t assertOnError; // default to NO
+    uint8_t assertOnError;        // default to NO
+    uint8_t assertOnInvalidState; // default to NO
+    uint8_t pedantic;             // default to NO
 } AMLParserPolicy;
 
 struct _AMLParserState

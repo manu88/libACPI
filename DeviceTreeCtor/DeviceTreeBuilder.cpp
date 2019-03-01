@@ -264,6 +264,11 @@ int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, cons
     return 0;
 }
 
+int DeviceTreeBuilder::onPackage( const ParserContext*context , const ACPIPackage& package)
+{
+    assert(false);
+    return 0;
+}
 int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
 {
 

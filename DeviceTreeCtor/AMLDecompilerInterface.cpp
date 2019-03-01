@@ -137,6 +137,16 @@ decomp(decomp)
         return self->onLargeItem(context, itemType, buffer, bufferSize);
     };
     
+    
+    decomp.callbacks.onPackage = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIPackage* package) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        
+        //return self->onPackage(context, itemType, buffer, bufferSize);
+        return self->onPackage(context, *package);
+    };
+    
+    
 }
 
 int AMLDecompilerInterface::onLargeItem(const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)

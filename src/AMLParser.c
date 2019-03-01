@@ -352,7 +352,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             const uint8_t* valPosition = buffer-1;
             const size_t valSize = 0;
             
-            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize +1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_NumericValue , valPosition , valSize +1);
             if (err != AMLParserError_None)
             {
                 assert(state->parserPolicy.assertOnError == 0);
@@ -368,7 +368,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 1;// sizeof(ACPIDWord);
             
-            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
             {
                 assert(state->parserPolicy.assertOnError == 0);
@@ -384,7 +384,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 2;// sizeof(ACPIDWord);
             
-            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
             {
                 assert(state->parserPolicy.assertOnError == 0);
@@ -401,7 +401,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 4;
             
-            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
             {
                 assert(state->parserPolicy.assertOnError == 0);
@@ -417,7 +417,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = 8;
             
-            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_NumericValue , valPosition , valSize+1);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_NumericValue , valPosition , valSize+1);
             if (err != AMLParserError_None)
             {
                 assert(state->parserPolicy.assertOnError == 0);
@@ -435,7 +435,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t valSize = strlen( (const char*)valPosition);
             
-            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_StringValue , valPosition , valSize);
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_StringValue , valPosition , valSize);
             if (err != AMLParserError_None)
             {
                 assert(state->parserPolicy.assertOnError == 0);
@@ -471,7 +471,43 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             break;
             
         case AML_PackageOp:
+        {
+            size_t adv = 0;
+            const size_t packLen = _GetPackageLength(buffer, bufSize, &adv, 0);
             
+            //PackageOp PkgLength NumElements PackageElementList
+            const uint8_t numElements = buffer[adv];
+            *advancedBy +=packLen;
+            
+            const size_t packSize = packLen - adv - 1;
+            const uint8_t* startPack = buffer + adv + 1;
+            
+            
+            ACPIPackage pack;
+            pack.buffer = startPack;
+            pack.bufSize = packSize;
+            pack.numElements = numElements;
+            
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Package ,(const uint8_t*) &pack , sizeof(ACPIPackage));
+            if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
+                return err;
+            }
+            /*
+            for(int i=0;i<packSize;i++)
+            {
+                if (i%8==0)
+                    printf("\n");
+                
+                printf(" 0x%x " , startPack[i]);
+            }
+            
+            printf("\n");
+            printf("\n");
+            */
+            
+        }
             break;
             
         case AML_AliasOp:

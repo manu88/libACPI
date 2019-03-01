@@ -350,6 +350,10 @@ public:
     }
     int StartName(const ParserContext* context, const char* name)override
     {
+        if (strcmp(name, "_FDI") == 0)
+        {
+            
+        }
         incScope();
         indent();
         content << "Name" << "(" << name << ",";
@@ -474,16 +478,29 @@ public:
         return 0;
     }
     
+    int onPackage( const ParserContext*context , const ACPIPackage& package) override
+    {
+        const size_t s = sizeof(FloppyDiskInformation);
+        
+        const FloppyDiskInformation *disk = reinterpret_cast<const FloppyDiskInformation *>(&package);
+        
+        
+        return 0;
+    }
+    
     int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc) override
     {
+        assert(false);
         return 0;
     }
     int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) override
     {
+        assert(false);
         return 0;
     }
     int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) override
     {
+        assert(false);
         return 0;
     }
     
