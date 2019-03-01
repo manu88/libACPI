@@ -511,14 +511,19 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 field.lockRule   = bytes & 0b00010000;
                 field.updateRule = bytes & 0b01100000;
                 
-                const uint8_t* bufPayload = bufferPos + nameSize +1;
+            
+                const uint8_t* data = bufferPos + nameSize +1;
                 
-                char n[5] = {0};
-                const uint8_t nSize = ExtractName(bufPayload, 4, n);
-                
-                const uint8_t value = bufPayload[nSize];
-                
+                //size_t dataSize = bufferSize - nameSize- 1;
+
                 assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
+                
+                memset(field.valueName, 0, 5);
+                const uint8_t valNameSize = ExtractName(data, 4, field.valueName);
+                assert(valNameSize <= 4);
+                
+                field.value = data[valNameSize];
+                
                 decomp->callbacks.onField(decomp ,&ctx , &field);
             }
             

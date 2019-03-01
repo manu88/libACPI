@@ -18,6 +18,10 @@ DefinitionBlock ("", "DSDT", 2, "BXPC", "BXDSDT", 1)
             {
                 VEND,   32
             }
+            Field (PCIC, DWordAcc, NoLock, Preserve)
+            {
+                TEST,   0xA
+            }
             Method (_S1D, 0, NotSerialized)
             {
                 Return (Zero)

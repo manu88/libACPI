@@ -30,6 +30,13 @@ AMLParserError Parse_WORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Parse
     
     desc.typeSpecificFlags = buffer[2];
     
+    assert((desc.generalFlags & 0b11110000) == 0);
+    // bits 7_4 are reserved and bust be zero
+    desc.maf        = (desc.generalFlags & 0b00001000)? 1:0;
+    desc.mif        = (desc.generalFlags & 0b00000100)? 1:0;
+    desc.decodeType = (desc.generalFlags & 0b00000010)? 1:0;
+    desc.isConsumer = (desc.generalFlags & 0b00000001)? 1:0;
+    
     
     union WordConv
     {
@@ -140,7 +147,6 @@ AMLParserError Parse_QWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Pars
     
     assert((desc.generalFlags & 0b11110000) == 0);
     // bits 7_4 are reserved and bust be zero
-    
     desc.maf        = (desc.generalFlags & 0b00001000)? 1:0;
     desc.mif        = (desc.generalFlags & 0b00000100)? 1:0;
     desc.decodeType = (desc.generalFlags & 0b00000010)? 1:0;

@@ -14,11 +14,22 @@
 
           "PCI1": 
           {
-            "Fields": {
-              "PCIC": {
-                "accessType": 3,
-                "lockRule": 0,
-                "updateRule": 0
+            "Fields": 
+            {
+              "PCIC": 
+              {
+                "VEND": 
+                {
+                  "accessType": 3,
+                  "lockRule": 0,
+                  "updateRule": 0
+                },
+                "TEST":
+                {
+                  "accessType": 3,
+                  "lockRule": 0,
+                  "updateRule": 0
+                }
               }
             },
             "Methods": {

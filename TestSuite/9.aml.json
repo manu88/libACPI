@@ -11,14 +11,14 @@
     "Children": {
       "_SB": {
         "Children": {
-
-          "PCI1": 
-          {
+          "PCI1": {
             "Fields": {
               "PCIC": {
-                "accessType": 3,
-                "lockRule": 0,
-                "updateRule": 0
+                "VEND": {
+                  "accessType": 3,
+                  "lockRule": 0,
+                  "updateRule": 0
+                }
               }
             },
             "Methods": {
@@ -29,15 +29,13 @@
                 "body": null
               }
             },
-          "OperationRegions": 
-          {
-            "PCIC": 
-            {
-              "length": 4,
-              "offset": 0,
-              "space": 2
-            }
-          },
+            "OperationRegions": {
+              "PCIC": {
+                "length": 4,
+                "offset": 0,
+                "space": 2
+              }
+            },
             "_HID": {
               "eisaid": true,
               "type": 0,

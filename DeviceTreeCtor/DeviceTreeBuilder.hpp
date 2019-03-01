@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <map>
 #include <vector>
 #include <memory>
 #include <stack>
@@ -213,7 +214,10 @@ struct TreeNode
     
     std::vector<NameDeclaration> _names;
     std::vector<ACPIOperationRegion> _opRegions;
-    std::vector<ACPIField> _fields;
+    
+    std::map<std::string, std::vector<ACPIField> > _fields;
+    //std::vector<ACPIField> _fields;
+    
     std::vector<ACPIMethod> _methods;
 };
 

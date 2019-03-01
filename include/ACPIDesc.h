@@ -202,13 +202,16 @@ typedef struct
 //6.4.3.5.3 Word Address Space Descriptor
 typedef struct
 {
-    uint8_t  ressourceType;
-    
-    uint8_t  generalFlags;
-    
-    
-    
-    uint8_t  typeSpecificFlags;
+    uint8_t ressourceType;
+
+    uint8_t generalFlags;
+    uint8_t maf:1;
+    uint8_t mif:1;
+    uint8_t decodeType:1;
+    uint8_t isConsumer:1;
+
+
+    uint8_t typeSpecificFlags;
     
     uint8_t  ressourceSourceIndex;
     uint16_t addrSpaceGranularity;
@@ -361,6 +364,12 @@ typedef struct
      */
     uint8_t lockRule:1; /* 0 NoLock 1 Lock */
     uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
+    
+    
+    
+    
+    char valueName[5]; // 4 + NULL byte
+    uint8_t value;
     
 } ACPIField;
 

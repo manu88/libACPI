@@ -42,12 +42,13 @@ public:
     {
         
     }
-    
-    void writeHexArg(uint8_t v)
+    template <typename T, typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
+    void writeHexArg(T v)
     {
-        content << "0x"<< std::uppercase<< std::hex<< std::setw(2) << std::setfill('0') << v;
+        
+        content << "0x"<< std::uppercase<< std::hex<< std::setw(sizeof(T)*2) << std::setfill('0') << (int) v;
     }
-    
+    /*
     void writeHexArg(uint16_t v)
     {
         content << "0x"<< std::uppercase<< std::hex<< std::setw(4) << std::setfill('0') << v;
@@ -63,7 +64,7 @@ public:
     {
         content << "0x"<< std::uppercase<< std::hex<< std::setw(16) << std::setfill('0') << v;
     }
-    
+    */
     void writeNumValue( uint64_t v)
     {
         if( v == 0)
@@ -139,7 +140,7 @@ public:
         content << "DefinitionBlock ("
                 << "\"\"" << ","
                 << "\"" << desc->tableSignature << "\"" << ","
-                << desc->OEMRev  << ","
+                << std::to_string( desc->complianceRevision)  << ","
                 << "\"" << desc->OEMId << "\"" << ","
                 << "\"" << desc->tableId << "\"" << ","
                 << desc->OEMRev
@@ -490,7 +491,27 @@ public:
     
     int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc) override
     {
-        assert(false);
+        incScope();
+        
+        indent(); content << "WordBusNumber (";
+        
+        content << (desc.isConsumer?"ResourceConsumer":"ResourceProducer") << ",";
+        content << (desc.mif?"MinFixed":"_MinNOTFixed_") << ",";
+        content << (desc.maf?"MaxFixed":"_MaxNOTFixed_") << ",";
+        content << (desc.decodeType?"SubDecode":"PosDecode") << ",";
+        content << std::endl;
+        
+        indent(); writeHexArg(desc.addrSpaceGranularity); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrRangeMin); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrRangeMax); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrTranslationOffset); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrTranslationLength); content << "," << std::endl;
+        indent(); content << ",, )" << std::endl;
+        
+        content << std::endl;
+        
+        
+        decScope();
         return 0;
     }
     int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) override
@@ -500,7 +521,29 @@ public:
     }
     int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) override
     {
-        assert(false);
+        /*
+         IO (Decode16,
+         0x0CF8,             // Range Minimum
+         0x0CF8,             // Range Maximum
+         0x01,               // Alignment
+         0x08,               // Length
+         )
+         
+         */
+        incScope();
+        indent(); content << "IO (Decode16," << std::endl;
+        
+        indent(); writeHexArg(desc.rangeMinBaseAddr); content << "," << std::endl;
+        indent(); writeHexArg(desc.rangeMaxBaseAddr); content << "," << std::endl;
+        indent(); writeHexArg(desc.baseAlign); content << " ," << std::endl;
+        indent(); writeHexArg(desc.rangeLen); content << " ," << std::endl;
+        
+        indent(); content << ")" << std::endl;
+        
+        content << std::endl;
+        
+        decScope();
+        
         return 0;
     }
     
