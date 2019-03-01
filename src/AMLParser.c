@@ -533,6 +533,10 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             /*
         
             */
+        case AML_DualNamePrefix:
+        case AML_RootChar:
+        case AML_IfOp:
+            break;
         default:
             assert(0);
     }
