@@ -73,9 +73,7 @@ static nlohmann::json serializeQWordAddressSpaceDescriptor(const QWordAddressSpa
 {
     nlohmann::json ret;
     
-    
     ret["ressourceType"]         = desc.resourceType;
-    //serializeResourceType(desc.resType);
     ret["generalFlags"]          = desc.generalFlags;
     ret["typeSpecificFlags"]     = desc.typeSpecificFlags;
     ret["addrSpaceGranularity"]  = desc.addrSpaceGranularity;
@@ -184,47 +182,7 @@ static nlohmann::json serializeName( const NameDeclaration&name)
             res["eisaid"] = name.isEisaid;
             break;
             
-            /*
-        case ValueType::Type_MemoryRangeDescriptor32:
-            res["value"]["rangeBaseAddr"]   = name.value.memoryRangeDesc32.rangeBaseAddr;
-            res["value"]["rangeLength"]     = name.value.memoryRangeDesc32.rangeLength;
-            res["value"]["writeStatus"]     = name.value.memoryRangeDesc32.writeStatus;
-            
-            break;
-            
-        case ValueType::Type_AddressSpaceDescriptor:
-            
-            res["value"]["ressourceType"]         = name.value.addressSpaceDescriptor.ressourceType;
-            res["value"]["typeSpecificFlags"]     = name.value.addressSpaceDescriptor.typeSpecificFlags;
-            res["value"]["addrSpaceGranularity"]  = name.value.addressSpaceDescriptor.addrSpaceGranularity;
-            res["value"]["addrRangeMin"]          = name.value.addressSpaceDescriptor.addrRangeMin;
-            res["value"]["addrRangeMax"]          = name.value.addressSpaceDescriptor.addrRangeMax;
-            res["value"]["addrTranslationOffset"] = name.value.addressSpaceDescriptor.addrTranslationOffset;
-            res["value"]["addrTranslationLength"] = name.value.addressSpaceDescriptor.addrTranslationLength;
-            res["value"]["ressourceSourceIndex"]  = name.value.addressSpaceDescriptor.ressourceSourceIndex;
-            res["value"]["ressourceSource"]       = name.value.addressSpaceDescriptor.ressourceSource;
-            res["value"]["maf"]                   = name.value.addressSpaceDescriptor.maf;
-            res["value"]["mif"]                   = name.value.addressSpaceDescriptor.mif;
-            res["value"]["decodeType"]            = name.value.addressSpaceDescriptor.decodeType;
-            res["value"]["isConsumer"]            = name.value.addressSpaceDescriptor.isConsumer;
-            
-            
-            
-            break;
-            
-        case ValueType::Type_WordAddressSpaceDescriptor:
-            
-            res["value"]["ressourceType"]          = name.value.wordAddressSpaceDescriptor.ressourceType;
-            res["value"]["generalFlags"]           = name.value.wordAddressSpaceDescriptor.generalFlags;
-            res["value"]["typeSpecificFlags"]      = name.value.wordAddressSpaceDescriptor.typeSpecificFlags;
-            res["value"]["addrSpaceGranularity"]   = name.value.wordAddressSpaceDescriptor.addrSpaceGranularity;
-            res["value"]["addrRangeMin"]           = name.value.wordAddressSpaceDescriptor.addrRangeMin;
-            res["value"]["addrRangeMax"]           = name.value.wordAddressSpaceDescriptor.addrRangeMax;
-            res["value"]["addrTranslationOffset"]  = name.value.wordAddressSpaceDescriptor.addrTranslationOffset;
-            res["value"]["addrTranslationLength"]  = name.value.wordAddressSpaceDescriptor.addrTranslationLength;
-            res["value"]["ressourceSourceIndex"]   = name.value.wordAddressSpaceDescriptor.ressourceSourceIndex;
-            break;
-            */
+
         case ValueType::Type_Buffer:
             
             if (isString(name.rawBuffer))
@@ -269,8 +227,7 @@ static nlohmann::json serializeFields( const std::vector< ACPIField> &fields)
 static nlohmann::json serializeOperationRegion( const ACPIOperationRegion&reg)
 {
     nlohmann::json ret;
-    
-    
+
     ret["space"] = reg.space;
     ret["offset"] = reg.offset;
     ret["length"] = reg.length;

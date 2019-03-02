@@ -46,7 +46,7 @@ public:
     void writeHexArg(T v)
     {
         
-        content << "0x"<< std::uppercase<< std::hex<< std::setw(sizeof(T)*2) << std::setfill('0') << (int) v;
+        content << "0x"<< std::uppercase<< std::hex<< std::setw(sizeof(T)*2) << std::setfill('0') << (long long) v;
     }
     /*
     void writeHexArg(uint16_t v)
@@ -324,7 +324,7 @@ public:
     {
         decScope();
         indent();
-        content << "}) // ENDOF ressourceTemplate" << std::endl;
+        content << "})" << std::endl;
         decScope();
         
         return 0;
@@ -416,7 +416,46 @@ public:
         return 0;
     }
     
-    
+    int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) override
+    {
+        incScope();
+        
+        /*
+         DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, NonCacheable, ReadWrite,
+         ,, _Y00, AddressRangeMemory, TypeStatic)
+         */
+        
+        indent(); content << "DWordMemory (";
+        
+        content << (desc.isConsumer?"ResourceConsumer":"ResourceProducer") << ",";
+        content << (desc.decodeType?"SubDecode":"PosDecode") << ",";
+        content << (desc.mif?"MinFixed":"_MinNOTFixed_") << ",";
+        content << (desc.maf?"MaxFixed":"_MaxNOTFixed_") << ",";
+        content << (desc.specificFlags.MEM== 2? " Cacheable,":"NonCacheable,");
+        content << (desc.specificFlags.RW== 1? " ReadWrite,":"");
+        content << std::endl;
+        
+        indent(); writeHexArg(desc.addrSpaceGranularity); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrRangeMin); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrRangeMax); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrTranslationOffset); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrTranslationLength); content << "," << std::endl;
+        indent();
+        content << ",,, "; // empty args
+        content << (desc.specificFlags.TTP== 0? " AddressRangeMemory,":"");
+        content << (desc.specificFlags.MTP== 0? " TypeStatic":"");
+        
+        content <<  ")" << std::endl;
+        
+        
+        content << std::endl;
+        
+        
+        decScope();
+        
+        
+        return 0;
+    }
     
     int onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc) override
     {
@@ -514,11 +553,7 @@ public:
         decScope();
         return 0;
     }
-    int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) override
-    {
-        assert(false);
-        return 0;
-    }
+
     int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) override
     {
         /*

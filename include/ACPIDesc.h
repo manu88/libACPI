@@ -223,22 +223,6 @@ typedef struct
     
 } WordAddressSpaceDescriptor;
 
-//6.4.3.5.2 DWord Address Space Descriptor
-typedef struct
-{
-    uint8_t  resourceType;
-    uint8_t  generalFlags;
-    uint8_t  typeSpecificFlags;
-    
-    uint32_t addrSpaceGranularity;
-    uint32_t addrRangeMin;
-    uint32_t addrRangeMax;
-    uint32_t addrTranslationOffset;
-    uint32_t addrTranslationLength;
-    
-    
-} DWordAddressSpaceDescriptor;
-
 //6.4.3.5.5 Resource Type Specific Flags
 typedef struct
 {
@@ -266,6 +250,33 @@ typedef struct
      */
     uint8_t RW:1;
 } ResourceType0Flags;
+
+
+//6.4.3.5.2 DWord Address Space Descriptor
+typedef struct
+{
+    uint8_t  resourceType;
+    uint8_t  generalFlags;
+    
+    uint8_t maf:1;
+    uint8_t mif:1;
+    uint8_t decodeType:1;
+    uint8_t isConsumer:1;
+    
+    uint8_t  typeSpecificFlags;
+    
+    uint32_t addrSpaceGranularity;
+    uint32_t addrRangeMin;
+    uint32_t addrRangeMax;
+    uint32_t addrTranslationOffset;
+    uint32_t addrTranslationLength;
+    
+    ResourceType0Flags specificFlags;
+    
+    
+} DWordAddressSpaceDescriptor;
+
+
 
 //6.4.3.5.1 QWord Address Space Descriptor
 typedef struct
