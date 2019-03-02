@@ -65,7 +65,8 @@ public:
         content << "0x"<< std::uppercase<< std::hex<< std::setw(16) << std::setfill('0') << v;
     }
     */
-    void writeNumValue( uint64_t v)
+    template <typename T, typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr>
+    void writeNumValue( T v)
     {
         if( v == 0)
         {
@@ -84,6 +85,7 @@ public:
             writeHexArg(v);
         }
     }
+    /*
     void writeNumValue( uint32_t v)
     {
         if( v == 0)
@@ -129,6 +131,7 @@ public:
             writeHexArg(v);
         }
     }
+     */
     /*
     void addheaderText()
     {
@@ -233,17 +236,24 @@ public:
         indent();content << "Field (";
         
         
-        content << field->name << ",";
+        content << field->name << ", ";
         
-        content << accessTypeDesc( field->accessType) << ",";
-        content << (field->lockRule? "Lock":"NoLock") << ",";
+        content << accessTypeDesc( field->accessType) << ", ";
+        content << (field->lockRule? "Lock":"NoLock") << ", ";
         content << updateRuleDesc(field->updateRule);
-        content << ")" << std::endl;
+        content << " )" << std::endl;
         
         indent(); content << "{" << std::endl;
         incScope();
         
-        indent(); content << "// Some Stuff" << std::endl;
+        
+        if (field->offset)
+        {
+            //Offset (1),
+            indent(); content << "Offset ("<< std::to_string( (int)(field->offset / 8) ) <<")," << std::endl;
+        }
+        
+        indent(); content << field->valueName << ", "; writeNumValue(field->value); content << "," << std::endl;
         
         decScope();
         indent(); content << "}" << std::endl;
@@ -506,10 +516,11 @@ public:
         
         
         content << ",";
-        writeNumValue(region->offset);
+        
+        writeHexArg( (uint16_t) region->offset);
         content << ",";
         
-        writeHexArg(region->length);
+        writeNumValue( (uint16_t) region->length);
         
         content << ")" << std::endl;
         

@@ -221,6 +221,11 @@ static nlohmann::json serializeFields( const std::vector< ACPIField> &fields)
         ret[field.valueName]["accessType"] = field.accessType;
         ret[field.valueName]["lockRule"] = field.lockRule;
         ret[field.valueName]["updateRule"] = field.updateRule;
+        
+        if (field.offset)
+        {
+            ret[field.valueName]["offset"] = (int) field.offset;
+        }
     }
     return ret;
 }

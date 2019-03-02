@@ -1,0 +1,89 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 1,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": {
+
+      "\\": 
+      {
+        "Fields": 
+        {
+          "FCFG": 
+          {
+            "FDAT": {
+              "accessType": 1,
+              "lockRule": 0,
+              "updateRule": 0,
+              "offset": 8
+            },
+            "FSEL": {
+              "accessType": 2,
+              "lockRule": 0,
+              "updateRule": 0
+            }
+          }
+        },
+        "Methods": 
+        {
+          "FRDB": 
+          {
+            "argCount": 1,
+            "body": "some",
+            "serializeFlag": 0,
+            "syncLevel": 0
+          },
+          "FRDI": 
+          {
+            "argCount": 1,
+            "body": "some",
+            "serializeFlag": 0,
+            "syncLevel": 0
+          }
+        },
+        "OperationRegions": 
+        {
+          "FCFG": 
+          {
+            "length": 2,
+            "offset": 1296,
+            "space": 1
+          }
+        }
+      },
+
+
+      "PCI0": {
+
+        "Methods": {
+          "FRDF": {
+            "argCount": 1,
+            "body": "some",
+            "serializeFlag": 0,
+            "syncLevel": 0
+          }
+        },
+        "_ADR": {
+          "eisaid": false,
+          "type": 0,
+          "value": 0
+        },
+        "_HID": {
+          "eisaid": true,
+          "type": 0,
+          "value": 51040321
+        },
+        "_UID": {
+          "eisaid": false,
+          "type": 0,
+          "value": 1
+        }
+      }
+    }
+  }
+}

@@ -392,6 +392,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             char name[5] = {0};
             const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
             const uint8_t nameSize = ExtractName(namePosition, 5, name);
+            assert(nameSize);
             name[4] = 0;
             
             size_t adv = 0;
@@ -502,7 +503,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 
                 
                 const uint8_t bytes = bufferPos[ nameSize];
-                
+                assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
                 
                 // bit 0-3: accessType
                 // bit 4: lock Rule
@@ -512,12 +513,31 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 field.updateRule = bytes & 0b01100000;
                 
             
-                const uint8_t* data = bufferPos + nameSize +1;
+                uint8_t* data = (uint8_t*) bufferPos + nameSize +1;
                 
-                //size_t dataSize = bufferSize - nameSize- 1;
-
-                assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
+                size_t dataSize = bufferSize - nameSize- 1;
+                /*
+                for(int i=0;i<dataSize; i++)
+                {
+                    if (i%8==0)
+                        printf("\n");
+                    
+                    printf(" %x " , data[i]);
+                }
                 
+                printf("\n");
+                 */
+                if (IsName(data[0]) == 0 ) // We have an offset
+                {
+                    assert(IsName(data[1]) == 0);
+                    //printf("Got an offset\n");
+                    field.offset = data[1];
+                    
+                    data +=2;
+                    dataSize -=2;
+                }
+                
+                assert(dataSize >= 5); // 4 chars + value
                 memset(field.valueName, 0, 5);
                 const uint8_t valNameSize = ExtractName(data, 4, field.valueName);
                 assert(valNameSize <= 4);
@@ -546,7 +566,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             method.serializeFlag = methodFlags & 0b00001000;
             method.syncLevel     = methodFlags & 0b11110000;
             
-            nameSize++;
+            nameSize++; // +1 for the methodFlags
             
             assert( bufferSize - nameSize >= 0); // remains some data for the method? Can be 0?
             method.bodySize = bufferSize - nameSize;

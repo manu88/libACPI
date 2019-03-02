@@ -382,6 +382,8 @@ typedef struct
     char valueName[5]; // 4 + NULL byte
     uint8_t value;
     
+    uint8_t offset;
+    
 } ACPIField;
 
 
