@@ -67,6 +67,7 @@ int main(int argc, const char * argv[])
         printf("\n");
         */
         
+        
         AML::Decompiler decomp;
         
         auto ret = decomp.process(buffer, bufSize);
