@@ -1,0 +1,77 @@
+{
+  "def": {
+    "OEMId": "OemId",
+    "OEMRev": 1,
+    "complianceRevision": 2,
+    "creatorID": 1280593481,
+    "tableId": "OemTblId",
+    "tableSignature": "SSDT"
+  },
+  "tree": {
+    "Children": {
+      "\\": {
+        "AAAA": {
+          "type": 1,
+          "value": {
+            "buf": [
+              80,
+              48,
+              48,
+              46,
+              48,
+              48,
+              65,
+              0,
+              8,
+              65
+            ],
+            "size": 10
+          }
+        },
+        "AAAC": {
+          "type": 1,
+          "value": {
+            "buf": [
+              80,
+              48,
+              48,
+              46,
+              48,
+              48,
+              65,
+              0,
+              0,
+              0
+            ],
+            "size": 10
+          }
+        },
+        "AAAD": {
+          "type": 1,
+          "value": {
+            "buf": [
+              80,
+              48,
+              48,
+              46,
+              48,
+              48,
+              65,
+              0,
+              0,
+              0
+            ],
+            "size": 10
+          }
+        },
+        "ROMB": {
+          "type": 1,
+          "value": {
+            "buf": [],
+            "size": 262144
+          }
+        }
+      }
+    }
+  }
+}
