@@ -8,44 +8,43 @@
     "tableSignature": "DSDT"
   },
   "tree": {
-    "Children": 
-    {
-        "_SB":
-        {
-            "Children": 
-            {
-                "PCI0": 
-                {
-                    "BUF0": 
-                    {
-                      "type": 1,
-                      "value": 
-                      [
-                        1,
-                        2,
-                        3,
-                        4
-                      ]
-                    },
-                    "BUF1": {
-                      "type": 1,
-                      "value": [
-                        9,
-                        98,
-                        99,
-                        100,
-                        101,
-                        0
-                      ]
-                    },
-                    "BUF2": 
-                    {
-                      "type": 1,
-                      "value": "abcde"
-                    }
-                }
-            }    
+    "Children": {
+      "_SB": {
+        "Children": {
+          "PCI0": {
+            "BUF0": {
+              "type": 1,
+              "value": {
+                "buf": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "size": 4
+              }
+            },
+            "BUF1": {
+              "type": 1,
+              "value": {
+                "buf": [
+                  9,
+                  98,
+                  99,
+                  100,
+                  101,
+                  0
+                ],
+                "size": 6
+              }
+            },
+            "BUF2": {
+              "type": 1,
+              "value": "abcde"
+            }
+          }
         }
+      }
     }
   }
 }

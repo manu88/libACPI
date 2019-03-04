@@ -69,11 +69,48 @@ size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
 
 uint8_t GetByteValue(const uint8_t* buffer , size_t bufSize , size_t* advance)
 {
+    
     assert(*buffer == AML_OP_BytePrefix);
     *advance = 2;
     return buffer[ 1];
 }
 
+uint32_t GetDWordValue(const uint8_t* buffer , size_t bufSize , size_t* advance)
+{
+    assert(*buffer == AML_OP_DWordPrefix);
+    
+    *advance = 5;
+    
+    union
+    {
+        uint8_t b[4];
+        uint32_t v;
+    } c;
+    
+    c.b[0] = buffer[1];
+    c.b[1] = buffer[2];
+    c.b[2] = buffer[3];
+    c.b[3] = buffer[4];
+    
+    return c.v;
+}
+
+uint8_t ExtractInteger( const uint8_t* buffer , size_t bufSize , size_t* advance, uint64_t *toVal)
+{
+    if (*buffer == AML_OP_BytePrefix)
+    {
+        *toVal = GetByteValue(buffer, bufSize, advance);
+        return 1;
+    }
+    else if (*buffer == AML_OP_DWordPrefix)
+    {
+        *toVal = GetDWordValue(buffer, bufSize, advance);
+        return 4;
+    }
+    
+    assert(0);
+    return 0;
+}
 
 /*
  18.2.4 Package Length Encoding

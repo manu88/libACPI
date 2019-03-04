@@ -86,7 +86,7 @@ AMLParserError DecodeBufferObject(const uint8_t* buffer , size_t bufferSize, AML
 {
     assert(results);
     
-    if (!buffer || bufferSize == 0)
+    if (!buffer)
         return AMLParserError_BufferTooShort;
     
     

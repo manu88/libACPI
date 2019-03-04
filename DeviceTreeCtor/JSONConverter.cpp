@@ -170,6 +170,22 @@ static nlohmann::json serializeResourseTemplate( const ResourceTemplate&resTempl
     }
     return res;
 }
+static nlohmann::json serializeBuffer( const NameDeclaration&name)
+{
+    nlohmann::json ret;
+    
+    if (isString(name.rawBuffer))
+    {
+        ret = std::string( reinterpret_cast<const char*>( name.rawBuffer.data() )  );
+    }
+    else
+    {
+        ret["buf"]  = name.rawBuffer;
+        ret["size"] = name.rawBufferSize;
+    }
+    
+    return ret;
+}
 static nlohmann::json serializeName( const NameDeclaration&name)
 {
     nlohmann::json res;
@@ -182,19 +198,9 @@ static nlohmann::json serializeName( const NameDeclaration&name)
             res["eisaid"] = name.isEisaid;
             break;
             
-
         case ValueType::Type_Buffer:
             
-            if (isString(name.rawBuffer))
-            {
-                res["value"] = std::string( reinterpret_cast<const char*>( name.rawBuffer.data() )  );
-            }
-            else
-            {
-                res["value"] = name.rawBuffer;
-            }
-            
-            
+            res["value"] = serializeBuffer(name);
             break;
             
         case ValueType::Type_RessourceTemplate:

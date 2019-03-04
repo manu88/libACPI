@@ -112,10 +112,14 @@ struct NameDeclaration
     {
         type = Type_Buffer;
         
+        rawBufferSize = bufSize;
         rawBuffer.clear();
-        for( size_t i=0;i<bufSize;i++)
+        if (buffer)
         {
-            rawBuffer.push_back(buffer[i]);
+            for( size_t i=0;i<bufSize;i++)
+            {
+                rawBuffer.push_back(buffer[i]);
+            }
         }
     }
     
@@ -160,6 +164,7 @@ struct NameDeclaration
     uint64_t value64;
     ResourceTemplate resTemplate;   // type = Type_RessourceTemplate
     std::vector<uint8_t> rawBuffer; // type = Type_Buffer
+    size_t rawBufferSize;
 };
 
 /*

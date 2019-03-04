@@ -231,12 +231,32 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     assert(decomp);
     
     size_t advance = 0;
-    uint8_t s =  GetByteValue(buffer, bufferSize, &advance);
+    
+    size_t a = 0;
+    AMLOperation nextOp  =  AMLParserPeekOp(buffer, bufferSize, &a);
+    
+    /*
+    if (nextOp == AML_DWordPrefix)
+    {
+        // THis is a simple DWord value buffer
+        assert(0);
+    }
+     */
+    
+    //size_t adv = 0;
+    uint64_t numOfBufferElements = 0;
+    uint8_t valSize = ExtractInteger(buffer, bufferSize, &advance, &numOfBufferElements);
+    
+    assert(valSize == 1 || valSize == 4 );
+    
+    //uint8_t __s =  GetByteValue(buffer, bufferSize, &advance);
+    //assert(numOfBufferElements == __s);
     
     const uint8_t* bufferPos = buffer + advance;
     bufferSize -= advance;
     
-    assert( bufferSize == s);
+    // buffer size can be
+    //assert( bufferSize == numOfBufferElements);
     AMLBufferAnalysisResults res = { 0};
     res.ctx = ctx;
     res.parser = parser;
@@ -248,7 +268,8 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
         {
             if (decomp->callbacks.OnBuffer)
             {
-                decomp->callbacks.OnBuffer(decomp, ctx , bufferSize , bufferPos);
+                // Pass null to buffer is bufferSize == 0
+                decomp->callbacks.OnBuffer(decomp, ctx , numOfBufferElements ,bufferSize == 0? NULL: bufferPos );
             }
         }
         else
@@ -494,7 +515,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             break;
         case ACPIObject_Type_Field:
         {
-            ACPIField field;
+            ACPIField field ={0} ;
             if(decomp->callbacks.onField)
             {
                 const uint8_t nameSize = ExtractName(bufferPos, 4, field.name);

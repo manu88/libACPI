@@ -9,6 +9,7 @@
 #include <string>
 #include <iomanip>
 #include <vector>
+#include <math.h>       /* floor */
 //#include <iostream>
 #include <sstream>
 #include "Decompiler.hpp"
@@ -17,6 +18,8 @@
 
 static bool isString(const uint8_t* buffer,size_t bufferSize )
 {
+    if (!buffer)
+        return false;
     assert(bufferSize);
     
     if ( buffer[bufferSize-1] != 0)
@@ -247,10 +250,11 @@ public:
         incScope();
         
         
-        if (field->offset)
+        const int realOffset = (int)( floor( field->offset / 8));
+        if (realOffset)
         {
             //Offset (1),
-            indent(); content << "Offset ("<< std::to_string( (int)(field->offset / 8) ) <<")," << std::endl;
+            indent(); content << "Offset ("<< std::to_string( realOffset ) <<")," << std::endl;
         }
         
         indent(); content << field->valueName << ", "; writeNumValue(field->value); content << "," << std::endl;
@@ -262,7 +266,10 @@ public:
         return 0;
     }
     
-    int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override
+    
+    
+  
+    int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer ) override
     {
         
         
@@ -277,29 +284,37 @@ public:
         }
         else
         {
-            content << std::to_string(bufferSize) << ")";
+            writeHexArg((uint32_t)bufferSize);
+            content << /*std::to_string(bufferSize) <<*/ ")";
             content << " ";
             content << "{";
             
-            bool first = true;
-            for( size_t i=0; i<bufferSize;i++)
+            if (buffer)
             {
-                if (!first)
+                bool first = true;
+                for( size_t i=0; i<bufferSize;i++)
                 {
-                    content << ",";
+                    if (!first)
+                    {
+                        content << ",";
+                    }
+                    writeHexArg(buffer[i]);
+                    //content << "0x" << std::hex <<(int) buffer[i];
+                    //writeHexArg(buffer[i]);
+                    
+                    if (first)
+                        first = false;
                 }
-                content << "0x" << std::hex <<(int) buffer[i];
-                //writeHexArg(buffer[i]);
-                
-                if (first)
-                    first = false;
             }
         }
         content << "}";
         
         EndName();
+        
         return 0;
     }
+    
+    
     int StartScope(const ParserContext* context, const char* location)override
     {
         const char* realLoc = location[0] == '.' ? location+1 : location;

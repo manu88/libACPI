@@ -96,7 +96,7 @@ typedef enum
     
 }ACPIObject_Type;
 
-
+//17.5.26 DefinitionBlock
 typedef struct
 {
     char    tableSignature[5]; // 4 chars
@@ -104,7 +104,7 @@ typedef struct
     uint8_t complianceRevision;
     uint8_t tableCheckSum; // Byte checksum of the entire table.
     char    OEMId[6];
-    char    tableId[8];
+    char    tableId[9]; // 8 + 1 NULL
     
     ACPIDWord OEMRev;
     

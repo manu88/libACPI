@@ -34,6 +34,7 @@ typedef struct
 
 
 #define MaxItemsPerBuffer 32
+
 typedef struct
 {
     const uint8_t* bufferPos;
@@ -43,14 +44,10 @@ typedef struct
     const ItemClass* isa;
 } ItemEntry;
 
-
-
-
 typedef struct _AMLParserState AMLParserState;
 typedef struct _ParserContext ParserContext;
-
-
 typedef struct _AMLBufferAnalysisResults AMLBufferAnalysisResults;
+
 typedef struct _AMLBufferAnalysisResults
 {
     int (*onLargeItem)(AMLBufferAnalysisResults* results, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
