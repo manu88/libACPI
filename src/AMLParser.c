@@ -22,6 +22,7 @@
 #include "AMLHelpers.h"
 #include "AMLRouter.h"
 #include "AMLByteCode.h"
+#include "AMLTypes.h"
 
 static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock);
 
@@ -236,31 +237,29 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         {
             const uint8_t* namePos = buffer;
             
-            
+/*
+             for(int i=0;i<bufSize;i++)
+             {
+                 if (i%8==0)
+                    printf("\n");
+             
+                    printf(" 0x%.2x (%c)", buffer[i],buffer[i]);
+             }
+             
+             printf("\n");
+            */
+            const uint8_t nameSize = GetNameSize(namePos , bufSize);
+            assert(nameSize <=5); // ACPIOperationRegion.name is size 6 so we need to check this one
             
             ACPIOperationRegion reg;
             assert(IsName(*namePos));
             
-            ExtractName(namePos, 4, reg.name);
-            reg.name[4] = 0;
+            memset(reg.name, 0, 6);
+            ExtractName(namePos, nameSize, reg.name);
+            //reg.name[4] = 0;
             
-            *advancedBy +=4;
-            /*
-            for(int i=0;i<8;i++)
-            {
-                if (i%8==0)
-                    printf("\n");
-                
-                printf(" 0x%x ", buffer[ *advancedBy +i]);
-            }
+            *advancedBy +=nameSize;
             
-            printf("\n");
-             */
-            /*
-             uint64_t regSpaceVal = 0;
-             uint64_t regOffsetVal = 0;
-             uint64_t regLenVal = 0;
-             */
             reg.space = buffer[ *advancedBy ];
             *advancedBy +=1;
             

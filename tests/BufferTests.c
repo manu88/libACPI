@@ -21,9 +21,9 @@ static void invalidTests()
     AMLBufferAnalysisResults res = { 0};
     assert(DecodeBufferObject( NULL, 10, &res) == AMLParserError_BufferTooShort );
     assert(res.numItems == 0);
-    uint8_t c = 0;
     
-    assert(DecodeBufferObject( &c, 0, &res) == AMLParserError_BufferTooShort);
+    uint8_t c = 0;
+    assert(DecodeBufferObject( &c, 0, &res) == AMLParserError_None);
     assert(res.numItems == 0);
 }
 

@@ -60,7 +60,7 @@ static void AML_InternalTests()
     {
         const uint8_t b[] = { 'H' , 'I' , 'D' , 'A'};
         char out[5] = {0};
-        ExtractName(b, 4, out);
+        assert (ExtractName(b, 4, out) == 4);
         assert( strcmp(out , "HIDA") == 0);
     }
     {

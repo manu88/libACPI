@@ -29,38 +29,30 @@
 
 int IsName(char character)
 {
-    if((character >= '0' && character <= 'Z') || character == '_')
+    if((character >= '0' && character <= 'Z') || character == '_' || character == '\\')
         return 1;
     
     else
         return 0;
 }
 
-int GetDWord(const uint8_t* buffer , ACPIDWord* word)
+
+uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize )
 {
-    assert(word);
-    assert(buffer);
-     
-    
-    union
+    uint8_t ret = 0;
+    while (ret <maxSize && IsName(*(buff++) )  )
     {
-        uint8_t b[4];
-        int32_t v;
-    } val;
+        ret++;
+    }
     
-    
-    val.b[0] = buffer[0];
-    val.b[1] = buffer[1];
-    val.b[2] = buffer[2];
-    val.b[3] = buffer[3];
-    
-    *word = val.v;
-    return 1;
+    return ret;
 }
 
 uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar)
 {
-    strncpy(outChar, (const char*)buff, 4);
+    const uint8_t computedSize = GetNameSize(buff,size);
+    assert( computedSize <= size);
+    strncpy(outChar, (const char*)buff, computedSize);
     
     uint8_t strSize = 4;
     if (outChar[3] == '_')
@@ -83,6 +75,28 @@ uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar)
         
     }
     return strSize;
+}
+
+int GetDWord(const uint8_t* buffer , ACPIDWord* word)
+{
+    assert(word);
+    assert(buffer);
+    
+    
+    union
+    {
+        uint8_t b[4];
+        int32_t v;
+    } val;
+    
+    
+    val.b[0] = buffer[0];
+    val.b[1] = buffer[1];
+    val.b[2] = buffer[2];
+    val.b[3] = buffer[3];
+    
+    *word = val.v;
+    return 1;
 }
 
 // taken from https://github.com/tadryanom/lux/blob/master/kernel/acpi/eval.c

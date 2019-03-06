@@ -348,15 +348,14 @@ typedef struct
     
 } ACPIMethod;
 
+
+// Table 17-18 OperationRegion Region Types and Access Types
 typedef struct
 {
-    char name[5]; // 4 chars max + null terminaison
+    char name[6]; // 4 chars max + null terminaison
     uint64_t space;
     uint64_t offset;
     uint64_t length;
-    
-    
-    
     
 } ACPIOperationRegion;
 

@@ -92,7 +92,8 @@ AMLParserError DecodeBufferObject(const uint8_t* buffer , size_t bufferSize, AML
     
     // check if n-1 byte is '6.4.2.8 End Tag'
     
-    if (buffer[bufferSize-2] != 0x79)
+    
+    if ( bufferSize == 0 || buffer[bufferSize-2] != 0x79)
     {
         results->numItems = 0; // this is a plain buffer
         return AMLParserError_None;

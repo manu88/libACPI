@@ -297,7 +297,66 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     return err;
 }
 
-
+static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
+{
+    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
+    assert(decomp);
+    
+    ACPIField field ={0} ;
+    if(decomp->callbacks.onField)
+    {
+        const uint8_t nameSize = ExtractName(buffer, 4, field.name);
+        
+        assert( field.name[nameSize] == 0);
+        //field.name[nameSize] = 0;
+        
+        const uint8_t bytes = buffer[ nameSize];
+        assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
+        
+        // bit 0-3: accessType
+        // bit 4: lock Rule
+        // bit 5-6: update rule
+        field.accessType = bytes & 0b00001111;
+        field.lockRule   = bytes & 0b00010000;
+        field.updateRule = bytes & 0b01100000;
+        
+        
+        uint8_t* data = (uint8_t*) buffer + nameSize +1;
+        
+        size_t dataSize = bufferSize - nameSize- 1;
+        /*
+        for(int i=0;i<bufferSize; i++)
+        {
+            if (i%8==0)
+                printf("\n");
+            
+            printf(" %x " , buffer[i]);
+        }
+        
+        printf("\n");
+        */
+        if (IsName(data[0]) == 0 ) // We have an offset
+        {
+            assert(IsName(data[1]) == 0);
+            //printf("Got an offset\n");
+            field.offset = data[1];
+            
+            data +=2;
+            dataSize -=2;
+        }
+        
+        assert(dataSize >= 5); // 4 chars + value
+        memset(field.valueName, 0, 5);
+        const uint8_t valNameSize = ExtractName(data, 4, field.valueName);
+        assert(valNameSize <= 4);
+        
+        field.value = data[valNameSize];
+        
+        decomp->callbacks.onField(decomp ,ctx , &field);
+    }
+    
+    return AMLParserError_None;
+}
 static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
 {
     assert(parser);
@@ -490,17 +549,8 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             break;
         case ACPIObject_Type_OperationRegion:
         {
-            /*
-            for(int i=0;i<bufferSize;i++)
-            {
-                if (i%8==0)
-                    printf("\n");
-                
-                printf(" 0x%x ", bufferPos[i]);
-            }
             
-            printf("\n");
-            */
+            
             assert( bufferSize == sizeof(ACPIOperationRegion));
             assert(bufferPos);
             const ACPIOperationRegion* reg = (const ACPIOperationRegion*)  bufferPos;
@@ -515,61 +565,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             break;
         case ACPIObject_Type_Field:
         {
-            ACPIField field ={0} ;
-            if(decomp->callbacks.onField)
-            {
-                const uint8_t nameSize = ExtractName(bufferPos, 4, field.name);
-                field.name[4] = 0;
-                
-                
-                
-                const uint8_t bytes = bufferPos[ nameSize];
-                assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
-                
-                // bit 0-3: accessType
-                // bit 4: lock Rule
-                // bit 5-6: update rule
-                field.accessType = bytes & 0b00001111;
-                field.lockRule   = bytes & 0b00010000;
-                field.updateRule = bytes & 0b01100000;
-                
-            
-                uint8_t* data = (uint8_t*) bufferPos + nameSize +1;
-                
-                size_t dataSize = bufferSize - nameSize- 1;
-                /*
-                for(int i=0;i<dataSize; i++)
-                {
-                    if (i%8==0)
-                        printf("\n");
-                    
-                    printf(" %x " , data[i]);
-                }
-                
-                printf("\n");
-                 */
-                if (IsName(data[0]) == 0 ) // We have an offset
-                {
-                    assert(IsName(data[1]) == 0);
-                    //printf("Got an offset\n");
-                    field.offset = data[1];
-                    
-                    data +=2;
-                    dataSize -=2;
-                }
-                
-                assert(dataSize >= 5); // 4 chars + value
-                memset(field.valueName, 0, 5);
-                const uint8_t valNameSize = ExtractName(data, 4, field.valueName);
-                assert(valNameSize <= 4);
-                
-                field.value = data[valNameSize];
-                
-                decomp->callbacks.onField(decomp ,&ctx , &field);
-            }
-            
+            return _DecodeField(parser, &ctx, bufferPos, bufferSize);
         }
-            break;
+//            break;
         case ACPIObject_Type_Method:
         {
             ACPIMethod method = {0};
