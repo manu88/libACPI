@@ -255,7 +255,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             assert(IsName(*namePos));
             
             memset(reg.name, 0, 6);
-            ExtractName(namePos, nameSize, reg.name);
+            ExtractName(namePos, nameSize, reg.name, NULL);
             //reg.name[4] = 0;
             
             *advancedBy +=nameSize;
@@ -453,7 +453,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         {
             char name[5] = {0};
             
-            const uint8_t nameSize =  ExtractName(buffer, 4, name);
+            const uint8_t nameSize =  ExtractName(buffer, 4, name, NULL);
             
             // bit 0-3: SyncLevel (0x00-0x0f)
             // bit 4-7: Reserved (must be 0)
@@ -516,8 +516,8 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             printf("%s\n" , buffer);
             char name1[5] = {0};
             char name2[5] = {0};
-            const uint8_t name1Size = ExtractName(buffer, 4, name1);
-            const uint8_t name2Size = ExtractName(buffer + name1Size, 4, name2);
+            const uint8_t name1Size = ExtractName(buffer, 4, name1, NULL);
+            const uint8_t name2Size = ExtractName(buffer + name1Size, 4, name2, NULL);
             
             *advancedBy += name1Size + name2Size;
         }

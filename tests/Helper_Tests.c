@@ -28,25 +28,25 @@ static void ExtractNameTests(void)
 {
     {
         char n[4];
-        uint8_t ret = ExtractName( (const uint8_t *)"DBB_", 4, n);
+        uint8_t ret = ExtractName( (const uint8_t *)"DBB_", 4, n , NULL);
         assert(ret == 3);
         assert(strcmp("DBB", n) == 0);
     }
     {
         char n[4];
-        uint8_t ret = ExtractName( (const uint8_t *)"__B_", 4, n);
+        uint8_t ret = ExtractName( (const uint8_t *)"__B_", 4, n, NULL);
         assert(ret == 3);
         assert(strcmp("__B", n) == 0);
     }
     {
         char n[4];
-        uint8_t ret = ExtractName( (const uint8_t *)"___B", 4, n);
+        uint8_t ret = ExtractName( (const uint8_t *)"___B", 4, n, NULL);
         assert(ret == 4);
         assert( strncmp( "___B", n , 4) == 0);
     }
     {
         char n[4];
-        uint8_t ret = ExtractName( (const uint8_t *)"DB__", 4, n);
+        uint8_t ret = ExtractName( (const uint8_t *)"DB__", 4, n, NULL);
         assert(ret == 2);
         assert(strcmp("DB", n) == 0);
     }

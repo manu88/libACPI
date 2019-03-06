@@ -305,20 +305,20 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
     ACPIField field ={0} ;
     if(decomp->callbacks.onField)
     {
-        const uint8_t nameSize = ExtractName(buffer, 4, field.name);
+        const uint8_t nameSize = ExtractName(buffer, 4, field.name, NULL);
         
         assert( field.name[nameSize] == 0);
         //field.name[nameSize] = 0;
         
-        const uint8_t bytes = buffer[ nameSize];
+        const uint8_t bytes = buffer[ nameSize ];
         assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
         
         // bit 0-3: accessType
         // bit 4: lock Rule
         // bit 5-6: update rule
         field.accessType = bytes & 0b00001111;
-        field.lockRule   = bytes & 0b00010000;
-        field.updateRule = bytes & 0b01100000;
+        field.lockRule   = (bytes & 0b00010000) >> 4;
+        field.updateRule = (bytes & 0b01100000) >> 5;
         
         
         uint8_t* data = (uint8_t*) buffer + nameSize +1;
@@ -330,12 +330,11 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
             if (i%8==0)
                 printf("\n");
             
-            printf(" %x " , buffer[i]);
+            printf(" %x (%c) " , buffer[i],buffer[i]);
         }
         
         printf("\n");
         */
-        
         if (IsName(data[0]) == 0 ) // We have an offset
         {
             assert(IsName(data[1]) == 0);
@@ -348,7 +347,7 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
         
         assert(dataSize >= 5); // 4 chars + value
         memset(field.valueName, 0, 5);
-        const uint8_t valNameSize = ExtractName(data, 4, field.valueName);
+        const uint8_t valNameSize = ExtractName(data, 4, field.valueName, NULL);
         assert(valNameSize <= 4);
         
         field.value = data[valNameSize];
@@ -445,7 +444,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             setState(decomp, AMLState_StartedDevice);
             ACPIDevice dev;
             
-            const uint8_t nameSize = ExtractName(bufferPos, bufferSize, dev.name);
+            const uint8_t nameSize = ExtractName(bufferPos, bufferSize, dev.name, NULL);
             dev.name[4] = 0;
             
             if (decomp->callbacks.StartDevice)
@@ -472,7 +471,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
             char name[5] = {0};
             const uint8_t* namePosition = bufferPos;// + pos + advancedByte;
-            const uint8_t nameSize = ExtractName(namePosition, 5, name);
+            const uint8_t nameSize = ExtractName(namePosition, 5, name, NULL);
             assert(nameSize);
             name[4] = 0;
             
@@ -573,7 +572,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         {
             ACPIMethod method = {0};
             
-            uint8_t nameSize = ExtractName(bufferPos, 4, method.name);
+            uint8_t nameSize = ExtractName(bufferPos, 4, method.name, NULL);
             method.name[4] = 0;
             
             

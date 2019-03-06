@@ -48,9 +48,12 @@ uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize )
     return ret;
 }
 
-uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar)
+uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar,uint8_t* advanced)
 {
     const uint8_t computedSize = GetNameSize(buff,size);
+    if (advanced)
+        *advanced = computedSize;
+    
     assert( computedSize <= size);
     strncpy(outChar, (const char*)buff, computedSize);
     
@@ -192,11 +195,11 @@ start:
         path++;
         
         //memcpy(fullpath + strlen(fullpath), path, 4);
-        ExtractName(path, 4, fullpath + strlen(fullpath));
+        ExtractName(path, 4, fullpath + strlen(fullpath) , NULL);
         
         fullpath[strlen(fullpath)] = '.';
         //memcpy(fullpath + strlen(fullpath), path + 4, 4);
-        ExtractName(path+4, 4, fullpath + strlen(fullpath));
+        ExtractName(path+4, 4, fullpath + strlen(fullpath), NULL);
         
         
     } else if(path[0] == AML_OP_MultiNamePrefix)
@@ -213,7 +216,7 @@ start:
         while(current_count < multi_count)
         {
             name_size += 4;
-            ExtractName(path, 4, fullpath + strlen(fullpath));
+            ExtractName(path, 4, fullpath + strlen(fullpath), NULL);
             //memcpy(fullpath + strlen(fullpath), path, 4);
             path += 4;
             current_count++;
@@ -226,7 +229,7 @@ start:
     {
         name_size += 4;
         
-        ExtractName(path, 4, fullpath + strlen(fullpath));
+        ExtractName(path, 4, fullpath + strlen(fullpath), NULL);
         //memcpy(fullpath + strlen(fullpath), path, 4);
         //const char* p = path;
         //printf("Path '%s' \n" , p);
