@@ -335,10 +335,11 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
         
         printf("\n");
         */
+        
         if (IsName(data[0]) == 0 ) // We have an offset
         {
             assert(IsName(data[1]) == 0);
-            //printf("Got an offset\n");
+            printf("Got an offset\n");
             field.offset = data[1];
             
             data +=2;
