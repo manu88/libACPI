@@ -60,45 +60,44 @@ static void AML_InternalTests()
     {
         const uint8_t b[] = { 'H' , 'I' , 'D' , 'A'};
         char out[5] = {0};
-        uint8_t adv = 0;
-        assert (ExtractName(b, 4, out,&adv) == 4);
-        assert(adv == 4);
+
+        assert (ExtractNameString(b, 4, out) == 4);
+
         assert( strcmp(out , "HIDA") == 0);
     }
     {
         const uint8_t b[] = { '_' , 'I' , 'D' , 'A'};
         char out[5] = {0};
-        uint8_t adv = 0;
-        const uint8_t sSize =  ExtractName(b, 4, out ,& adv);
+
+        const uint8_t sSize =  ExtractNameString(b, 4, out );
         assert(sSize == 4);
-        assert(adv == 4);
+
         assert( strcmp(out , "_IDA") == 0);
     }
     {
         const uint8_t b[] = { 'H' , 'I' , 'D' , '_'};
         char out[5] = {0};
-        uint8_t adv = 0;
-        const uint8_t sSize =  ExtractName(b, 4, out,& adv);
-        assert(adv == 4);
-        assert(sSize == 3);
+
+        const uint8_t sSize =  ExtractNameString(b, 4, out);
+
+        assert(sSize == 4);
         assert( strcmp(out , "HID") == 0);
     }
     {
         const uint8_t b[] = { 'H' , 'I' , '_' , '_'};
         char out[5] = {0};
-        uint8_t adv = 0;
-        const uint8_t sSize =  ExtractName(b, 4, out,& adv);
-        assert(adv == 4);
-        assert(sSize == 2);
+
+        const uint8_t sSize =  ExtractNameString(b, 4, out);
+
+        assert(sSize == 4);
         assert( strcmp(out , "HI") == 0);
     }
     {
         const uint8_t b[] = { 'H' , '_' , '_' , '_'};
         char out[5] = {0};
-        uint8_t adv = 0;
-        const uint8_t sSize =  ExtractName(b, 4, out,& adv);
-        assert(adv == 4);
-        assert(sSize == 1);
+
+        const uint8_t sSize =  ExtractNameString(b, 4, out);
+        assert(sSize == 4);
         assert( strcmp(out , "H") == 0);
     }
 }

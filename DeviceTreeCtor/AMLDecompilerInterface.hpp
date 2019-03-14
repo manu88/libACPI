@@ -40,7 +40,7 @@ protected:
     virtual int OnValue(const ParserContext* context, uint64_t value)= 0;
 
     virtual int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)= 0;
-    virtual int onField(const ParserContext* context, const ACPIField*)= 0;
+    virtual int startField(const ParserContext* context, const ACPIField*)= 0;
     
     
     virtual int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)= 0;

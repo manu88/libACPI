@@ -48,6 +48,47 @@ uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize )
     return ret;
 }
 
+// 17.1.2 ASL Name and Pathname Terms
+uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar )
+{
+    uint8_t parsed = 0;
+    // NameString := <RootChar NamePath> | <ParentPrefixChar PrefixPath NamePath> | NonEmptyNamePath
+    
+    // PrefixPath := Nothing | <ParentPrefixChar PrefixPath>
+    switch (buff[0])
+    {
+        case AML_OP_ParentPrefixChar:
+            
+            break;
+        case AML_OP_RootChar:
+        default:
+            outChar[parsed] = buff[parsed];
+            while (parsed < 5 && parsed < size && IsName(buff[parsed]))
+            {
+                outChar[parsed] = buff[parsed];
+                parsed++;
+            }
+            break;
+            
+            
+        
+            break;
+    }
+    
+    
+    uint8_t index = parsed;
+    
+    while (index--)
+    {
+        if (outChar[index] == '_')
+            outChar[index] = 0;
+        else
+            break;
+    }
+    
+    return parsed;
+}
+
 uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar,uint8_t* advanced)
 {
     const uint8_t computedSize = GetNameSize(buff,size);

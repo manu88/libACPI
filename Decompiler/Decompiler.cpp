@@ -188,7 +188,7 @@ public:
     }
     
     
-    int onField(const ParserContext* context, const ACPIField* field)override
+    int startField(const ParserContext* context, const ACPIField* field)override
     {
         incScope();
         

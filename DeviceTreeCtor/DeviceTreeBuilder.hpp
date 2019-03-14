@@ -269,7 +269,7 @@ protected:
     
     int OnValue(const ParserContext* context, uint64_t value)override;
     int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)override;
-    int onField(const ParserContext* context, const ACPIField*)override;
+    int startField(const ParserContext* context, const ACPIField*)override;
     
     
     int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;

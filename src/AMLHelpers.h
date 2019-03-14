@@ -25,7 +25,9 @@ int GetDWord(const uint8_t* buffer , ACPIDWord* word);
 
 uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize );
 // returns the corrected string size
-uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar , uint8_t* advanced);
+//uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar , uint8_t* advanced);
+
+uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar );
 
 
 size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);

@@ -106,10 +106,10 @@ decomp(decomp)
         return self->onOperationRegion(context, reg);
     };
     
-    decomp.callbacks.onField = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIField* field) -> int
+    decomp.callbacks.startField = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIField* field) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->onField(context, field);
+        return self->startField(context, field);
     };
     
     decomp.callbacks.onMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIMethod* method) -> int

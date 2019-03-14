@@ -51,6 +51,47 @@ static void ExtractNameTests(void)
         assert(strcmp("DB", n) == 0);
     }
     
+    
+    {
+        char n[4];
+        uint8_t ret = ExtractNameString( (const uint8_t *)"DBB_", 4, n );
+        assert(ret == 4);
+        assert(strlen(n) == 3);
+        assert(strcmp("DBB", n) == 0);
+    }
+    {
+        char n[4];
+        uint8_t ret = ExtractNameString( (const uint8_t *)"__B_", 4, n);
+        assert(ret == 4);
+        assert(strlen(n) == 3);
+        assert(strcmp("__B", n) == 0);
+    }
+    {
+        char n[5];
+        uint8_t ret = ExtractNameString( (const uint8_t *)"___B", 4, n);
+        assert(ret == 4);
+        assert(strlen(n) == 4);
+        assert( strncmp( "___B", n , 4) == 0);
+    }
+    {
+        char n[4];
+        uint8_t ret = ExtractNameString( (const uint8_t *)"DB__", 4, n);
+        assert(ret == 4);
+        assert(strlen(n) == 2);
+        assert(strcmp("DB", n) == 0);
+    }
+    {
+        const uint8_t buff[] =     "\\PHO_APBP_\x01PBW_\x01\xbe";
+        
+        char c[18] = "";
+        const uint8_t nameS =  ExtractNameString(buff, sizeof(buff), c);
+        assert(strcmp(c, "\\PHO") == 0);
+        assert(strlen(c) == 4);
+        assert(nameS == 5);
+        
+        
+    }
+    
 }
 
 static void ResolvePath_Tests()

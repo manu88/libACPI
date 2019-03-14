@@ -386,6 +386,12 @@ typedef struct
 } ACPIField;
 
 
+typedef struct
+{
+    char name[5]; // 4 + NULL byte
+    uint8_t value;
+} ACPIFieldEntry;
+
 
 typedef struct
 {
@@ -437,3 +443,4 @@ typedef struct
     uint8_t  disk_motor_strt;           //BYTE
     
 } FloppyDiskInformation;
+
