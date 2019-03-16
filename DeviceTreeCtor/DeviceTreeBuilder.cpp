@@ -183,7 +183,11 @@ int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACP
 
 int DeviceTreeBuilder::startField(const ParserContext* context, const ACPIField*field)
 {
-    currentNode.top()->_fields[field->name].push_back(*field);
+    char* fieldName = AMLNameConstructNormalized(&field->name);
+    
+    currentNode.top()->_fields[fieldName].push_back(*field);
+    
+    free(fieldName);
     return 0;
 }
 

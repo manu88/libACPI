@@ -127,7 +127,8 @@ ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  )
                 
                 const uint8_t numNames = buff[1];
                 
-                return 5*numNames -1;
+                
+                return 2 + 4*numNames;
             }
             
             break;

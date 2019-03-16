@@ -77,8 +77,17 @@ static void ExtractNameSizeTests(void)
     assert(ExtractMaxNameSize((const uint8_t*)"^/", 2)   == -1);
     assert(ExtractMaxNameSize((const uint8_t*)"\\^", 2) == 0);
     
-    const uint8_t b[] = { '^','^' , '^' , 0x2F, 3 };
-    assert(ExtractMaxNameSize(b, sizeof(b)) == -1);
+    {
+        const uint8_t b[] = { '^','^' , '^' , 0x2F, 3 };
+        assert(ExtractMaxNameSize(b, sizeof(b)) == -1);
+    }
+    
+    {
+        const uint8_t buff[] = { '^','^' , '^' , 0x2F , 4  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' ,  'S' ,'E' , 'T' , '_' , 'T','E','S','T' };
+        assert(ExtractMaxNameSize(buff, sizeof(buff)) == 21);
+        
+    }
+    
     
 }
 static void ExtractNameTests(void)

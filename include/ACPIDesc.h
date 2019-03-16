@@ -19,6 +19,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <AMLTypes.h>
 
 typedef int32_t  ACPIDWord;
 
@@ -362,7 +363,9 @@ typedef struct
 
 typedef struct
 {
-    char name[32]; // 4 + NULL byte
+    //char _name[32]; // 4 + NULL byte
+    AMLName name;
+    //AMLName
     uint8_t accessType:4;
     /*
      0 AnyAcc

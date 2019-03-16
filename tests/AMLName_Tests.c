@@ -24,8 +24,7 @@ static int NameIsValid( const AMLName* name)
 
 void doAMLNameTests()
 {
-    
-    
+
     {
         AMLName name = {0};
         const uint8_t b[] = {0x0 , 0x1};
@@ -39,12 +38,24 @@ void doAMLNameTests()
     {
         AMLName name = {0};
         const uint8_t b[] = {'A' , 'M' , 'L'};
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 1);
-        assert( NameIsValid(&name));
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == -2);// not enough buffer size
+        assert(NameIsInvalid(&name));
+        /*
         assert(AMLNameCountParents(&name) == 0);
         assert(AMLNameHasPrefixRoot(&name) == 0);
         assert(AMLNameCountSegments(&name) == 1);
+         */
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = {'A' , 'M' , 'L' , '_'};
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 4);
+        assert(NameIsValid(&name));
+        
+         assert(AMLNameCountParents(&name) == 0);
+         assert(AMLNameHasPrefixRoot(&name) == 0);
+         assert(AMLNameCountSegments(&name) == 1);
+
     }
     {
         // VALID cause only '\'
@@ -79,8 +90,8 @@ void doAMLNameTests()
     {
         AMLName name = {0};
         const uint8_t b[] = {'\\' , 'A' , 'M' , 'L' ,'_'  /*Junk*/ ,0x1 , 0x10  };
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 1);
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 5);
+        
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 0);
         assert(AMLNameHasPrefixRoot(&name) == 1);
@@ -93,9 +104,9 @@ void doAMLNameTests()
     }
     {
         AMLName name = {0};
-        const uint8_t b[] = {'^' , 'A' , 'M' , 'L'};
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 1);
+        const uint8_t b[] = {'^' ,'_', 'A' , 'M' , 'L'};
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b) ) == 5);
+        
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 1);
         assert(AMLNameHasPrefixRoot(&name) == 0);
@@ -104,13 +115,13 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "AML" ) == 0);
+        assert(strcmp(segName, "_AML" ) == 0);
     }
     {
         AMLName name = {0};
-        const uint8_t b[] = {'^' , '^' , 'A' , 'M' , 'L'};
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 1);
+        const uint8_t b[] = {'^' , '^' , 'A' , 'M' , 'L' , '_'};
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 6);
+        
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 2);
         assert(AMLNameHasPrefixRoot(&name) == 0);
@@ -118,13 +129,13 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "AML" ) == 0);
+        assert(strcmp(segName, "AML_" ) == 0);
     }
     {
         AMLName name = {0};
-        const uint8_t b[] = {'^' , '^' ,'^' , 'A' , 'M' , 'L'};
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 1);
+        const uint8_t b[] = {'^' , '^' ,'^' , 'A' , 'M' , 'L' , '_'};
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 7);
+        
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 3);
         assert(AMLNameHasPrefixRoot(&name) == 0);
@@ -132,13 +143,13 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "AML" ) == 0);
+        assert(strcmp(segName, "AML_" ) == 0);
     }
     {
         AMLName name = {0};
         const uint8_t b[] = { '^' , '^' , 0x2E  , 'P' ,'C' , 'I' , '_'    , 'S' ,'B' , 'S', '_'};
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 1);
+        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 11);
+        
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 2);
         assert(AMLNameHasPrefixRoot(&name) == 0);
@@ -156,8 +167,8 @@ void doAMLNameTests()
         // multi name
         AMLName name = {0};
         const uint8_t b[] = { '^','^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 1);
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 17);
+        
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 3);
         assert(AMLNameHasPrefixRoot(&name) == 0);
@@ -179,8 +190,8 @@ void doAMLNameTests()
         // multi name, but troncated
         AMLName name = {0};
         const uint8_t b[] = { '^','^' , '^' , 0x2F };//, 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 0);
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == -1);
+        
         assert( NameIsInvalid(&name));
         /*
         assert(AMLNameCountParents(&name) == 3);
@@ -193,8 +204,8 @@ void doAMLNameTests()
         // multi name, but troncated
         AMLName name = {0};
         const uint8_t b[] = { '^','^' , '^' , 0x2F, 3 };//  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
-        assert(ret == 0);
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == -1);
+        
         assert( NameIsInvalid(&name));
         /*
          assert(AMLNameCountParents(&name) == 3);
@@ -280,8 +291,9 @@ void doAMLNameNormalizedTests()
     }
     {
         AMLName name = {0};
-        const uint8_t b[] = { '^','^' , '^' , 0x2F , 4  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' , 'T','E','S','T' };
-        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) );
+        const uint8_t b[] = { '^','^' , '^' , 0x2F , 4  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' ,  'S' ,'E' , 'T' , '_' , 'T','E','S','T' ,0,0,0};
+        
+        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 21);
         
         char* ret = AMLNameConstructNormalized(&name);
         assert(ret);

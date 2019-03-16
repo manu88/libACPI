@@ -302,10 +302,19 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
     
+    
+    //AMLName fieldName = {0};
+    
     ACPIField field ={0} ;
     
-    uint8_t advancedFromName = ExtractNameString(buffer, 32, field.name);
+    const ssize_t retParseFieldName = AMLNameCreateFromBuffer(&field.name, buffer, bufferSize);
+    
+    if (retParseFieldName < 0)
+        return AMLParserError_BufferTooShort;
+    
+    uint8_t advancedFromName = (uint8_t) retParseFieldName;// ExtractNameString(buffer, 32, field._name);
     assert(advancedFromName);
+    //assert(retParseFieldName == advancedFromName);
     //const uint8_t nameSize = ExtractName(buffer, 4, field.name, &advancedFromName);
     
     //assert( field.name[nameSize] == 0);

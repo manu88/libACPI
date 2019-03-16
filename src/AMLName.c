@@ -22,7 +22,7 @@
 #include <AMLHelpers.h>
 #include "AMLByteCode.h"
 
-uint8_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize )
+ssize_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize )
 {
     
     assert(name);
@@ -32,12 +32,17 @@ uint8_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bu
     
     if (maxSize <= 0)
     {
-        return 0;
+        return maxSize;
+    }
+    
+    if (bufferSize< maxSize)
+    {
+        return -2;
     }
     
     name->originalBuf = buffer;
     name->originalBufSize = bufferSize;
-    return 1;
+    return maxSize;
 }
 
 

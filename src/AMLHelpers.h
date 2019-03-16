@@ -40,7 +40,7 @@ size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);
 size_t ResolvePath(char *fullpath, const uint8_t *path);
 
 typedef struct _AMLName AMLName;
-uint8_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize );
+ssize_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize );
 
 
 //DeviceIdentifiers GetDeviceIDFromStr(const uint8_t* name);
