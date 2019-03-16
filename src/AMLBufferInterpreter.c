@@ -112,7 +112,7 @@ AMLParserError DecodeBufferObject(const uint8_t* buffer , size_t bufferSize, AML
         results->entries[results->numItems].isa = item;
         
         results->numItems++;
-        
+        assert(results->numItems < MaxItemsPerBuffer);
         const size_t remains =bufferSize - itemSize;
         
         

@@ -54,7 +54,7 @@ static nlohmann::json serializeIOPortDescriptor( const IOPortDescriptor &desc)
     
     return ret;
 }
-
+/*
 static nlohmann::json serializeResourceType0Flags(const ResourceType0Flags& desc)
 {
     nlohmann::json ret;
@@ -67,7 +67,7 @@ static nlohmann::json serializeResourceType0Flags(const ResourceType0Flags& desc
     
     return ret;
 }
-
+*/
 
 static nlohmann::json serializeQWordAddressSpaceDescriptor(const QWordAddressSpaceDescriptor& desc)
 {

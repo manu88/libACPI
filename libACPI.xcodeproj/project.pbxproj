@@ -51,6 +51,8 @@
 		59459AE02217419100DD9396 /* BufferTests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459ADF2217419100DD9396 /* BufferTests.c */; };
 		59459AE622180D9600DD9396 /* Parse_WORDAddressSpaceDescriptor.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459AE522180D9600DD9396 /* Parse_WORDAddressSpaceDescriptor.c */; };
 		59459AE8221B1DA800DD9396 /* ParseSmallItems.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459AE7221B1DA800DD9396 /* ParseSmallItems.c */; };
+		595BAC1D223CE1440044D8A3 /* AMLName_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 595BAC1C223CE1440044D8A3 /* AMLName_Tests.c */; };
+		595BAC1F223CE5240044D8A3 /* AMLName.c in Sources */ = {isa = PBXBuildFile; fileRef = 595BAC1E223CE5240044D8A3 /* AMLName.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -144,6 +146,9 @@
 		59459AE122180CC400DD9396 /* ItemParsers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ItemParsers.h; sourceTree = "<group>"; };
 		59459AE522180D9600DD9396 /* Parse_WORDAddressSpaceDescriptor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Parse_WORDAddressSpaceDescriptor.c; sourceTree = "<group>"; };
 		59459AE7221B1DA800DD9396 /* ParseSmallItems.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ParseSmallItems.c; sourceTree = "<group>"; };
+		595BAC1B223CE1440044D8A3 /* AMLName_Tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLName_Tests.h; sourceTree = "<group>"; };
+		595BAC1C223CE1440044D8A3 /* AMLName_Tests.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLName_Tests.c; sourceTree = "<group>"; };
+		595BAC1E223CE5240044D8A3 /* AMLName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLName.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -225,6 +230,7 @@
 				59459A7021DF51B800DD9396 /* AMLDecompiler.c */,
 				59459A3E21DE25EC00DD9396 /* AMLHelpers.h */,
 				59459A3621DE25EC00DD9396 /* AMLHelpers.c */,
+				595BAC1E223CE5240044D8A3 /* AMLName.c */,
 				59459A3921DE25EC00DD9396 /* AMLRouter.c */,
 				59459A3F21DE25EC00DD9396 /* AMLParser.c */,
 				59459A3C21DE25EC00DD9396 /* ACPIDesc.c */,
@@ -248,6 +254,8 @@
 				59459A6C21DF4FB400DD9396 /* Decompiler_Tests.h */,
 				59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */,
 				59459A4B21DE25FC00DD9396 /* main.c */,
+				595BAC1B223CE1440044D8A3 /* AMLName_Tests.h */,
+				595BAC1C223CE1440044D8A3 /* AMLName_Tests.c */,
 				59459ADE2217419100DD9396 /* BufferTests.h */,
 				59459ADF2217419100DD9396 /* BufferTests.c */,
 				59459AD7220F371200DD9396 /* Eisaid_Tests.h */,
@@ -469,6 +477,7 @@
 				59459AE02217419100DD9396 /* BufferTests.c in Sources */,
 				59459AA721F0607D00DD9396 /* DecompilerInvalid_Tests.c in Sources */,
 				59459AD9220F371200DD9396 /* Eisaid_Tests.c in Sources */,
+				595BAC1D223CE1440044D8A3 /* AMLName_Tests.c in Sources */,
 				59459A9D21EF0D3500DD9396 /* Helper_Tests.c in Sources */,
 				59459A4C21DE25FC00DD9396 /* main.c in Sources */,
 			);
@@ -483,6 +492,7 @@
 				59459AE622180D9600DD9396 /* Parse_WORDAddressSpaceDescriptor.c in Sources */,
 				59459A5821DE266500DD9396 /* AMLRouter.c in Sources */,
 				59459A5921DE266500DD9396 /* ACPIDesc.c in Sources */,
+				595BAC1F223CE5240044D8A3 /* AMLName.c in Sources */,
 				59459ADD22173F5B00DD9396 /* AMLBufferInterpreter.c in Sources */,
 				59459A5A21DE266500DD9396 /* AMLParser.c in Sources */,
 				59459AE8221B1DA800DD9396 /* ParseSmallItems.c in Sources */,

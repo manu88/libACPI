@@ -39,7 +39,7 @@ typedef enum
     
     AML_OP_ExtOpPrefix            = 0x5b,
     AML_OP_RootChar               = 0x5c, // '/'
-    AML_OP_ParentPrefixChar       = 0x5E,
+    AML_OP_ParentPrefixChar       = 0x5E, // '^'
     AML_OP_NameChar               = 0x5f,
     
     AML_OP_Local0Op               = 0x60,

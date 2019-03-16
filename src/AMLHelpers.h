@@ -20,19 +20,27 @@
 #include "ACPIDesc.h"
 #include <stdint.h>
 
+
+
 int IsName(char character);
+int IsRealName(char character);
 int GetDWord(const uint8_t* buffer , ACPIDWord* word);
 
-uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize );
+//uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize );
 // returns the corrected string size
-//uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar , uint8_t* advanced);
+uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar , uint8_t* advanced);
+ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  );
 
+uint8_t ExtractNameSize(const uint8_t *buff, size_t size  );
 uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar );
 
 
 size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);
 
 size_t ResolvePath(char *fullpath, const uint8_t *path);
+
+typedef struct _AMLName AMLName;
+uint8_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize );
 
 
 //DeviceIdentifiers GetDeviceIDFromStr(const uint8_t* name);

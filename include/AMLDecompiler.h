@@ -46,37 +46,37 @@ typedef struct _AMLDecompiler AMLDecompiler;
 typedef struct
 {
     
-    int (*startResourceTemplate)(AMLDecompiler*, const ParserContext* context , size_t numItems );
-    int (*endResourceTemplate)(AMLDecompiler*, const ParserContext* context , size_t numItemsParsed, AMLParserError err);
+    int (*startResourceTemplate)(AMLDecompiler* decomp, const ParserContext* context , size_t numItems );
+    int (*endResourceTemplate)(AMLDecompiler* decomp, const ParserContext* context , size_t numItemsParsed, AMLParserError err);
     
-    int (*onLargeItem)(AMLDecompiler*,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
-    int (*onSmallItem)(AMLDecompiler*,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
+    int (*onLargeItem)(AMLDecompiler* decomp,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
+    int (*onSmallItem)(AMLDecompiler* decomp,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     
-    int (*OnValue)(AMLDecompiler*,const ParserContext* context, uint64_t value);
-    int (*OnString)(AMLDecompiler*,const ParserContext* context, const char* string);
+    int (*OnValue)(AMLDecompiler* decomp,const ParserContext* context, uint64_t value);
+    int (*OnString)(AMLDecompiler* decomp,const ParserContext* context, const char* string);
     
-    int (*OnDefinitionBlock)(AMLDecompiler*,const ParserContext* context, const ACPIDefinitionBlock* block);
+    int (*OnDefinitionBlock)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDefinitionBlock* block);
     
-    int (*onOperationRegion)(AMLDecompiler*,const ParserContext* context, const ACPIOperationRegion*);
-    
-    
-    int (*startField)(AMLDecompiler*,const ParserContext* context, const ACPIField*);
+    int (*onOperationRegion)(AMLDecompiler* decomp,const ParserContext* context, const ACPIOperationRegion* reg);
     
     
-    int (*OnBuffer)(AMLDecompiler*, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
+    int (*startField)(AMLDecompiler* decomp,const ParserContext* context, const ACPIField* field);
     
-    int (*StartScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
-    int (*EndScope)(AMLDecompiler* ,const ParserContext* context, const char* location);
     
-    int (*StartDevice)(AMLDecompiler* ,const ParserContext* context, const ACPIDevice* name);
-    int (*EndDevice)(AMLDecompiler* ,const ParserContext* context, const ACPIDevice* name);
+    int (*OnBuffer)(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     
-    int (*StartName)(AMLDecompiler* ,const ParserContext* context, const char* name);
+    int (*StartScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
+    int (*EndScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
+    
+    int (*StartDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
+    int (*EndDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
+    
+    int (*StartName)(AMLDecompiler* decomp,const ParserContext* context, const char* name);
     //int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
-    int (*onMethod)(AMLDecompiler* ,const ParserContext* context, const ACPIMethod* method);
+    int (*onMethod)(AMLDecompiler* decomp,const ParserContext* context, const ACPIMethod* method);
     
-    int (*onPackage)(AMLDecompiler* ,const ParserContext* context, const ACPIPackage* package);
+    int (*onPackage)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package);
     //int (*endMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
 } AMLDecompilerCallbacks;
@@ -95,7 +95,7 @@ struct _AMLDecompiler
 {
     AMLParserPolicy parserPolicy;
     AMLDecompilerCallbacks callbacks;
-    char currentScope[SCOPE_STR_SIZE];
+    //char currentScope[SCOPE_STR_SIZE];
     void* userData;
     const uint8_t* errorPos;
     

@@ -362,7 +362,7 @@ typedef struct
 
 typedef struct
 {
-    char name[5]; // 4 + NULL byte
+    char name[32]; // 4 + NULL byte
     uint8_t accessType:4;
     /*
      0 AnyAcc

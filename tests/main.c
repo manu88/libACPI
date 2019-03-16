@@ -23,8 +23,10 @@
 #include "DecompilerInvalid_Tests.h"
 #include "Eisaid_Tests.h"
 #include "BufferTests.h"
+#include "AMLName_Tests.h"
 #include <stdlib.h>
 
+/*
 static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 {
     
@@ -39,6 +41,7 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
     fclose(fileptr); // Close the file
     return buffer;
 }
+ */
 
 int main(int argc, const char * argv[])
 {
@@ -50,6 +53,7 @@ int main(int argc, const char * argv[])
 
     Decompile_Tests();
     Buffers_Tests();
+    doAMLNameTests();
     /*
     size_t size = 0;
     uint8_t* buffer = readAndFillBuffer("/Users/manueldeneu/Documents/projets/Dev/libACPI/TestSuite/51.aml", &size);

@@ -232,8 +232,8 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     
     size_t advance = 0;
     
-    size_t a = 0;
-    AMLOperation nextOp  =  AMLParserPeekOp(buffer, bufferSize, &a);
+    //size_t a = 0;
+    //AMLOperation nextOp  =  AMLParserPeekOp(buffer, bufferSize, &a);
     
     /*
     if (nextOp == AML_DWordPrefix)
@@ -303,72 +303,77 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
     assert(decomp);
     
     ACPIField field ={0} ;
-    if(decomp->callbacks.startField)
+    
+    uint8_t advancedFromName = ExtractNameString(buffer, 32, field.name);
+    assert(advancedFromName);
+    //const uint8_t nameSize = ExtractName(buffer, 4, field.name, &advancedFromName);
+    
+    //assert( field.name[nameSize] == 0);
+    //field.name[nameSize] = 0;
+    
+    const uint8_t bytes = buffer[ advancedFromName ];
+    assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
+    
+    // bit 0-3: accessType
+    // bit 4: lock Rule
+    // bit 5-6: update rule
+    field.accessType = bytes & 0b00001111;
+    field.lockRule   = (bytes & 0b00010000) >> 4;
+    field.updateRule = (bytes & 0b01100000) >> 5;
+    
+    
+    uint8_t* data = (uint8_t*) buffer + advancedFromName +1;
+    
+    size_t dataSize = bufferSize - advancedFromName- 1;
+    /*
+    
+    */
+    if (IsName(data[0]) == 0 ) // We have an offset
     {
-        uint8_t advancedFromName = ExtractNameString(buffer, 5, field.name);
-        //const uint8_t nameSize = ExtractName(buffer, 4, field.name, &advancedFromName);
         
-        //assert( field.name[nameSize] == 0);
-        //field.name[nameSize] = 0;
-        
-        const uint8_t bytes = buffer[ advancedFromName ];
-        assert( (bytes & 0b10000000) == 0); // bit7 : Reserved (must be 0)
-        
-        // bit 0-3: accessType
-        // bit 4: lock Rule
-        // bit 5-6: update rule
-        field.accessType = bytes & 0b00001111;
-        field.lockRule   = (bytes & 0b00010000) >> 4;
-        field.updateRule = (bytes & 0b01100000) >> 5;
-        
-        
-        uint8_t* data = (uint8_t*) buffer + advancedFromName +1;
-        
-        size_t dataSize = bufferSize - advancedFromName- 1;
-        /*
-        for(int i=0;i<bufferSize; i++)
+        if (IsName(data[1] != 0))
         {
-            if (i%8==0)
-                printf("\n");
+            for(int i=0;i<dataSize; i++)
+            {
+                if (i%8==0)
+                    printf("\n");
+                
+                printf(" %x (%c) " , data[i],data[i]);
+            }
             
-            printf(" %x (%c) " , buffer[i],buffer[i]);
+            printf("\n");
         }
+        assert(IsName(data[1]) == 0);
+        printf("Got an offset\n");
+        field.offset = data[1];
         
-        printf("\n");
-        */
-        if (IsName(data[0]) == 0 ) // We have an offset
-        {
-            assert(IsName(data[1]) == 0);
-            printf("Got an offset\n");
-            field.offset = data[1];
-            
-            data +=2;
-            dataSize -=2;
-        }
-        
-        assert(dataSize >= 5); // 4 chars + value
-        memset(field.valueName, 0, 5);
-        const uint8_t valNameSize = ExtractNameString(data, 4, field.valueName);
-        assert(valNameSize <= 4);
-        
-        field.value = data[valNameSize];
-        
-        data += valNameSize +1;
-        dataSize-= valNameSize + 1;
-        
-        while (dataSize)
-        {
-            ACPIField otherField ={0} ;
-            uint8_t valueNameSize = ExtractNameString(data, 4, otherField.valueName);
-            const uint8_t*v = data  + valueNameSize;
-            otherField.value = *v;
-            
-            dataSize -= valNameSize + 1;
-            data += valNameSize +1;
-        }
-        
-        decomp->callbacks.startField(decomp ,ctx , &field);
+        data +=2;
+        dataSize -=2;
     }
+    
+    assert(dataSize >= 5); // 4 chars + value
+    memset(field.valueName, 0, 5);
+    const uint8_t valNameSize = ExtractNameString(data, 4, field.valueName);
+    assert(valNameSize <= 4);
+    
+    field.value = data[valNameSize];
+    
+    data += valNameSize +1;
+    dataSize-= valNameSize + 1;
+    
+    while (dataSize)
+    {
+        ACPIField otherField ={0} ;
+        uint8_t valueNameSize = ExtractNameString(data, 4, otherField.valueName);
+        const uint8_t*v = data  + valueNameSize;
+        otherField.value = *v;
+        
+        dataSize -= valNameSize + 1;
+        data += valNameSize +1;
+    }
+    
+    decomp->callbacks.startField(decomp ,ctx , &field);
+    
     
     return AMLParserError_None;
 }
@@ -379,7 +384,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
     assert(decomp);
     
     ParserContext ctx;
-    ctx.currentScope = decomp->currentScope;
+    //ctx.currentScope = decomp->currentScope;
     ctx.nextOp = AML_Unknown;
     
     switch (forObjectType)
@@ -412,7 +417,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                     decomp->callbacks.StartScope(decomp ,&ctx , name);
                 }
                 
-                strncpy(decomp->currentScope, name, SCOPE_STR_SIZE);
+                //strncpy(decomp->currentScope, name, SCOPE_STR_SIZE);
                 
                 AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
                 if(err != AMLParserError_None)

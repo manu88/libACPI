@@ -23,19 +23,32 @@
 #include "AMLParser.h"
 #include "AMLTypes.h"
 
+
+
+
+
 // acpins_is_name(): Evaluates a name character
 // Param:    char character - character from name
 // Return:    int - 1 if it's a name, 0 if it's not
+
 
 int IsName(char character)
 {
     if((character >= '0' && character <= 'Z') || character == '_' || character == '\\')
         return 1;
     
-    else
-        return 0;
+
+    return 0;
 }
 
+int IsRealName(char character)
+{
+    if((character >= '0' && character <= 'Z') || character == '_' )
+        return 1;
+    
+    
+    return 0;
+}
 
 uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize )
 {
@@ -48,6 +61,79 @@ uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize )
     return ret;
 }
 
+
+ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  )
+{
+    if (size == 0)
+    {
+        return 0;
+    }
+    switch (buff[0])
+    {
+        
+        case AML_OP_ParentPrefixChar: // ^
+        {
+            int parsed = 0;
+            int c = 1;
+            
+            if (size <= 1)
+                return 0;
+            
+            
+            ssize_t remain = size - parsed;
+            while (buff[++parsed] == AML_OP_ParentPrefixChar)
+            {
+                
+                c++;
+                remain = size - parsed;
+                if (remain <=1)
+                    return 0;
+            }
+            
+            const ssize_t nextRet = ExtractMaxNameSize(buff + parsed, size - parsed);
+            return nextRet<0? nextRet :  c + nextRet;
+            //return ExtractMaxNameSize(buff+1, size-1) + 1;
+            
+        }
+        case AML_OP_RootChar: // /
+        {
+            if (size > 1) 
+            {
+                if (  IsRealName(buff[1]))
+                {
+                    const ssize_t nextRet = ExtractMaxNameSize(buff+1, size-1);
+                    return nextRet<0? nextRet :   nextRet + 1;
+                }
+                return  0;
+            }
+            
+            return 1;
+        }
+        default:
+            if (IsName(buff[0]))
+            {
+                return 4;
+            }
+            else if ( buff[0] == AML_OP_DualNamePrefix)
+            {
+                return 8 + 1; // two names plus '.' separator
+            }
+            else if (buff[0] == AML_OP_MultiNamePrefix)
+            {
+                if (size <=2 )
+                {
+                    return -1;
+                }
+                
+                const uint8_t numNames = buff[1];
+                
+                return 5*numNames -1;
+            }
+            
+            break;
+    }
+    return 0;
+}
 // 17.1.2 ASL Name and Pathname Terms
 uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar )
 {
@@ -58,11 +144,24 @@ uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar )
     switch (buff[0])
     {
         case AML_OP_ParentPrefixChar:
+            outChar[parsed] = buff[parsed];
+            parsed++;
+            while (parsed < size && parsed < size && IsName(buff[parsed]))
+            {
+                outChar[parsed] = buff[parsed];
+                parsed++;
+            }
+            
+            if (buff[parsed] == '.')
+            {
+                return parsed + ExtractNameString(buff + parsed, size-parsed, outChar + parsed);
+            }
             
             break;
         case AML_OP_RootChar:
         default:
             outChar[parsed] = buff[parsed];
+            parsed++;
             while (parsed < 5 && parsed < size && IsName(buff[parsed]))
             {
                 outChar[parsed] = buff[parsed];

@@ -24,6 +24,63 @@
 #include "AMLByteCode.h"
 #include "AMLParser.h"
 
+
+static void ExtractNameSizeTests(void)
+{
+    /*
+     STP1
+     ^GET
+     ^^PCI0
+     ^^PCI0.SBS -> ParentPrefixChar ParentPrefixChar DualNamePrefix 'PCI0' 'SBS_'
+     \S2
+     \SB.ISA.COM1
+     */
+
+    assert(ExtractMaxNameSize(NULL, 0)   == 0);
+    assert(ExtractMaxNameSize((const uint8_t*)"lol", 0)   == 0);
+    assert(ExtractMaxNameSize((const uint8_t*)"STP1", 4)   == 4);
+    assert(ExtractMaxNameSize((const uint8_t*)"^GET", 5)   == 5);
+    assert(ExtractMaxNameSize((const uint8_t*)"^^GET", 5)  == 6);
+    assert(ExtractMaxNameSize((const uint8_t*)"^^PCI0", 5) == 6);
+    
+    assert(ExtractMaxNameSize((const uint8_t*)"\\S2", 3)   == 5);
+    
+    {
+        // dual name
+        const uint8_t b[] = { '^' , '^' , 0x2E  , 'P' ,'C' , 'I', '0'    , 'S' ,'B' , 'S'};
+        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        assert(s == 11);
+    }
+    {
+        // dual name
+        const uint8_t b[] = { '^' , '^' , 0x2E  , 'P' ,'C' , 'I'    , 'S' ,'B' , 'S'};
+        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        assert(s == 11);
+    }
+    //^^S2.MEM.SET
+    {
+        // multi name
+        const uint8_t b[] = { '^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
+        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        assert(s == 16);
+    }
+    //^^^S2.MEM.SET
+    {
+        // multi name
+        const uint8_t b[] = { '^','^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
+        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        assert(s == 17);
+    }
+    
+    // invalid names
+
+    assert(ExtractMaxNameSize((const uint8_t*)"^/", 2)   == -1);
+    assert(ExtractMaxNameSize((const uint8_t*)"\\^", 2) == 0);
+    
+    const uint8_t b[] = { '^','^' , '^' , 0x2F, 3 };
+    assert(ExtractMaxNameSize(b, sizeof(b)) == -1);
+    
+}
 static void ExtractNameTests(void)
 {
     {
@@ -90,6 +147,15 @@ static void ExtractNameTests(void)
         assert(nameS == 5);
         
         
+    }
+    {
+        
+        const uint8_t buff[] = "^PX13.P13C";
+        
+        char c[18] = "";
+        const uint8_t nameS =  ExtractNameString(buff, sizeof(buff), c);
+        assert(nameS == 10);
+        assert(strcmp(c, "^PX13.P13C") == 0);
     }
     
 }
@@ -357,6 +423,7 @@ static void DeviceIds_Tests()
 */
 void Helper_Tests()
 {
+    ExtractNameSizeTests();
     ExtractNameTests();
     ResolvePath_Tests();
     GetInteger_Tests();
