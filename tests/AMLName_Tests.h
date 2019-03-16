@@ -4,3 +4,5 @@
 
 
 void doAMLNameTests(void);
+
+void doAMLNameNormalizedTests(void);

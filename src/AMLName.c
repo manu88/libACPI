@@ -14,7 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
+//#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <AMLTypes.h>
 #include <assert.h>
@@ -177,5 +178,69 @@ char* AMLNameConstructNormalized( const AMLName* name)
     assert(name);
     
     
-    return NULL;
+    const uint8_t hasRoot = AMLNameHasPrefixRoot(name);
+    const uint8_t  numParents = AMLNameCountParents(name);
+    
+    const uint8_t numSegs = AMLNameCountSegments(name);
+    if ( /* == 0 &&*/ numParents == 0 && numSegs == 1)
+    {
+        
+        size_t size = name->originalBufSize<4? name->originalBufSize :4;
+        size += hasRoot;
+        
+        return strndup( (const char*)name->originalBuf, size);
+    }
+    
+    
+    
+    size_t advance = hasRoot +  numParents;
+    
+    if (numSegs == 2)
+        advance +=1;
+    else if (numSegs >2)
+        advance +=2;
+    
+    size_t remains = name->originalBufSize - advance;
+    const uint8_t*  bufPos = name->originalBuf + advance;
+    
+    const size_t size = remains<4*numSegs? remains :4*numSegs;
+    
+    const size_t sizeToAlloc = numParents + size +  numSegs  +1 ; // +1 for the fucking NULL byte
+    char* ret = malloc( sizeToAlloc);
+    if (ret == NULL)
+    {
+        return NULL;
+    }
+    
+    
+    memset(ret, 0, sizeToAlloc);
+    
+    for(uint8_t i=0;i<numParents ;i++)
+    {
+        ret[i] = '^';
+    }
+    
+    for(uint8_t seg = 0;seg<numSegs ;seg++)
+    {
+        //uint8_t offsetfromDot = 0;
+        //const size_t writeAt = numParents+(seg*4);// + offsetfromDot;
+    
+        //char* addAtt = ret+writeAt;
+        
+        if (seg>0)
+        {
+            //printf("Add . after '%s'\n" , ret);
+            strcat(ret, ".");
+            //addAtt++;
+        }
+        
+        const uint8_t* copyFrom = bufPos+(seg*4);
+
+        //memcpy(addAtt, copyFrom, 4);
+        strncat(ret, (const char*)copyFrom, 4);
+        //size-=4;
+        
+    }
+    
+    return ret;
 }

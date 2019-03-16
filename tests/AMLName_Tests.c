@@ -6,6 +6,7 @@
 //  Copyright © 2019 Manuel Deneu. All rights reserved.
 //
 
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include "AMLName_Tests.h"
@@ -77,7 +78,7 @@ void doAMLNameTests()
     }
     {
         AMLName name = {0};
-        const uint8_t b[] = {'\\' , 'A' , 'M' , 'L'};
+        const uint8_t b[] = {'\\' , 'A' , 'M' , 'L' ,'_'  /*Junk*/ ,0x1 , 0x10  };
         uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
         assert(ret == 1);
         assert( NameIsValid(&name));
@@ -88,7 +89,7 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "AML" ) == 0);
+        assert(strcmp(segName, "AML_" ) == 0);
     }
     {
         AMLName name = {0};
@@ -202,4 +203,89 @@ void doAMLNameTests()
          */
     }
     
+}
+
+
+void doAMLNameNormalizedTests()
+{
+    {
+        AMLName name = {0};
+        const uint8_t b[] = {'A' , 'M' , 'L','_' /*Junk*/ ,0x1 , 0x10  };
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b))) ;
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "AML_")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = {'\\' ,'A' , 'M' , 'L' ,'_' /*Junk*/ ,0x6 , 0x10  };
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b))) ;
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "\\AML_")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = {'^' ,'A' , 'M' , 'L' ,'A' /*Junk*/ ,0x6 , 0x10  };
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b))) ;
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "^AMLA")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = {'^','^','^','^' ,'A' , 'M' , 'L' ,'A' /*Junk*/ ,0x6 , 0x10  };
+        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b))) ;
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "^^^^AMLA")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = { '^' , '^' , 0x2E  , 'P' ,'C' , 'I' , '_'    , 'S' ,'B' , 'S', '_'};
+        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) );
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "^^PCI_.SBS_")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = { '^','^','^','^' , '^' , 0x2E  , 'P' ,'C' , 'I' , '_'    , 'S' ,'B' , 'S', '_'};
+        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) );
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "^^^^^PCI_.SBS_")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = { '^','^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
+        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) );
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "^^^S2__.MEM_.SET_")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = { '^','^' , '^' , 0x2F , 4  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' , 'T','E','S','T' };
+        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) );
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "^^^S2__.MEM_.SET_.TEST")==0);
+        free(ret);
+    }
 }

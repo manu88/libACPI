@@ -54,6 +54,7 @@ int main(int argc, const char * argv[])
     Decompile_Tests();
     Buffers_Tests();
     doAMLNameTests();
+    doAMLNameNormalizedTests();
     /*
     size_t size = 0;
     uint8_t* buffer = readAndFillBuffer("/Users/manueldeneu/Documents/projets/Dev/libACPI/TestSuite/51.aml", &size);
