@@ -12,15 +12,17 @@
       "_SB": {
         "Children": {
           "PCI1": {
-            "Fields": {
-              "PCIC": {
-                "VEND": {
-                  "accessType": 3,
-                  "lockRule": 0,
-                  "updateRule": 0
-                }
+            "Fields": [
+              {
+                "content": [
+                  {
+                    "name": "VEND",
+                    "value": 32
+                  }
+                ],
+                "name": "PCIC"
               }
-            },
+            ],
             "Methods": {
               "_S1D": {
                 "argCount": 0,

@@ -9,57 +9,54 @@
   },
   "tree": {
     "Children": {
-
-      "\\": 
-      {
-        "Fields": 
-        {
-          "FCFG": 
+      "\\": {
+        "Fields": [
           {
-            "FDAT": {
-              "accessType": 1,
-              "lockRule": 0,
-              "updateRule": 0,
-              "offset": 8
-            },
-            "FSEL": {
-              "accessType": 2,
-              "lockRule": 0,
-              "updateRule": 0
-            }
+            "content": [
+              {
+                "name": "FSEL",
+                "value": 16
+              }
+            ],
+            "name": "FCFG"
+          },
+          {
+            "content": [
+              {
+                "name": "",
+                "value": 8
+              },
+              {
+                "name": "FDAT",
+                "value": 8
+              }
+            ],
+            "name": "FCFG"
           }
-        },
-        "Methods": 
-        {
-          "FRDB": 
-          {
+        ],
+        "Methods": {
+          "FRDB": {
             "argCount": 1,
             "body": "some",
             "serializeFlag": 0,
             "syncLevel": 0
           },
-          "FRDI": 
-          {
+          "FRDI": {
             "argCount": 1,
             "body": "some",
             "serializeFlag": 0,
             "syncLevel": 0
           }
         },
-        "OperationRegions": 
-        {
-          "FCFG": 
-          {
+        "OperationRegions": {
+          "FCFG": {
             "length": 2,
             "offset": 1296,
             "space": 1
           }
         }
       },
-
-
       "PCI0": {
-
         "Methods": {
           "FRDF": {
             "argCount": 1,

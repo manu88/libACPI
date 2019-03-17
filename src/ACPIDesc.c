@@ -21,6 +21,12 @@
 #include "ACPIDesc.h"
 #include "AMLParser.h"
 
+
+uint8_t ACPIFieldElementIsOffset(const ACPIFieldElement* element)
+{
+    assert(element);
+    return element->name[0] == 0 && element->value > 255;
+}
 /*
 int ACPIDescriptionInit(ACPIDescription* desc)
 {

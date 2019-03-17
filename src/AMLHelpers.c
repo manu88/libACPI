@@ -221,7 +221,7 @@ uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar,uint8_t* adv
     return strSize;
 }
 
-int GetDWord(const uint8_t* buffer , ACPIDWord* word)
+int GetDWord(const uint8_t* buffer , int32_t* word)
 {
     assert(word);
     assert(buffer);

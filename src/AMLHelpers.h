@@ -17,14 +17,14 @@
 
 #pragma once
 
-#include "ACPIDesc.h"
+//#include "ACPIDesc.h"
 #include <stdint.h>
-
+#include <AMLTypes.h>
 
 
 int IsName(char character);
 int IsRealName(char character);
-int GetDWord(const uint8_t* buffer , ACPIDWord* word);
+int GetDWord(const uint8_t* buffer , int32_t* word);
 
 //uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize );
 // returns the corrected string size
@@ -39,7 +39,7 @@ size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);
 
 size_t ResolvePath(char *fullpath, const uint8_t *path);
 
-typedef struct _AMLName AMLName;
+
 ssize_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize );
 
 

@@ -16,11 +16,12 @@
  */
 
 #include "Helper_Tests.h"
+//#include "AMLTypes.h"
 #include "AMLHelpers.h"
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
-#include "AMLTypes.h"
+
 #include "AMLByteCode.h"
 #include "AMLParser.h"
 

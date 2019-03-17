@@ -15,6 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
 #include <assert.h>
 #include "AMLParser.h"
 #include "AMLRouter.h"
@@ -37,6 +38,7 @@ size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
     }
     else if(bytecount == 1)
     {
+        
         destination[0] = (size_t)(data[0] & 0x0F);
         destination[0] |= (size_t)(data[1] << 4);
     } else if(bytecount == 2)
@@ -51,6 +53,7 @@ size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
         destination[0] |= (size_t)(data[2] << 12);
         destination[0] |= (size_t)(data[3] << 20);
     }
+    
     
     if (bytecount == 0)
     {
@@ -112,6 +115,34 @@ uint8_t ExtractInteger( const uint8_t* buffer , size_t bufSize , size_t* advance
     return 0;
 }
 
+size_t GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advance)
+{
+    uint8_t bytecount = (buffer[0] >> 6) & 3;
+    *advance = bytecount +1;
+    if (bytecount == 0)
+    {
+        uint8_t v = buffer[0] & 0x3F;
+        assert(v <= 63);
+        return v;
+    }
+    if (bytecount == 1)
+    {
+        const uint8_t leastFromByte0 = buffer[0] & 0b00000111;
+        const uint8_t leastFromByte1 = buffer[1];
+        
+        uint16_t v0 = leastFromByte0 << 8;
+        uint16_t v1 = leastFromByte1 << 1;
+        uint16_t v = v0  + v1;
+        
+        return v;
+        
+    }
+    else
+    {
+        assert(0);
+    }
+    return 0;//bytecount+1;
+}
 /*
  18.2.4 Package Length Encoding
  */
@@ -120,8 +151,11 @@ size_t _GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advanc
     size_t ret = 0;
     size_t numBytesAdvanced =  acpins_parse_pkgsize(buffer+offset, &ret);
     
+    
+    
     *advance += numBytesAdvanced;
     
+
     return  ret;
     
     

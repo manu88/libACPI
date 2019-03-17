@@ -18,23 +18,13 @@
 #pragma once
 
 #include <stdint.h>
+
 #define SCOPE_STR_SIZE 512
 
-#define MAX_NAMES_SEGMENT_PER_AMLNAME 8
-
-typedef struct _AMLName
+typedef struct// _AMLName
 {
     const uint8_t*  originalBuf;
     size_t          originalBufSize;
-    
-    
-    size_t startOfNames;
-    //uint8_t  root;      // has a / prefix?
-    //uint8_t  parents;   // number of ^ prefix
-    
-    //char* names[MAX_NAMES_SEGMENT_PER_AMLNAME]; // ordered list of names components
-    
-    
 } AMLName;
 
 

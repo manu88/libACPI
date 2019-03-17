@@ -177,6 +177,20 @@ struct Device
     
 };
 */
+
+struct FieldElement
+{
+    std::string name;
+    uint8_t value;
+};
+struct FieldDeclaration
+{
+    std::string name;
+    uint8_t accessType:4;
+    uint8_t lockRule:1; /* 0 NoLock 1 Lock */
+    uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
+    std::vector<FieldElement> elements;
+};
 struct TreeNode
 {
     
@@ -220,7 +234,7 @@ struct TreeNode
     std::vector<NameDeclaration> _names;
     std::vector<ACPIOperationRegion> _opRegions;
     
-    std::map<std::string, std::vector<ACPIField> > _fields;
+    std::vector<FieldDeclaration>  _fields;
     //std::vector<ACPIField> _fields;
     
     std::vector<ACPIMethod> _methods;
@@ -269,8 +283,10 @@ protected:
     
     int OnValue(const ParserContext* context, uint64_t value)override;
     int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)override;
-    int startField(const ParserContext* context, const ACPIField*)override;
     
+    int startField(const ParserContext* context, const ACPIField*)override;
+    int onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement)override;
+    int endField(const ParserContext* context, const ACPIField*)override;
     
     int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;
     
@@ -300,7 +316,7 @@ private:
     std::stack<TreeNode*> currentNode;// = nullptr;
     NameDeclaration* currentName = nullptr;
     
-    
+    FieldDeclaration *_currentFieldDecl = nullptr;
 
 };
 

@@ -185,9 +185,32 @@ int DeviceTreeBuilder::startField(const ParserContext* context, const ACPIField*
 {
     char* fieldName = AMLNameConstructNormalized(&field->name);
     
-    currentNode.top()->_fields[fieldName].push_back(*field);
-    
+    FieldDeclaration decl;
+    decl.name = fieldName;
+    currentNode.top()->_fields.push_back(decl);
+    _currentFieldDecl = &currentNode.top()->_fields.back();
     free(fieldName);
+    return 0;
+}
+
+int DeviceTreeBuilder::onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement)
+{
+    assert(_currentFieldDecl);
+    
+    FieldElement el;
+    
+    el.name = fieldElement.name;
+    el.value = fieldElement.value;
+    _currentFieldDecl->elements.push_back(el);
+    
+    return 0;
+}
+
+int DeviceTreeBuilder::endField(const ParserContext* context, const ACPIField*)
+{
+    
+    
+    _currentFieldDecl  = nullptr;
     return 0;
 }
 

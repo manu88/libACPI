@@ -11,27 +11,27 @@
     "Children": {
       "_SB": {
         "Children": {
-
-          "PCI1": 
-          {
-            "Fields": 
-            {
-              "PCIC": 
+          "PCI1": {
+            "Fields": [
               {
-                "VEND": 
-                {
-                  "accessType": 3,
-                  "lockRule": 0,
-                  "updateRule": 0
-                },
-                "TEST":
-                {
-                  "accessType": 3,
-                  "lockRule": 0,
-                  "updateRule": 0
-                }
+                "content": [
+                  {
+                    "name": "VEND",
+                    "value": 32
+                  }
+                ],
+                "name": "PCIC"
+              },
+              {
+                "content": [
+                  {
+                    "name": "TEST",
+                    "value": 10
+                  }
+                ],
+                "name": "PCIC"
               }
-            },
+            ],
             "Methods": {
               "_S1D": {
                 "argCount": 0,
@@ -40,15 +40,13 @@
                 "body": "some"
               }
             },
-          "OperationRegions": 
-          {
-            "PCIC": 
-            {
-              "length": 4,
-              "offset": 0,
-              "space": 2
-            }
-          },
+            "OperationRegions": {
+              "PCIC": {
+                "length": 4,
+                "offset": 0,
+                "space": 2
+              }
+            },
             "_HID": {
               "eisaid": true,
               "type": 0,

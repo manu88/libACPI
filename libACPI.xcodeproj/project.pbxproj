@@ -21,9 +21,7 @@
 		59459A6E21DF4FB400DD9396 /* Decompiler_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */; };
 		59459A7221DF51B800DD9396 /* AMLDecompiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A7021DF51B800DD9396 /* AMLDecompiler.c */; };
 		59459A7421DF51C900DD9396 /* AMLDecompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A7321DF51C900DD9396 /* AMLDecompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		59459A7D21E6512F00DD9396 /* ACPI_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6421DE26B200DD9396 /* ACPI_Tests.c */; };
 		59459A7E21E6512F00DD9396 /* Decompiler_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */; };
-		59459A7F21E6512F00DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
 		59459A8221E6512F00DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
 		59459A8F21E7274300DD9396 /* AMLRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A8D21E7274200DD9396 /* AMLRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59459A9021E7274300DD9396 /* AMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A8E21E7274200DD9396 /* AMLParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,9 +29,6 @@
 		59459A9221E7279C00DD9396 /* AMLByteCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 59459A4121DE25EC00DD9396 /* AMLByteCode.h */; };
 		59459A9D21EF0D3500DD9396 /* Helper_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A9C21EF0D3500DD9396 /* Helper_Tests.c */; };
 		59459AA721F0607D00DD9396 /* DecompilerInvalid_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459AA621F0607D00DD9396 /* DecompilerInvalid_Tests.c */; };
-		59459AAA21F0BF5500DD9396 /* ACPI_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6421DE26B200DD9396 /* ACPI_Tests.c */; };
-		59459AAB21F0BF5500DD9396 /* Decompiler_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */; };
-		59459AAC21F0BF5500DD9396 /* AMLParser_Tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A6721DE26B200DD9396 /* AMLParser_Tests.c */; };
 		59459AAF21F0BF5500DD9396 /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
 		59459AB721F0BF8600DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459AB621F0BF8500DD9396 /* main.cpp */; };
 		59459AB821F0BFB500DD9396 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59459A8821E6514500DD9396 /* main.cpp */; };
@@ -504,10 +499,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59459A7D21E6512F00DD9396 /* ACPI_Tests.c in Sources */,
 				59459A7E21E6512F00DD9396 /* Decompiler_Tests.c in Sources */,
 				59459AB821F0BFB500DD9396 /* main.cpp in Sources */,
-				59459A7F21E6512F00DD9396 /* AMLParser_Tests.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,10 +509,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59459ABB21F0C01200DD9396 /* DeviceTreeBuilder.cpp in Sources */,
-				59459AAA21F0BF5500DD9396 /* ACPI_Tests.c in Sources */,
-				59459AAB21F0BF5500DD9396 /* Decompiler_Tests.c in Sources */,
 				59459AC421F347EA00DD9396 /* JSONConverter.cpp in Sources */,
-				59459AAC21F0BF5500DD9396 /* AMLParser_Tests.c in Sources */,
 				59459ABE21F0C39700DD9396 /* AMLDecompilerInterface.cpp in Sources */,
 				59459AB721F0BF8600DD9396 /* main.cpp in Sources */,
 			);

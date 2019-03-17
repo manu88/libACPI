@@ -364,8 +364,7 @@ typedef struct
 typedef struct
 {
     //char _name[32]; // 4 + NULL byte
-    AMLName name;
-    //AMLName
+    AMLName name; // this is just a ref to original content! a deep copy should be made to keep content around if the original ACPI buffer was to be freed
     uint8_t accessType:4;
     /*
      0 AnyAcc
@@ -382,10 +381,10 @@ typedef struct
     
     
     
-    char valueName[5]; // 4 + NULL byte
-    uint8_t value;
+    //char valueName[5]; // 4 + NULL byte
+    //uint8_t value;
     
-    uint8_t offset;
+    //uint8_t offset;
     
 } ACPIField;
 
@@ -394,7 +393,9 @@ typedef struct
 {
     char name[5]; // 4 + NULL byte
     uint8_t value;
-} ACPIFieldEntry;
+} ACPIFieldElement;
+
+uint8_t ACPIFieldElementIsOffset(const ACPIFieldElement* element);
 
 
 typedef struct

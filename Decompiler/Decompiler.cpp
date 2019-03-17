@@ -187,7 +187,28 @@ public:
         return 0;
     }
     
-    
+    int endField(const ParserContext* context, const ACPIField* field)override
+    {
+        decScope();
+        indent(); content << "}" << std::endl;
+        
+        decScope();
+        return 0;
+    }
+    int onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement) override
+    {
+        if ( ACPIFieldElementIsOffset(&fieldElement))// fieldElement.name[0] == 0)
+        {
+            
+            indent(); content << "Offset(" ; writeHexArg(fieldElement.value); content << ")," << std::endl;
+        }
+        else
+        {
+            indent(); content << fieldElement.name << ", "; writeHexArg(fieldElement.value); content << "," << std::endl;
+            
+        }
+        return 0;
+    }
     int startField(const ParserContext* context, const ACPIField* field)override
     {
         incScope();
@@ -238,8 +259,10 @@ public:
         
         indent();content << "Field (";
         
-        
-        content << field->name << ", ";
+        char* fieldName = AMLNameConstructNormalized(&field->name);
+        assert(fieldName);
+        content << fieldName << ", ";
+        free(fieldName);
         
         content << accessTypeDesc( field->accessType) << ", ";
         content << (field->lockRule? "Lock":"NoLock") << ", ";
@@ -249,7 +272,7 @@ public:
         indent(); content << "{" << std::endl;
         incScope();
         
-        
+        /*
         const int realOffset = (int)( floor( field->offset / 8));
         if (realOffset)
         {
@@ -257,12 +280,9 @@ public:
             indent(); content << "Offset ("<< std::to_string( realOffset ) <<")," << std::endl;
         }
         
-        indent(); content << field->valueName << ", "; writeNumValue(field->value); content << "," << std::endl;
+        indent(); content << field->valueName << ", "; writeHexArg(field->value); content << "," << std::endl;
+        */
         
-        decScope();
-        indent(); content << "}" << std::endl;
-        
-        decScope();
         return 0;
     }
     

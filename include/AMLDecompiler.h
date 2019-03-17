@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+
 #include <AMLTypes.h>
 #include <AMLParser.h>
 
@@ -61,7 +62,8 @@ typedef struct
     
     
     int (*startField)(AMLDecompiler* decomp,const ParserContext* context, const ACPIField* field);
-    
+    int (*onFieldElement)(AMLDecompiler* decomp,const ParserContext* context, const ACPIFieldElement* fieldElement);
+    int (*endField)(AMLDecompiler* decomp,const ParserContext* context, const ACPIField* field);
     
     int (*OnBuffer)(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     

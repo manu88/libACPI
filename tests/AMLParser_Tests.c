@@ -16,6 +16,7 @@
  */
 #include <string.h>
 #include <assert.h>
+#include "ACPIDesc.h"
 #include "AMLParser_Tests.h"
 #include "AMLRouter.h"
 #include "AMLHelpers.h"
@@ -24,12 +25,38 @@
 
 static void AML_PackageLengthTests()
 {
-    const uint8_t b = 0;
     
-    size_t advanced = 0;
-    size_t ret =  _GetPackageLength(&b, 1, &advanced, 0);
-    assert( ret == 0);
-    assert( advanced == 1);
+    {
+        const uint8_t b = 0;
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(&b, 1, &advanced);
+        assert( ret == 0);
+        assert( advanced == 1);
+    }
+    {
+        const uint8_t b = 63;
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(&b, 1, &advanced);
+        assert( ret == 63);
+        assert( advanced == 1);
+    }
+
+    {
+        const uint8_t b[] = {0x40 ,0x2d};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0x5A);
+    }
+    {
+        const uint8_t b[] = {0x40, 0x78};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0xF0);
+    }
+    
+    
 }
 static void AML_InternalTests()
 {

@@ -112,6 +112,20 @@ decomp(decomp)
         return self->startField(context, field);
     };
     
+    decomp.callbacks.onFieldElement = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIFieldElement* element) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->onFieldElement(context, *element);
+    };
+    
+    decomp.callbacks.endField = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIField* field) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->endField(context, field);
+    };
+    
+    
+    
     decomp.callbacks.onMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIMethod* method) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
