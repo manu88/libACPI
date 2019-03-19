@@ -27,7 +27,7 @@ decomp(decomp)
 {
     decomp.userData = this;
     
-    decomp.callbacks.OnDefinitionBlock = []( AMLDecompiler* _decomp ,
+    decomp.callbacks.onDefinitionBlock = []( AMLDecompiler* _decomp ,
                                             const ParserContext* context,
                                             const ACPIDefinitionBlock* desc)-> int
     {
@@ -51,28 +51,28 @@ decomp(decomp)
         return self->endResourceTemplate(context, numItemsParsed, err);
     };
     
-    decomp.callbacks.OnBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
+    decomp.callbacks.onBuffer = [](AMLDecompiler* _decomp , const ParserContext* ctx , size_t bufferSize , const uint8_t* buffer) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->OnBuffer(ctx, bufferSize, buffer);
+        return self->onBuffer(ctx, bufferSize, buffer);
     };
     
-    decomp.callbacks.StartDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* device) -> int
+    decomp.callbacks.startDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* device) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->StartDevice(context, *device);
+        return self->startDevice(context, *device);
     };
     
-    decomp.callbacks.EndDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* dev) -> int
+    decomp.callbacks.endDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* dev) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->EndDevice(context, *dev);
+        return self->endDevice(context, *dev);
     };
     
-    decomp.callbacks.StartName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
+    decomp.callbacks.startName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->StartName(context, name);
+        return self->startName(context, name);
     };
     
     /*
@@ -83,21 +83,21 @@ decomp(decomp)
     };
      */
     
-    decomp.callbacks.StartScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
+    decomp.callbacks.startScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->StartScope(context, location);
+        return self->startScope(context, location);
     };
-    decomp.callbacks.EndScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
+    decomp.callbacks.endScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->EndScope(context, location);
+        return self->endScope(context, location);
     };
     
-    decomp.callbacks.OnValue = []( AMLDecompiler* _decomp ,const ParserContext* context, uint64_t val) -> int
+    decomp.callbacks.onValue = []( AMLDecompiler* _decomp ,const ParserContext* context, uint64_t val) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->OnValue(context, val);
+        return self->onValue(context, val);
     };
 
     decomp.callbacks.onOperationRegion = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIOperationRegion* reg) -> int

@@ -167,7 +167,7 @@ public:
         return 0;
     }
      */
-    int OnValue(const ParserContext* context, uint64_t value)override
+    int onValue(const ParserContext* context, uint64_t value)override
     {
         
         if (isEisaId(value))
@@ -295,7 +295,7 @@ public:
     
     
   
-    int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer ) override
+    int onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer ) override
     {
         
         
@@ -341,7 +341,7 @@ public:
     }
     
     
-    int StartScope(const ParserContext* context, const char* location)override
+    int startScope(const ParserContext* context, const char* location)override
     {
         const char* realLoc = location[0] == '.' ? location+1 : location;
         incScope();
@@ -353,7 +353,7 @@ public:
         content << "{" << std::endl;
         return 0;
     }
-    int EndScope(const ParserContext* context, const char* location)override
+    int endScope(const ParserContext* context, const char* location)override
     {
         indent();
         content << "}" << std::endl;
@@ -382,7 +382,7 @@ public:
     }
     
     
-    int StartDevice(const ParserContext* context, const ACPIDevice& device)override
+    int startDevice(const ParserContext* context, const ACPIDevice& device)override
     {
         incScope();
         indent();
@@ -392,7 +392,7 @@ public:
         content << "{" << std::endl;
         return 0;
     }
-    int EndDevice(const ParserContext* context, const ACPIDevice&)override
+    int endDevice(const ParserContext* context, const ACPIDevice&)override
     {
         indent();
         content << "}" << std::endl;
@@ -400,7 +400,7 @@ public:
         decScope();
         return 0;
     }
-    int StartName(const ParserContext* context, const char* name)override
+    int startName(const ParserContext* context, const char* name)override
     {
         if (strcmp(name, "_FDI") == 0)
         {

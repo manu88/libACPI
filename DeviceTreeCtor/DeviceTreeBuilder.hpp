@@ -281,21 +281,21 @@ protected:
     //int onSmallItem(const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)override;
     
     
-    int OnValue(const ParserContext* context, uint64_t value)override;
+    int onValue(const ParserContext* context, uint64_t value)override;
     int onOperationRegion(const ParserContext* context, const ACPIOperationRegion&)override;
     
     int startField(const ParserContext* context, const ACPIField&)override;
     int onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement)override;
     int endField(const ParserContext* context, const ACPIField&)override;
     
-    int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;
+    int onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;
     
     
-    int StartScope(const ParserContext* context, const char* location)override;
-    int EndScope(const ParserContext* context, const char* location)override;
-    int StartDevice(const ParserContext* context, const ACPIDevice& name)override;
-    int EndDevice(const ParserContext* context, const ACPIDevice& name)override;
-    int StartName(const ParserContext* context, const char* name)override;
+    int startScope(const ParserContext* context, const char* location)override;
+    int endScope(const ParserContext* context, const char* location)override;
+    int startDevice(const ParserContext* context, const ACPIDevice& name)override;
+    int endDevice(const ParserContext* context, const ACPIDevice& name)override;
+    int startName(const ParserContext* context, const char* name)override;
     //int EndName(const ParserContext* context, const char* name)override;
     int onMethod(const ParserContext* context, const ACPIMethod& method)override;
     

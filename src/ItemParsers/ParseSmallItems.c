@@ -46,12 +46,11 @@ AMLParserError ParseSmall_IOPortDescriptor(AMLDecompiler*decomp,const ParserCont
     desc.rangeLen = buffer[6];
     
     
-    if(decomp->callbacks.onSmallItem)
-    {
-        decomp->callbacks.onSmallItem(decomp , context ,
-                                      SmallResourceItemsType_IOPortDescriptor,
-                                      (const uint8_t*) &desc , sizeof(IOPortDescriptor)
-                                      );
-    }
+    
+    decomp->callbacks.onSmallItem(decomp , context ,
+                                  SmallResourceItemsType_IOPortDescriptor,
+                                  (const uint8_t*) &desc , sizeof(IOPortDescriptor)
+                                  );
+    
     return AMLParserError_None;
 }

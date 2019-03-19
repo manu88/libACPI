@@ -222,7 +222,7 @@ int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod& 
     return 0;
 }
 
-int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
+int DeviceTreeBuilder::onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
 {
     currentName->setValue(buffer, bufferSize);
 
@@ -230,7 +230,7 @@ int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize
     return 0;
 }
 
-int DeviceTreeBuilder::StartDevice(const ParserContext* context, const ACPIDevice& device)
+int DeviceTreeBuilder::startDevice(const ParserContext* context, const ACPIDevice& device)
 {
     currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name, _scopes.empty()? "" :  _scopes.top()) );
     //printf("Start Device named '%s' current scope '%s' -> %s \n" , device->name , _scopes.top().c_str() , currentNode? "found":"Not found" );
@@ -239,7 +239,7 @@ int DeviceTreeBuilder::StartDevice(const ParserContext* context, const ACPIDevic
     return 0;
 }
 
-int DeviceTreeBuilder::StartScope(const ParserContext* context, const char* location)
+int DeviceTreeBuilder::startScope(const ParserContext* context, const char* location)
 {
     
     currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(location, _scopes.empty()? "" :  _scopes.top()) );
@@ -250,21 +250,21 @@ int DeviceTreeBuilder::StartScope(const ParserContext* context, const char* loca
     return 0;
 }
 
-int DeviceTreeBuilder::EndScope(const ParserContext* context, const char* location)
+int DeviceTreeBuilder::endScope(const ParserContext* context, const char* location)
 {
     //printf("End scope '%s' '%s'\n" , location , _scopes.back().c_str());
     _scopes.pop();
     return 0;
 }
 
-int DeviceTreeBuilder::EndDevice(const ParserContext* context, const ACPIDevice& device)
+int DeviceTreeBuilder::endDevice(const ParserContext* context, const ACPIDevice& device)
 {
     currentNode.pop();
     //currentNode = nullptr;
     return 0;
 }
 
-int DeviceTreeBuilder::StartName(const ParserContext* context, const char* name)
+int DeviceTreeBuilder::startName(const ParserContext* context, const char* name)
 {
     assert(!currentNode.empty());
     
@@ -296,7 +296,7 @@ int DeviceTreeBuilder::onPackage( const ParserContext*context , const ACPIPackag
     assert(false);
     return 0;
 }
-int DeviceTreeBuilder::OnValue(const ParserContext* context, uint64_t value)
+int DeviceTreeBuilder::onValue(const ParserContext* context, uint64_t value)
 {
 
     if(currentName)

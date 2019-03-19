@@ -44,6 +44,7 @@ typedef struct _ParserContext
     
 typedef struct _AMLDecompiler AMLDecompiler;
 
+// required callbacks, undefined behaviour if NULL
 typedef struct
 {
     
@@ -53,27 +54,26 @@ typedef struct
     int (*onLargeItem)(AMLDecompiler* decomp,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     int (*onSmallItem)(AMLDecompiler* decomp,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     
-    int (*OnValue)(AMLDecompiler* decomp,const ParserContext* context, uint64_t value);
-    int (*OnString)(AMLDecompiler* decomp,const ParserContext* context, const char* string);
+    int (*onValue)(AMLDecompiler* decomp,const ParserContext* context, uint64_t value);
+    int (*onString)(AMLDecompiler* decomp,const ParserContext* context, const char* string);
     
-    int (*OnDefinitionBlock)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDefinitionBlock* block);
+    int (*onDefinitionBlock)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDefinitionBlock* block);
     
     int (*onOperationRegion)(AMLDecompiler* decomp,const ParserContext* context, const ACPIOperationRegion* reg);
-    
     
     int (*startField)(AMLDecompiler* decomp,const ParserContext* context, const ACPIField* field);
     int (*onFieldElement)(AMLDecompiler* decomp,const ParserContext* context, const ACPIFieldElement* fieldElement);
     int (*endField)(AMLDecompiler* decomp,const ParserContext* context, const ACPIField* field);
     
-    int (*OnBuffer)(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
+    int (*onBuffer)(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     
-    int (*StartScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
-    int (*EndScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
+    int (*startScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
+    int (*endScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
     
-    int (*StartDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
-    int (*EndDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
+    int (*startDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
+    int (*endDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
     
-    int (*StartName)(AMLDecompiler* decomp,const ParserContext* context, const char* name);
+    int (*startName)(AMLDecompiler* decomp,const ParserContext* context, const char* name);
     //int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
     int (*onMethod)(AMLDecompiler* decomp,const ParserContext* context, const ACPIMethod* method);

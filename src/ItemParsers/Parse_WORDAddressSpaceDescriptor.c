@@ -252,11 +252,10 @@ AMLParserError Parse_FixedLocationMemoryRangeDescriptor32(AMLDecompiler*decomp,c
     
     desc.rangeLength = c.v;
     
-    if(decomp->callbacks.onLargeItem)
-    {
-        decomp->callbacks.onLargeItem(decomp , context ,
-                                      LargeResourceItemsType_MemoryRangeDescriptor32,
-                                      (const uint8_t*) &desc , sizeof(MemoryRangeDescriptor32));
-    }
+
+    decomp->callbacks.onLargeItem(decomp , context ,
+                                  LargeResourceItemsType_MemoryRangeDescriptor32,
+                                  (const uint8_t*) &desc , sizeof(MemoryRangeDescriptor32));
+
     return AMLParserError_None;
 }

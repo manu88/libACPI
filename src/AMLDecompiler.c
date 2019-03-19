@@ -266,11 +266,8 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     {
         if (res.numItems == 0) // This is a regular buffer, not a resource template
         {
-            if (decomp->callbacks.OnBuffer)
-            {
-                // Pass null to buffer is bufferSize == 0
-                decomp->callbacks.OnBuffer(decomp, ctx , numOfBufferElements ,bufferSize == 0? NULL: bufferPos );
-            }
+            // Pass null to buffer is bufferSize == 0
+            decomp->callbacks.onBuffer(decomp, ctx , numOfBufferElements ,bufferSize == 0? NULL: bufferPos );
         }
         else
         {
@@ -485,10 +482,8 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         {
             const ACPIDefinitionBlock* desc =(const ACPIDefinitionBlock*) bufferPos;
             
-            if (decomp->callbacks.OnDefinitionBlock)
-            {
-                decomp->callbacks.OnDefinitionBlock(decomp,&ctx , desc);
-            }
+
+            decomp->callbacks.onDefinitionBlock(decomp,&ctx , desc);
             
         }
             break;
@@ -503,11 +498,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 char name[SCOPE_STR_SIZE];
 
                 size_t advanced = ResolvePath(name,  bufferPos);
+                
+                decomp->callbacks.startScope(decomp ,&ctx , name);
 
-                if (decomp->callbacks.StartScope)
-                {
-                    decomp->callbacks.StartScope(decomp ,&ctx , name);
-                }
                 
                 //strncpy(decomp->currentScope, name, SCOPE_STR_SIZE);
                 
@@ -517,11 +510,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                     setState(decomp, AMLState_Unknown);
                     return err;
                 }
-                if (decomp->callbacks.EndScope)
-                {
-                    decomp->callbacks.EndScope(decomp ,&ctx , name);
-                }
                 
+                decomp->callbacks.endScope(decomp ,&ctx , name);
+
                 setState(decomp, AMLState_Unknown);
             }
             else
@@ -559,10 +550,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             const uint8_t nameSize = ExtractNameString(bufferPos, bufferSize, dev.name );
             dev.name[4] = 0;
             
-            if (decomp->callbacks.StartDevice)
-            {
-                decomp->callbacks.StartDevice(decomp ,&ctx , &dev);
-            }
+            
+            decomp->callbacks.startDevice(decomp ,&ctx , &dev);
+
             // advance bufferPos to skip the name
             AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + nameSize, bufferSize-nameSize);
             if(err != AMLParserError_None)
@@ -570,10 +560,8 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 return err;
             }
             
-            if (decomp->callbacks.EndDevice)
-            {
-                decomp->callbacks.EndDevice(decomp ,&ctx , &dev);
-            }
+            decomp->callbacks.endDevice(decomp ,&ctx , &dev);
+
             
         }
             break;
@@ -604,10 +592,8 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 return AMLParserError_UnexpectedToken;
             }
             
-            if (decomp->callbacks.StartName)
-            {
-                decomp->callbacks.StartName(decomp ,&ctx , name);
-            }
+
+            decomp->callbacks.startName(decomp ,&ctx , name);
             
             setState(decomp, AMLState_WaitingNameValue);
 
@@ -621,10 +607,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 uint64_t w;
                 GetInteger(bufferPos,bufferSize, &w);
                 
-                if (decomp->callbacks.OnValue)
-                {
-                    decomp->callbacks.OnValue(decomp,&ctx , w);
-                }
+                
+                decomp->callbacks.onValue(decomp,&ctx , w);
+
                 setState(decomp, AMLState_Unknown);
             }
             else if (decomp->parserPolicy.pedantic)
@@ -637,19 +622,16 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
         case ACPIObject_Type_StringValue:
         {
-            if (decomp->callbacks.OnString)
-            {
-                decomp->callbacks.OnString(decomp, &ctx , (const char*) bufferPos);
-            }
+            
+            decomp->callbacks.onString(decomp, &ctx , (const char*) bufferPos);
         }
             break;
             
         case ACPIObject_Type_Package:
         {
-            if (decomp->callbacks.onPackage)
-            {
-                decomp->callbacks.onPackage( decomp , &ctx , (const ACPIPackage*) bufferPos);
-            }
+
+            decomp->callbacks.onPackage( decomp , &ctx , (const ACPIPackage*) bufferPos);
+
         }
             break;
         case ACPIObject_Type_VarPackage:
@@ -667,10 +649,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             assert(bufferPos);
             const ACPIOperationRegion* reg = (const ACPIOperationRegion*)  bufferPos;
             
-            if(decomp->callbacks.onOperationRegion)
-            {
-                decomp->callbacks.onOperationRegion(decomp ,&ctx , reg);
-            }
+            decomp->callbacks.onOperationRegion(decomp ,&ctx , reg);
             
             
         }
@@ -704,10 +683,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             method.bodyDef  = method.bodySize?( bufferPos + nameSize) : NULL;
             
             
-            if (decomp->callbacks.onMethod)
-            {
-                decomp->callbacks.onMethod(decomp ,&ctx , &method);
-            }
+
+            decomp->callbacks.onMethod(decomp ,&ctx , &method);
+
             /*
             if (decomp->callbacks.endMethod)
             {
