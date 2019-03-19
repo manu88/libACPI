@@ -172,18 +172,18 @@ int DeviceTreeBuilder::endResourceTemplate(const ParserContext* context , size_t
     return 0;
 }
 
-int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACPIOperationRegion* reg)
+int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACPIOperationRegion& reg)
 {
     
     assert(!currentNode.empty());
-    currentNode.top()->_opRegions.push_back(*reg);
+    currentNode.top()->_opRegions.push_back(reg);
     //currentNode->_opRegions.push_back(*reg);
     return 0;
 }
 
-int DeviceTreeBuilder::startField(const ParserContext* context, const ACPIField*field)
+int DeviceTreeBuilder::startField(const ParserContext* context, const ACPIField&field)
 {
-    char* fieldName = AMLNameConstructNormalized(&field->name);
+    char* fieldName = AMLNameConstructNormalized(&field.name);
     
     FieldDeclaration decl;
     decl.name = fieldName;
@@ -206,7 +206,7 @@ int DeviceTreeBuilder::onFieldElement(const ParserContext* context, const ACPIFi
     return 0;
 }
 
-int DeviceTreeBuilder::endField(const ParserContext* context, const ACPIField*)
+int DeviceTreeBuilder::endField(const ParserContext* context, const ACPIField&)
 {
     
     
@@ -214,11 +214,11 @@ int DeviceTreeBuilder::endField(const ParserContext* context, const ACPIField*)
     return 0;
 }
 
-int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod* method)
+int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod& method)
 {
     assert(!currentNode.empty());
-    assert(method->name[4] == 0);
-    currentNode.top()->_methods.push_back(*method);
+    assert(method.name[4] == 0);
+    currentNode.top()->_methods.push_back(method);
     return 0;
 }
 
@@ -230,9 +230,9 @@ int DeviceTreeBuilder::OnBuffer(const ParserContext* context , size_t bufferSize
     return 0;
 }
 
-int DeviceTreeBuilder::StartDevice(const ParserContext* context, const ACPIDevice* device)
+int DeviceTreeBuilder::StartDevice(const ParserContext* context, const ACPIDevice& device)
 {
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device->name, _scopes.empty()? "" :  _scopes.top()) );
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name, _scopes.empty()? "" :  _scopes.top()) );
     //printf("Start Device named '%s' current scope '%s' -> %s \n" , device->name , _scopes.top().c_str() , currentNode? "found":"Not found" );
     
     //assert(node);
@@ -257,7 +257,7 @@ int DeviceTreeBuilder::EndScope(const ParserContext* context, const char* locati
     return 0;
 }
 
-int DeviceTreeBuilder::EndDevice(const ParserContext* context, const ACPIDevice* device)
+int DeviceTreeBuilder::EndDevice(const ParserContext* context, const ACPIDevice& device)
 {
     currentNode.pop();
     //currentNode = nullptr;
@@ -285,9 +285,9 @@ int DeviceTreeBuilder::EndName(const ParserContext* context, const char* name)
 */
 
 
-int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc)
+int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock& desc)
 {
-    _deviceTree.defBlock = *desc;
+    _deviceTree.defBlock = desc;
     return 0;
 }
 

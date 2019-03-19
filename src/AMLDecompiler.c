@@ -297,32 +297,31 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     return err;
 }
 
-static ssize_t _DecodeFieldElement(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
+static ssize_t _DecodeFieldElement(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize , size_t* offsetAccum,const ACPIField *fieldRef)
 {
+    assert(offsetAccum);
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
     assert(decomp);
     
     ACPIFieldElement element = {0};
+    element.fieldRef = fieldRef;
     
     size_t offsetBeforeValue = 0;
     if (buffer[0] == 0) // anonymous
     {
-        printf("Got an anonymous FieldElement\n");
-        
         offsetBeforeValue = 1;
         
     }
     else if (IsName(buffer[0]))
     {
-        
         offsetBeforeValue = ExtractNameString(buffer, 4, element.name);
-        printf("Got an named FieldElement '%s'\n" , element.name);
-        
     }
     
     size_t advancedOf = 0;
     element.value = GetPackageLength(buffer+offsetBeforeValue, bufferSize-offsetBeforeValue, &advancedOf);
     
+    *offsetAccum += element.value;
+    element.offsetFromStart = *offsetAccum;
     
     int retCallB = decomp->callbacks.onFieldElement(decomp , ctx , &element);
     
@@ -330,6 +329,22 @@ static ssize_t _DecodeFieldElement(AMLParserState* parser ,ParserContext *ctx ,c
         return  retCallB;
     
     return advancedOf + offsetBeforeValue;
+}
+
+static int _DecodeFieldElementList(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* fieldElementsData , size_t fieldElementsDataSize,const ACPIField *fieldRef)
+{
+    
+    size_t offsetAccum = 0;
+    while ( fieldElementsDataSize >0 )
+    {
+        const ssize_t retElement =  _DecodeFieldElement(parser, ctx, fieldElementsData, fieldElementsDataSize, &offsetAccum,  fieldRef);
+        fieldElementsData+=retElement;
+        fieldElementsDataSize -= retElement;
+    }
+    
+    assert(fieldElementsDataSize == 0); // We must have consumed all the field element data size
+    
+    return 0;
 }
 
 static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
@@ -375,7 +390,7 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
     // This is the payload
     uint8_t* fieldElementsData = (uint8_t*) buffer + advancedFromName +1;
     ssize_t  fieldElementsDataSize = bufferSize - advancedFromName- 1;
-    
+    /*
     for(int i=0;i<fieldElementsDataSize;i++)
     {
         if (i%8==0)
@@ -384,16 +399,12 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
         printf(" 0x%x (%c)" , fieldElementsData[i],fieldElementsData[i]);
     }
     printf("\n");
+    */
     
-    while ( fieldElementsDataSize >0 )
-    {
-        const ssize_t retElement =  _DecodeFieldElement(parser, ctx, fieldElementsData, fieldElementsDataSize);
-        fieldElementsData+=retElement;
-        fieldElementsDataSize -= retElement;
-    }
+    const int retDecodeList =  _DecodeFieldElementList(parser, ctx, fieldElementsData, fieldElementsDataSize, &field);
     
-    assert(fieldElementsDataSize == 0); // We must have consumed all the field element data size
-    
+    if (retDecodeList != AMLParserError_None)
+        return retDecodeList;
     
     retCallb = decomp->callbacks.endField(decomp ,ctx , &field);
     if (retCallb != AMLParserError_None)

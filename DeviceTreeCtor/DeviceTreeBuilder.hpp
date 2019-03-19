@@ -272,7 +272,7 @@ public:
         return _deviceTree;
     }
 protected:
-    int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc) override;
+    int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock& desc) override;
     
     
     int startResourceTemplate( const ParserContext* context , size_t numItems ) override;
@@ -282,22 +282,22 @@ protected:
     
     
     int OnValue(const ParserContext* context, uint64_t value)override;
-    int onOperationRegion(const ParserContext* context, const ACPIOperationRegion*)override;
+    int onOperationRegion(const ParserContext* context, const ACPIOperationRegion&)override;
     
-    int startField(const ParserContext* context, const ACPIField*)override;
+    int startField(const ParserContext* context, const ACPIField&)override;
     int onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement)override;
-    int endField(const ParserContext* context, const ACPIField*)override;
+    int endField(const ParserContext* context, const ACPIField&)override;
     
     int OnBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;
     
     
     int StartScope(const ParserContext* context, const char* location)override;
     int EndScope(const ParserContext* context, const char* location)override;
-    int StartDevice(const ParserContext* context, const ACPIDevice* name)override;
-    int EndDevice(const ParserContext* context, const ACPIDevice* name)override;
+    int StartDevice(const ParserContext* context, const ACPIDevice& name)override;
+    int EndDevice(const ParserContext* context, const ACPIDevice& name)override;
     int StartName(const ParserContext* context, const char* name)override;
     //int EndName(const ParserContext* context, const char* name)override;
-    int onMethod(const ParserContext* context, const ACPIMethod* method)override;
+    int onMethod(const ParserContext* context, const ACPIMethod& method)override;
     
     
     int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override;

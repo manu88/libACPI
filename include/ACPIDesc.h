@@ -393,9 +393,12 @@ typedef struct
 {
     char name[5]; // 4 + NULL byte
     uint8_t value;
+    
+    size_t offsetFromStart;
+    
+    const ACPIField* fieldRef;
 } ACPIFieldElement;
 
-uint8_t ACPIFieldElementIsOffset(const ACPIFieldElement* element);
 
 
 typedef struct

@@ -141,15 +141,15 @@ public:
         content << "// generated with AML::Decompiler + libACPI" << std::endl;
     }
     */
-    int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock* desc) override
+    int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock& desc) override
     {
         content << "DefinitionBlock ("
                 << "\"\"" << ","
-                << "\"" << desc->tableSignature << "\"" << ","
-                << std::to_string( desc->complianceRevision)  << ","
-                << "\"" << desc->OEMId << "\"" << ","
-                << "\"" << desc->tableId << "\"" << ","
-                << desc->OEMRev
+                << "\"" << desc.tableSignature << "\"" << ","
+                << std::to_string( desc.complianceRevision)  << ","
+                << "\"" << desc.OEMId << "\"" << ","
+                << "\"" << desc.tableId << "\"" << ","
+                << desc.OEMRev
                 << ")"
                 << std::endl;
         
@@ -187,7 +187,7 @@ public:
         return 0;
     }
     
-    int endField(const ParserContext* context, const ACPIField* field)override
+    int endField(const ParserContext* context, const ACPIField& )override
     {
         decScope();
         indent(); content << "}" << std::endl;
@@ -197,10 +197,16 @@ public:
     }
     int onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement) override
     {
-        if ( ACPIFieldElementIsOffset(&fieldElement))// fieldElement.name[0] == 0)
+        if ( /*ACPIFieldElementIsOffset(&fieldElement))// */fieldElement.name[0] == 0)
         {
-            
-            indent(); content << "Offset(" ; writeHexArg(fieldElement.value); content << ")," << std::endl;
+            if (fieldElement.offsetFromStart %8 == 0)
+            {
+                indent(); content << "Offset(" ; writeHexArg((uint8_t)(fieldElement.offsetFromStart / 8)); content << ")," << std::endl;
+            }
+            else
+            {
+                indent(); content << "," ; writeHexArg(fieldElement.value); content << "," << std::endl;
+            }
         }
         else
         {
@@ -209,7 +215,7 @@ public:
         }
         return 0;
     }
-    int startField(const ParserContext* context, const ACPIField* field)override
+    int startField(const ParserContext* context, const ACPIField& field)override
     {
         incScope();
         
@@ -259,14 +265,14 @@ public:
         
         indent();content << "Field (";
         
-        char* fieldName = AMLNameConstructNormalized(&field->name);
+        char* fieldName = AMLNameConstructNormalized(&field.name);
         assert(fieldName);
         content << fieldName << ", ";
         free(fieldName);
         
-        content << accessTypeDesc( field->accessType) << ", ";
-        content << (field->lockRule? "Lock":"NoLock") << ", ";
-        content << updateRuleDesc(field->updateRule);
+        content << accessTypeDesc( field.accessType) << ", ";
+        content << (field.lockRule? "Lock":"NoLock") << ", ";
+        content << updateRuleDesc(field.updateRule);
         content << " )" << std::endl;
         
         indent(); content << "{" << std::endl;
@@ -376,17 +382,17 @@ public:
     }
     
     
-    int StartDevice(const ParserContext* context, const ACPIDevice* device)override
+    int StartDevice(const ParserContext* context, const ACPIDevice& device)override
     {
         incScope();
         indent();
-        content << "Device" << "(" << device->name << ")" << std::endl;
+        content << "Device" << "(" << device.name << ")" << std::endl;
         
         indent();
         content << "{" << std::endl;
         return 0;
     }
-    int EndDevice(const ParserContext* context, const ACPIDevice* name)override
+    int EndDevice(const ParserContext* context, const ACPIDevice&)override
     {
         indent();
         content << "}" << std::endl;
@@ -412,12 +418,12 @@ public:
         decScope();
     }
     
-    int onMethod(const ParserContext* context, const ACPIMethod* method) override
+    int onMethod(const ParserContext* context, const ACPIMethod& method) override
     {
         incScope();
         indent();
-        content << "Method" << "(" << method->name << ",";
-        content << std::to_string( method->argCount );
+        content << "Method" << "(" << method.name << ",";
+        content << std::to_string( method.argCount );
         content << ")" << "\n";
         
         indent(); content << "{" << std::endl;
@@ -514,7 +520,7 @@ public:
         return 0;
     }
     
-    int onOperationRegion(const ParserContext* context, const ACPIOperationRegion* region)override
+    int onOperationRegion(const ParserContext* context, const ACPIOperationRegion& region)override
     {
         auto regionSpaceGetStr = [] (uint64_t space) -> std::string
         {
@@ -544,18 +550,18 @@ public:
         
         incScope();
         indent();content << "OperationRegion(";
-        content << region->name << ",";
+        content << region.name << ",";
         
         
-        content << regionSpaceGetStr( region->space);
+        content << regionSpaceGetStr( region.space);
         
         
         content << ",";
         
-        writeHexArg( (uint16_t) region->offset);
+        writeHexArg( (uint16_t) region.offset);
         content << ",";
         
-        writeNumValue( (uint16_t) region->length);
+        writeNumValue( (uint16_t) region.length);
         
         content << ")" << std::endl;
         

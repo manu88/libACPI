@@ -32,7 +32,7 @@ decomp(decomp)
                                             const ACPIDefinitionBlock* desc)-> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->onACPIDefinitionBlock(context, desc);
+        return self->onACPIDefinitionBlock(context, *desc);
     };
     
     
@@ -60,13 +60,13 @@ decomp(decomp)
     decomp.callbacks.StartDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* device) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->StartDevice(context, device);
+        return self->StartDevice(context, *device);
     };
     
     decomp.callbacks.EndDevice = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIDevice* dev) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->EndDevice(context, dev);
+        return self->EndDevice(context, *dev);
     };
     
     decomp.callbacks.StartName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
@@ -103,13 +103,13 @@ decomp(decomp)
     decomp.callbacks.onOperationRegion = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIOperationRegion* reg) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->onOperationRegion(context, reg);
+        return self->onOperationRegion(context, *reg);
     };
     
     decomp.callbacks.startField = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIField* field) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->startField(context, field);
+        return self->startField(context, *field);
     };
     
     decomp.callbacks.onFieldElement = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIFieldElement* element) -> int
@@ -121,7 +121,7 @@ decomp(decomp)
     decomp.callbacks.endField = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIField* field) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->endField(context, field);
+        return self->endField(context, *field);
     };
     
     
@@ -129,7 +129,7 @@ decomp(decomp)
     decomp.callbacks.onMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIMethod* method) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->onMethod(context, method);
+        return self->onMethod(context, *method);
     };
     /*
     decomp.callbacks.endMethod = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
