@@ -19,7 +19,7 @@
 #include <string.h>
 #include <AMLTypes.h>
 #include <assert.h>
-#include <AMLHelpers.h>
+#include "AMLHelpers.h"
 #include "AMLByteCode.h"
 
 ssize_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize )

@@ -20,7 +20,8 @@
 //#include "ACPIDesc.h"
 #include <stdint.h>
 #include <AMLTypes.h>
-
+#include <stddef.h>
+#include <sys/types.h>
 
 int IsName(char character);
 int IsRealName(char character);

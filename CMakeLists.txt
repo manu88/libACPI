@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.7.2)
 project(libACPI C)
 
 
-file(GLOB deps src/*.c)
+file(GLOB deps src/*.c src/*/*.c)
 list(SORT deps)
 
 add_library(libACPI EXCLUDE_FROM_ALL ${deps})
