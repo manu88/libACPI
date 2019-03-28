@@ -3,9 +3,9 @@ DefinitionBlock ("", "DSDT", 2, "BXPC", "BXDSDT", 1)
 
     Scope (_SB)
     {
-        Device (PCI1)
+        Device (PCI0)
         {
-            Name (_HID, EisaId ("CSI2201"))
+            Name (_HID, EisaId ("PNP0A03") /* PCI Bus */)  // _HID: Hardware ID
             Name (CRES, ResourceTemplate ()
             {
                 Memory32Fixed (ReadOnly,
@@ -13,15 +13,6 @@ DefinitionBlock ("", "DSDT", 2, "BXPC", "BXDSDT", 1)
                     0x00000400,         // Address Length
                     )
             })
-            OperationRegion (PCIC, PCI_Config, Zero, 0x04)
-            Field (PCIC, DWordAcc, NoLock, Preserve)
-            {
-                VEND,   32
-            }
-            Method (_S1D, 0, NotSerialized)
-            {
-                //Return (Zero)
-            }
         }
     }
 

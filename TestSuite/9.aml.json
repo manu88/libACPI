@@ -11,37 +11,11 @@
     "Children": {
       "_SB": {
         "Children": {
-          "PCI1": {
-            "Fields": [
-              {
-                "content": [
-                  {
-                    "name": "VEND",
-                    "value": 32
-                  }
-                ],
-                "name": "PCIC"
-              }
-            ],
-            "Methods": {
-              "_S1D": {
-                "argCount": 0,
-                "serializeFlag": 0,
-                "syncLevel": 0,
-                "body": null
-              }
-            },
-            "OperationRegions": {
-              "PCIC": {
-                "length": 4,
-                "offset": 0,
-                "space": 2
-              }
-            },
+          "PCI0": {
             "_HID": {
               "eisaid": true,
               "type": 0,
-              "value": 19032334
+              "value": 51040321
             },
             "CRES": {
               "type": 10,

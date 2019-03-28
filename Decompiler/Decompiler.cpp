@@ -1,10 +1,19 @@
-//
-//  Decompiler.cpp
-//  Decompiler
-//
-//  Created by Manuel Deneu on 09/02/2019.
-//  Copyright © 2019 Manuel Deneu. All rights reserved.
-//
+/*
+ * This file is part of the libACPI project
+ * Copyright (c) 2018 Manuel Deneu.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <string>
 #include <iomanip>
@@ -187,6 +196,12 @@ public:
         return 0;
     }
     
+    int onString(const ParserContext* context, const char* str) override
+    {
+        content << "\"" << str << "\"" ;
+        return 0;
+    }
+    
     int endField(const ParserContext* context, const ACPIField& )override
     {
         decScope();
@@ -341,9 +356,9 @@ public:
     }
     
     
-    int startScope(const ParserContext* context, const char* location)override
+    int startScope(const ParserContext* context, const ACPIScope& scope)override
     {
-        const char* realLoc = location[0] == '.' ? location+1 : location;
+        const char* realLoc = scope.name[0] == '.' ? scope.name+1 : scope.name;
         incScope();
         indent();
         
@@ -353,7 +368,7 @@ public:
         content << "{" << std::endl;
         return 0;
     }
-    int endScope(const ParserContext* context, const char* location)override
+    int endScope(const ParserContext* context, const ACPIScope& scope)override
     {
         indent();
         content << "}" << std::endl;
@@ -663,9 +678,10 @@ private:
 };
 
 
-bool AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
+int AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
 {
     AMLDecompiler decomp;
+    
     
     if(AMLDecompilerInit(&decomp) == 0)
     {
@@ -673,6 +689,9 @@ bool AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
     }
     
     //decomp.parserPolicy.assertOnError = 1;
+    
+    decomp.parserPolicy.assertOnInvalidState = 1;
+    decomp.parserPolicy.assertOnError = 1;
     
     DecompilerImpl impl(decomp);
     
@@ -690,7 +709,7 @@ bool AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
     {
         printf("AML::Decompiler  Error : current ASL is \n %s \n" ,impl.content.str().c_str() );
     }
-    return err == AMLParserError_None;
+    return err;// == AMLParserError_None;
 }
 
 

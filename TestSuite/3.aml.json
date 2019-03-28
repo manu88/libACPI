@@ -1,8 +1,8 @@
 {
   "def": {
     "OEMId": "BXPC",
-    "OEMRev": 1,
-    "complianceRevision": 1,
+    "OEMRev": 2,
+    "complianceRevision": 10,
     "creatorID": 1280593481,
     "tableId": "BXDSDT",
     "tableSignature": "DSDT"
@@ -10,63 +10,49 @@
   "tree": {
     "Children": 
     {
-        "_SB":
+      "PCI0": 
+      {
+        "_ADR": 
         {
-            "Children": 
-            {
-                "PCI0": 
-                {
-                    "Children": 
-                    {
-                        "ISA":
-                        {
-                            "Children": 
-                            {
-                                "RTC":
-                                {
-                                    "_HID":
-                                    {
-                                        "eisaid": true,
-                                        "type": 0,
-                                        "value": 774209
-                                    },
-                                    "_UID":
-                                    {
-                                        "eisaid": false,
-                                        "type": 0,
-                                        "value": 18
-                                    }
-                                }
-                            },
-                            "_ADR": 
-                            {
-                              "eisaid": false,
-                              "type": 0,
-                              "value": 65536
-                            }
-                        }
-                    },
-                    "_ADR": 
-                    {
-                      "eisaid": false,
-                      "type": 0,
-                      "value": 0
-                    },
-                    "_HID": 
-                    {
-                      "eisaid": true,
-                      "type": 0,
-                      "value": 51040321
-                    },
-                    "_UID": 
-                    {
-                      "eisaid": false,
-                      "type": 0,
-                      "value": 1
-                    }
-                }
-            }    
+          "eisaid": false,
+          "type": 0,
+          "value": 0
+        },
+        "_HID": 
+        {
+          "eisaid": true,
+          "type": 0,
+          "value": 51040321
+        },
+        "_UID": 
+        {
+          "eisaid": false,
+          "type": 0,
+          "value": 1
         }
+      }
+      ,
+      "PCI1":
+      {
+         "_ADR": 
+        {
+          "eisaid": false,
+          "type": 0,
+          "value": 1
+        },
+        "_HID": 
+        {
+          "eisaid": true,
+          "type": 0,
+          "value": 17158209
+        },
+        "_UID": 
+        {
+          "eisaid": false,
+          "type": 0,
+          "value": 0
+        }
+      }
     }
   }
 }

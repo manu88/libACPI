@@ -94,6 +94,8 @@ typedef enum
     ACPIObject_Type_StringValue,
     
     ACPIObject_Type_Package,
+    ACPIObject_Type_IndexField,
+    
     //ACPIObject_Type_DWord, // should remove this one
     
 }ACPIObject_Type;
@@ -334,6 +336,12 @@ typedef struct
     
 }ACPIDevice;
 
+
+typedef struct
+{
+    AMLName _name;
+    const char* name;
+} ACPIScope;
 
 typedef struct
 {

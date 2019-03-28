@@ -1,59 +1,55 @@
 {
   "def": {
     "OEMId": "BXPC",
-    "OEMRev": 43,
-    "complianceRevision": 100,
+    "OEMRev": 42,
+    "complianceRevision": 20,
     "creatorID": 1280593481,
     "tableId": "BXDSDT",
     "tableSignature": "DSDT"
   },
   "tree": {
-    "Children": 
-    {
-        "_SB":
-        {
-            "Children": 
+    "Children": {
+      "_SB": {
+        "Children": {
+          "PCI0": {
+            "_HID":
             {
-                "PCI0": 
-                {
-                  "_HID":
-                  {
-                      "eisaid": true,
-                      "type": 0,
-                      "value": 51040321
-                  },
-                    "CRES": {
-                        "type": 10,
-                        "value": [
-                          {
-                            "type": 13,
-                            "value": {
-                              "addrRangeMax": 255,
-                              "addrRangeMin": 0,
-                              "addrSpaceGranularity": 0,
-                              "addrTranslationLength": 256,
-                              "addrTranslationOffset": 0,
-                              "generalFlags": 12,
-                              "ressourceSourceIndex": 71,
-                              "ressourceType": 2,
-                              "typeSpecificFlags": 0
-                            }
-                          },
-                          {
-                  "type": 14,
-                  "value": {
-                    "baseAlign": 1,
-                    "isDecoder": 1,
-                    "rangeLen": 8,
-                    "rangeMaxBaseAddr": 3320,
-                    "rangeMinBaseAddr": 3320
-                  }
-                }
-              ]
+              "type":2,
+              "value":"ACPI0003"
+            },
+            "BUF0": {
+              "type": 1,
+              "value": {
+                "buf": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "size": 4
+              }
+            },
+            "BUF1": {
+              "type": 1,
+              "value": {
+                "buf": [
+                  9,
+                  98,
+                  99,
+                  100,
+                  101,
+                  0
+                ],
+                "size": 6
+              }
+            },
+            "BUF2": {
+              "type": 1,
+              "value": "abcde"
             }
-                }
-            }    
+          }
         }
+      }
     }
   }
 }

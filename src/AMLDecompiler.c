@@ -23,6 +23,7 @@
 #include "AMLHelpers.h"
 #include "AMLBufferInterpreter.h"
 #include "ItemParsers.h"
+#include "AMLDecompilerDefaultCallbacks.h"
 
 int AMLDecompilerInit(AMLDecompiler* decomp)
 {
@@ -31,6 +32,12 @@ int AMLDecompilerInit(AMLDecompiler* decomp)
     return 1;
 }
 
+int AMLDecompilerUseDefaultCallbacks(AMLDecompiler* decomp)
+{
+    assert(decomp);
+    
+    return memcpy(&decomp->callbacks, AMLDecompilerGetDefaultCallbacks(), sizeof(AMLDecompilerCallbacks)) == &decomp->callbacks;
+}
 
 static void setState( AMLDecompiler* decomp, AMLState newState)
 {
@@ -344,6 +351,17 @@ static int _DecodeFieldElementList(AMLParserState* parser ,ParserContext *ctx ,c
     return 0;
 }
 
+static int _DecodeIndexField(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
+{
+    char name[5] ={0};
+    
+    const uint8_t nameSize = ExtractNameString(buffer, bufferSize, name );
+    name[4] = 0;
+    printf("IndexField(%s)\n",name);
+    assert(0);
+    return 0;
+}
+
 static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
 {
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
@@ -496,13 +514,15 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 
                 
                 char name[SCOPE_STR_SIZE];
-
-                size_t advanced = ResolvePath(name,  bufferPos);
+                ACPIScope scope = {0};
+                scope.name = name;
                 
-                decomp->callbacks.startScope(decomp ,&ctx , name);
-
+                AMLName scopeName = {0};
+                const ssize_t advanced = AMLNameCreateFromBuffer(&scopeName, bufferPos, bufferSize);
+                size_t __advanced = ResolvePath(name,  bufferPos);
                 
-                //strncpy(decomp->currentScope, name, SCOPE_STR_SIZE);
+                assert(__advanced == advanced);
+                decomp->callbacks.startScope(decomp ,&ctx , &scope);
                 
                 AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
                 if(err != AMLParserError_None)
@@ -511,7 +531,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                     return err;
                 }
                 
-                decomp->callbacks.endScope(decomp ,&ctx , name);
+                decomp->callbacks.endScope(decomp ,&ctx , &scope);
 
                 setState(decomp, AMLState_Unknown);
             }
@@ -583,6 +603,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                && ctx.nextOp !=  AML_ZeroOp
                && ctx.nextOp !=  AML_OnesOp
                && ctx.nextOp !=  AML_DWordPrefix
+               && ctx.nextOp !=  AML_WordPrefix
                && ctx.nextOp !=  AML_BufferOp
                && ctx.nextOp !=  AML_BytePrefix
                && ctx.nextOp !=  AML_PackageOp
@@ -602,11 +623,11 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
         case ACPIObject_Type_NumericValue:
         {
-            if (exceptState(decomp, AMLState_WaitingNameValue))
-            {
+            
                 uint64_t w;
                 GetInteger(bufferPos,bufferSize, &w);
-                
+            if (exceptState(decomp, AMLState_WaitingNameValue))
+            {
                 
                 decomp->callbacks.onValue(decomp,&ctx , w);
 
@@ -654,6 +675,10 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
         }
             break;
+        case ACPIObject_Type_IndexField:
+        {
+            return _DecodeIndexField(parser, &ctx, bufferPos, bufferSize);
+        }
         case ACPIObject_Type_Field:
         {
             return _DecodeField(parser, &ctx, bufferPos, bufferSize);

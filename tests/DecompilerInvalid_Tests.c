@@ -19,12 +19,14 @@
 #include <AMLDecompiler.h>
 #include <assert.h>
 
+
+
 void DecompilerInvalid_Tests()
 {
     {
         AMLDecompiler decomp;
         assert(AMLDecompilerInit(&decomp));
-        
+        AMLDecompilerUseDefaultCallbacks(&decomp);
         // This is a valid ACPI Buffer, but with the last part removed
         const uint8_t b[] = {0x44,0x53,0x44,0x54,0x96,0x00,0x00,0x00,
             0x28,0xa3,0x4f,0x45,0x4d,0x49,0x44,0x00,

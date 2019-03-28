@@ -475,7 +475,7 @@ static void Decompile_Test1()
     
     
     assert( AMLDecompilerInit(&decomp));
-    
+    AMLDecompilerUseDefaultCallbacks(&decomp);
     decomp.callbacks.startName = onName;
     
     AMLParserError ret = AMLDecompilerStart(&decomp, test1, sizeof(test1));
@@ -492,6 +492,7 @@ static void Decompile_Test4()
     
     
     assert( AMLDecompilerInit(&decomp));
+    AMLDecompilerUseDefaultCallbacks(&decomp);
     decomp.callbacks.startName = onName;
     
     assert(AMLDecompilerStart(&decomp, test4, sizeof(test4)) == AMLParserError_None);

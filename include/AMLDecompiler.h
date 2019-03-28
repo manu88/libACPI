@@ -37,7 +37,7 @@ typedef struct _ParserContext
     
     AMLOperation nextOp;
     
-    const char* currentScope;
+    //const char* currentScope;
     
     
 } ParserContext;
@@ -45,7 +45,7 @@ typedef struct _ParserContext
 typedef struct _AMLDecompiler AMLDecompiler;
 
 // required callbacks, undefined behaviour if NULL
-typedef struct
+typedef struct _AMLDecompilerCallbacks
 {
     
     int (*startResourceTemplate)(AMLDecompiler* decomp, const ParserContext* context , size_t numItems );
@@ -67,8 +67,8 @@ typedef struct
     
     int (*onBuffer)(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     
-    int (*startScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
-    int (*endScope)(AMLDecompiler* decomp,const ParserContext* context, const char* location);
+    int (*startScope)(AMLDecompiler* decomp,const ParserContext* context, const ACPIScope* scope);
+    int (*endScope)(AMLDecompiler* decomp,const ParserContext* context, const ACPIScope* scope);
     
     int (*startDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
     int (*endDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
@@ -107,7 +107,8 @@ struct _AMLDecompiler
 
 int AMLDecompilerInit(AMLDecompiler* decomp);
 
-
+// add default (and empty) callbacks to an instance of AMLDecompiler. Individual callbacks can be set after. Will erase All previously set callbacks
+int AMLDecompilerUseDefaultCallbacks(AMLDecompiler* decomp);
 
 AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , size_t bufferSize);
 

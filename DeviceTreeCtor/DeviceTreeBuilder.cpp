@@ -79,6 +79,7 @@ DeviceTreeBuilder::DeviceTreeBuilder(AMLDecompiler& decomp):
 AMLDecompilerInterface(decomp)
 {
     decomp.parserPolicy.assertOnError = 1;
+    decomp.parserPolicy.assertOnInvalidState = 1;
     _scopes.push("");
 }
 
@@ -99,9 +100,12 @@ static void printDefBlock( const ACPIDefinitionBlock& defBlock)
 static void printDev(TreeNode* node ,int indent)
 {
     for(int i=0;i<indent;i++)
+    {
         printf("\t");
+    }
     
     printf("TreeNode '%s' %zi names : \n" , node->id.c_str() , node->_names.size() );
+    
     for(const auto &name : node->_names)
     {
         for(int i=0;i<indent+1;i++)
@@ -109,15 +113,22 @@ static void printDev(TreeNode* node ,int indent)
         
         if (name.id == "_HID")
         {
-            if (isEisaId(name.value64) )
+            if (name.type == ACPI::Type_NumericValue)
             {
-                char eisaid[8] = {0};
-                assert(getEisaidString(name.value64, eisaid));
-                printf("%s:%s",name.id.c_str() ,eisaid);
+                if (isEisaId(name.value64) )
+                {
+                    char eisaid[8] = {0};
+                    assert(getEisaidString(name.value64, eisaid));
+                    printf("%s:%s(EisaID)",name.id.c_str() ,eisaid);
+                }
+                else
+                {
+                    printf("%s:0x%llx",name.id.c_str() ,name.value64);
+                }
             }
-            else
+            else if (name.type == ACPI::Type_StringValue)
             {
-                printf("%s:0x%llx",name.id.c_str() ,name.value64);
+                printf("%s:%s",name.id.c_str() ,name.valueStr.c_str());
             }
             
             //printf("%s:%s",name.id.c_str() ,isEisaId(name.value64)? GetEisaId(name.value64): std::to_string(name.value64).c_str() );
@@ -126,6 +137,7 @@ static void printDev(TreeNode* node ,int indent)
         {
             printf("%s:%llx (type %i)",name.id.c_str() ,name.value64 , name.type );
         }
+        
         printf("\n");
     }
     
@@ -160,11 +172,16 @@ void DeviceTreeBuilder::print()
      */
 }
 
+ACPI::NameDeclaration* DeviceTreeBuilder::getCurrentName()
+{
+    return &(currentNode.top()->_names.back());
+}
+
 
 int DeviceTreeBuilder::startResourceTemplate( const ParserContext* context , size_t numItems )
 {
-    assert(currentName);
-    currentName->type = ValueType::Type_RessourceTemplate;
+    assert(getCurrentName());
+    getCurrentName()->type = ACPI::ValueType::Type_RessourceTemplate;
     return 0;
 }
 int DeviceTreeBuilder::endResourceTemplate(const ParserContext* context , size_t numItemsParsed, AMLParserError err)
@@ -185,7 +202,7 @@ int DeviceTreeBuilder::startField(const ParserContext* context, const ACPIField&
 {
     char* fieldName = AMLNameConstructNormalized(&field.name);
     
-    FieldDeclaration decl;
+    ACPI::FieldDeclaration decl;
     decl.name = fieldName;
     currentNode.top()->_fields.push_back(decl);
     _currentFieldDecl = &currentNode.top()->_fields.back();
@@ -197,7 +214,7 @@ int DeviceTreeBuilder::onFieldElement(const ParserContext* context, const ACPIFi
 {
     assert(_currentFieldDecl);
     
-    FieldElement el;
+    ACPI::FieldElement el;
     
     el.name = fieldElement.name;
     el.value = fieldElement.value;
@@ -222,45 +239,38 @@ int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod& 
     return 0;
 }
 
-int DeviceTreeBuilder::onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
-{
-    currentName->setValue(buffer, bufferSize);
 
-    
-    return 0;
-}
 
 int DeviceTreeBuilder::startDevice(const ParserContext* context, const ACPIDevice& device)
 {
     currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name, _scopes.empty()? "" :  _scopes.top()) );
-    //printf("Start Device named '%s' current scope '%s' -> %s \n" , device->name , _scopes.top().c_str() , currentNode? "found":"Not found" );
-    
-    //assert(node);
-    return 0;
-}
-
-int DeviceTreeBuilder::startScope(const ParserContext* context, const char* location)
-{
-    
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(location, _scopes.empty()? "" :  _scopes.top()) );
-    
-    _scopes.push( (_scopes.empty()? "" :  _scopes.top() )+  location);
-    assert(!currentNode.empty());
-
-    return 0;
-}
-
-int DeviceTreeBuilder::endScope(const ParserContext* context, const char* location)
-{
-    //printf("End scope '%s' '%s'\n" , location , _scopes.back().c_str());
-    _scopes.pop();
     return 0;
 }
 
 int DeviceTreeBuilder::endDevice(const ParserContext* context, const ACPIDevice& device)
 {
+    assert(!currentNode.empty() );
     currentNode.pop();
-    //currentNode = nullptr;
+    return 0;
+}
+
+int DeviceTreeBuilder::startScope(const ParserContext* context, const ACPIScope& scope)
+{
+    
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(scope.name, _scopes.empty()? "" :  _scopes.top()) );
+    
+    _scopes.push( (_scopes.empty()? "" :  _scopes.top() )+  scope.name);
+    assert(!currentNode.empty());
+
+    return 0;
+}
+
+int DeviceTreeBuilder::endScope(const ParserContext* context, const ACPIScope& scope)
+{
+    //printf("End scope '%s' '%s'\n" , location , _scopes.back().c_str());
+    assert(!_scopes.empty());
+    
+    _scopes.pop();
     return 0;
 }
 
@@ -268,13 +278,12 @@ int DeviceTreeBuilder::startName(const ParserContext* context, const char* name)
 {
     assert(!currentNode.empty());
     
-    
-    currentNode.top()->_names.push_back(NameDeclaration(name) );
-    currentName = &currentNode.top()->_names.back();
+    currentNode.top()->_names.push_back(ACPI::NameDeclaration(name) );
+    assert(getCurrentName());
+    //currentName = &(currentNode.top()->_names.back());
     
     return 0;
 }
-
 
 
 /*
@@ -296,14 +305,29 @@ int DeviceTreeBuilder::onPackage( const ParserContext*context , const ACPIPackag
     assert(false);
     return 0;
 }
+
+int DeviceTreeBuilder::onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
+{
+    getCurrentName()->setValue(buffer, bufferSize);
+    return 0;
+}
+
+int DeviceTreeBuilder::onString(const ParserContext* context, const char* str)
+{
+    getCurrentName()->setValue(str);
+    
+    assert(getCurrentName()->type== ACPI::Type_StringValue);
+    return 0;
+}
+
 int DeviceTreeBuilder::onValue(const ParserContext* context, uint64_t value)
 {
 
-    if(currentName)
+    if(getCurrentName())
     {
-        currentName->setValue(value);
+        getCurrentName()->setValue(value);
         
-        currentName->isEisaid = isEisaId(value);
+        getCurrentName()->isEisaid = isEisaId(value);
         
     }
     return 0;
@@ -311,62 +335,57 @@ int DeviceTreeBuilder::onValue(const ParserContext* context, uint64_t value)
 
 int DeviceTreeBuilder::onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc)
 {
-    assert(currentName);
-    if(currentName)
-    {
-        RessourceItem item;
-        item.setValue(desc);
-        currentName->addTemplateItem(item);
-    }
+    assert(getCurrentName());
+
+    ACPI::RessourceItem item;
+    item.setValue(desc);
+    getCurrentName()->addTemplateItem(item);
+
     return 0;
 }
 
 
 int DeviceTreeBuilder::onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc)
 {
-    assert(currentName);
-    if(currentName)
-    {
-        RessourceItem item;
-        item.setValue(desc);
-        currentName->addTemplateItem(item);
-    }
+    assert(getCurrentName());
+
+    ACPI::RessourceItem item;
+    item.setValue(desc);
+    getCurrentName()->addTemplateItem(item);
+
     return 0;
 }
 
 int DeviceTreeBuilder::onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc)
 {
-    assert(currentName);
-    if(currentName)
-    {
-        RessourceItem item;
-        item.setValue(desc);
-        currentName->addTemplateItem(item);
-    }
+    assert(getCurrentName());
+
+    ACPI::RessourceItem item;
+    item.setValue(desc);
+    getCurrentName()->addTemplateItem(item);
+
     return 0;
 }
 
 int DeviceTreeBuilder::onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc)
 {
-    assert(currentName);
-    if(currentName)
-    {
-        RessourceItem item;
-        item.setValue(desc);
-        currentName->addTemplateItem(item);
-    }
+    assert(getCurrentName());
+
+    ACPI::RessourceItem item;
+    item.setValue(desc);
+    getCurrentName()->addTemplateItem(item);
+
     return 0;
 }
 
 int DeviceTreeBuilder::onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc)
 {
-    assert(currentName);
-    if(currentName)
-    {
-        RessourceItem item;
-        item.setValue(desc);
-        currentName->addTemplateItem(item);
-    }
+    assert(getCurrentName());
+
+    ACPI::RessourceItem item;
+    item.setValue(desc);
+    getCurrentName()->addTemplateItem(item);
+
     return 0;
 }
 

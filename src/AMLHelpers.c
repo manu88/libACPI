@@ -99,7 +99,11 @@ ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  )
         {
             if (size > 1) 
             {
-                if (  IsRealName(buff[1]))
+                if (buff[1]==0)
+                {
+                    return 2;
+                }
+                else if (  IsRealName(buff[1]))
                 {
                     const ssize_t nextRet = ExtractMaxNameSize(buff+1, size-1);
                     return nextRet<0? nextRet :   nextRet + 1;
@@ -302,7 +306,7 @@ size_t ResolvePath(char *fullpath, const uint8_t *path)
     
     if(path[0] == AML_OP_RootChar)
     {
-        name_size = 1;
+        name_size = 2;
         fullpath[0] = AML_OP_RootChar;
         fullpath[1] = 0;
         path++;

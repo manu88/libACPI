@@ -17,24 +17,7 @@
 
 #pragma once
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <cstddef>
+typedef struct _AMLDecompilerCallbacks AMLDecompilerCallbacks;
 
-namespace AML
-{
+AMLDecompilerCallbacks* AMLDecompilerGetDefaultCallbacks(void);
 
-
-class Decompiler
-{
-public:
-    int process( const uint8_t* buffer , std::size_t bufferSize);
-    
-    
-    std::string getStringResult() const;
-    
-private:
-    std::string result;
-};
-    
-} // end namespace AML

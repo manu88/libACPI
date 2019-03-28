@@ -24,6 +24,20 @@ static int NameIsValid( const AMLName* name)
 
 void doAMLNameTests()
 {
+    {
+        AMLName name = {0};
+        const uint8_t b[] = { '\\',0  , 0x2F , 4  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' ,  'S' ,'E' , 'T' , '_' , 'T','E','S','T' ,0,0,0};
+        
+        ssize_t num = AMLNameCreateFromBuffer(&name, b, sizeof(b));
+        
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert( num == 2);
+        assert(ret);
+        assert(strcmp(ret, "\\")==0);
+        free(ret);
+    }
+    
 
     {
         AMLName name = {0};
@@ -213,12 +227,15 @@ void doAMLNameTests()
          assert(AMLNameCountSegments(&name) == 3);
          */
     }
+   
     
 }
 
 
 void doAMLNameNormalizedTests()
 {
+    
+    
     {
         AMLName name = {0};
         const uint8_t b[] = {'A' , 'M' , 'L','_' /*Junk*/ ,0x1 , 0x10  };
@@ -300,4 +317,5 @@ void doAMLNameNormalizedTests()
         assert(strcmp(ret, "^^^S2__.MEM_.SET_.TEST")==0);
         free(ret);
     }
+    
 }

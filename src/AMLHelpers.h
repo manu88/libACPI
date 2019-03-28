@@ -38,6 +38,7 @@ uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar );
 
 size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);
 
+// returns the number of consummed bytes
 size_t ResolvePath(char *fullpath, const uint8_t *path);
 
 

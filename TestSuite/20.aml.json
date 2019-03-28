@@ -21,6 +21,15 @@
                   }
                 ],
                 "name": "PCIC"
+              },
+              {
+                "content": [
+                  {
+                    "name": "TEST",
+                    "value": 10
+                  }
+                ],
+                "name": "PCIC"
               }
             ],
             "Methods": {
@@ -28,7 +37,7 @@
                 "argCount": 0,
                 "serializeFlag": 0,
                 "syncLevel": 0,
-                "body": null
+                "body": "some"
               }
             },
             "OperationRegions": {

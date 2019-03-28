@@ -38,6 +38,7 @@ protected:
     
     
     virtual int onValue(const ParserContext* context, uint64_t value)= 0;
+    virtual int onString(const ParserContext* context, const char* str)= 0;
 
     virtual int onOperationRegion(const ParserContext* context, const ACPIOperationRegion&)= 0;
     
@@ -49,8 +50,8 @@ protected:
     virtual int onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)= 0;
     
     
-    virtual int startScope(const ParserContext* context, const char* location)= 0;
-    virtual int endScope(const ParserContext* context, const char* location)= 0;
+    virtual int startScope(const ParserContext* context, const ACPIScope& scope)= 0;
+    virtual int endScope(const ParserContext* context, const ACPIScope& scope)= 0;
     virtual int startDevice(const ParserContext* context, const ACPIDevice& name)= 0;
     virtual int endDevice(const ParserContext* context, const ACPIDevice& name)= 0;
     virtual int startName(const ParserContext* context, const char* name)= 0;

@@ -48,33 +48,6 @@
                     "rangeMaxBaseAddr": 3320,
                     "rangeMinBaseAddr": 3320
                   }
-                },
-                {
-                  "type": 13,
-                  "value": {
-                    "addrRangeMax": 3319,
-                    "addrRangeMin": 0,
-                    "addrSpaceGranularity": 0,
-                    "addrTranslationLength": 3320,
-                    "addrTranslationOffset": 0,
-                    "generalFlags": 12,
-                    "ressourceSourceIndex": 135,
-                    "ressourceType": 1,
-                    "typeSpecificFlags": 3
-                  }
-                },
-                {
-                  "type": 15,
-                  "value": {
-                    "addrRangeMax": 4273995775,
-                    "addrRangeMin": 3758096384,
-                    "addrSpaceGranularity": 0,
-                    "addrTranslationLength": 515899392,
-                    "addrTranslationOffset": 0,
-                    "generalFlags": 12,
-                    "ressourceType": 0,
-                    "typeSpecificFlags": 1
-                  }
                 }
               ]
             }

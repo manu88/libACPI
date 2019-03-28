@@ -16,7 +16,7 @@
  */
 
 #include "JSONConverter.hpp"
-#include "DeviceTreeBuilder.hpp"
+#include "DeviceTree.hpp"
 
 
 static bool isString(const std::vector<uint8_t> &bytes)
@@ -130,7 +130,7 @@ static nlohmann::json serializeWordAddressSpaceDescriptor(const WordAddressSpace
     return ret;
 }
 
-static nlohmann::json serializeResourseTemplate( const ResourceTemplate&resTemplate)
+static nlohmann::json serializeResourseTemplate( const ACPI::ResourceTemplate&resTemplate)
 {
     nlohmann::json res;
     
@@ -142,23 +142,24 @@ static nlohmann::json serializeResourseTemplate( const ResourceTemplate&resTempl
         
         switch (item.type)
         {
-            case Type_WordAddressSpaceDescriptor:
+            case ACPI::Type_WordAddressSpaceDescriptor:
                 it["value"] = serializeWordAddressSpaceDescriptor(item.value.wordAddressSpaceDescriptor);
                 break;
                 
-            case Type_IOPortDescriptor:
+            case ACPI::Type_IOPortDescriptor:
                 it["value"] = serializeIOPortDescriptor(item.value.ioPortDescriptor);
                 break;
                 
-            case Type_DWordAddressSpaceDescriptor:
+            case ACPI::Type_DWordAddressSpaceDescriptor:
                 it["value"] = serializeDWordAddressSpaceDescriptor(item.value.dwordAddressSpaceDescriptor);
                 break;
                 
                 
-            case Type_QWordAddressSpaceDescriptor:
+            case ACPI::Type_QWordAddressSpaceDescriptor:
                 it["value"] = serializeQWordAddressSpaceDescriptor(item.value.qwordAddressSpaceDescriptor);
                 break;
-            case Type_MemoryRangeDescriptor32:
+            
+            case ACPI::Type_MemoryRangeDescriptor32:
                 it["value"] = serializeMemoryRangeDescriptor32(item.value.memoryRangeDesc32);
                 break;
             default:
@@ -170,7 +171,7 @@ static nlohmann::json serializeResourseTemplate( const ResourceTemplate&resTempl
     }
     return res;
 }
-static nlohmann::json serializeBuffer( const NameDeclaration&name)
+static nlohmann::json serializeBuffer( const ACPI::NameDeclaration&name)
 {
     nlohmann::json ret;
     
@@ -186,28 +187,33 @@ static nlohmann::json serializeBuffer( const NameDeclaration&name)
     
     return ret;
 }
-static nlohmann::json serializeName( const NameDeclaration&name)
+static nlohmann::json serializeName( const ACPI::NameDeclaration&name)
 {
     nlohmann::json res;
     
     res["type"] = name.type;
     switch (name.type)
     {
-        case ValueType::Type_NumericValue:
+        case ACPI::ValueType::Type_NumericValue:
+            assert(name.valueStr.empty());
             res["value"] = name.value64;
             res["eisaid"] = name.isEisaid;
             break;
             
-        case ValueType::Type_Buffer:
+        case ACPI::ValueType::Type_Buffer:
             
             res["value"] = serializeBuffer(name);
             break;
             
-        case ValueType::Type_RessourceTemplate:
+        case ACPI::ValueType::Type_RessourceTemplate:
         {
             res["value"] = serializeResourseTemplate( name.resTemplate );
             
         }
+            break;
+            
+        case ACPI::ValueType::Type_StringValue:
+            res["value"] = name.valueStr;
             break;
         default:
             
@@ -218,7 +224,7 @@ static nlohmann::json serializeName( const NameDeclaration&name)
     
     return res;
 }
-static nlohmann::json serializeFields( const FieldDeclaration &field)
+static nlohmann::json serializeFields( const ACPI::FieldDeclaration &field)
 {
     nlohmann::json ret;
     ret["name"] = field.name;
@@ -276,12 +282,13 @@ static nlohmann::json serializeMethod( const ACPIMethod& method)
     return ret;
 }
 
-static nlohmann::json serializeNode( const TreeNode&node)
+static nlohmann::json serializeNode( const TreeNode& node)
 {
     nlohmann::json res;
     
     for( const auto &name : node._names)
     {
+        assert(!name.id.empty());
         res[name.id] = serializeName(name);
     }
     

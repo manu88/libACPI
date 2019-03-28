@@ -73,8 +73,6 @@ struct DeviceTreeTester
         if (err != AMLParserError_None)
             return false;
         
-        
-        
         JSONConverter conv(builder.getDeviceTree() );
         
         const auto jsonResult = conv.getJSON();
@@ -105,8 +103,6 @@ struct DeviceTreeTester
 };
 
 
-
-
 static int ext_match(const char *name, const char *ext)
 {
     size_t nl = strlen(name), el = strlen(ext);
@@ -130,14 +126,14 @@ static std::vector<std::string> constructFileList(const std::string& fromPath , 
     while ((dp = readdir(testDir)) != NULL)
     {
         if (strcmp(dp->d_name, "..") == 0 ||  strcmp(dp->d_name, ".") == 0)
+        {
             continue;
-        
+        }
         
         if (ext_match(dp->d_name, extension.c_str()))
         {
             ret.push_back(dp->d_name);
         }
-        
     }
     
     closedir(testDir);
@@ -147,7 +143,6 @@ static std::vector<std::string> constructFileList(const std::string& fromPath , 
 
 int main(int argc, const char * argv[])
 {
-
     const char* testDirPath = argv[1];
     
     if (!testDirPath)
@@ -157,7 +152,6 @@ int main(int argc, const char * argv[])
     
     std::vector<std::string > amlFiles = constructFileList(testDirPath, "aml");
     
-
     for( const auto &file : amlFiles)
     {
         const auto fullPath = testDirPath + file;

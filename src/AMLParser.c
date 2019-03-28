@@ -303,6 +303,8 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             *advancedBy += fieldSize;
         }
             break;
+            
+            
         case AML_MethodOp:
         {
             size_t methodSizeLen = 0;
@@ -353,6 +355,8 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         {
             const uint8_t* valPosition = buffer-1;
             const size_t valSize = 0;
+            
+
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_NumericValue , valPosition , valSize +1);
             if (err != AMLParserError_None)
@@ -435,7 +439,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         {
             const uint8_t* valPosition = buffer;
             
-            const size_t valSize = strlen( (const char*)valPosition);
+            const size_t valSize = strlen( (const char*)valPosition) + 1; // +1 for null byte
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_StringValue , valPosition , valSize);
             if (err != AMLParserError_None)
@@ -514,7 +518,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
         case AML_AliasOp:
         {
-            printf("%s\n" , buffer);
+//            printf("%s\n" , buffer);
             char name1[5] = {0};
             char name2[5] = {0};
             const uint8_t name1Size = ExtractNameString(buffer, 4, name1);
@@ -523,11 +527,29 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             *advancedBy += name1Size + name2Size;
         }
             break;
-        case AML_ProcessorOp:
+            
+        case AML_IndexFieldOp:
         {
             size_t adv = 0;
             size_t len = _GetPackageLength(buffer, bufSize, &adv, 0);
             
+            const uint8_t* startOfIndexField = buffer + adv;
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_IndexField ,startOfIndexField , len-adv);
+            if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
+                return err;
+            }
+            
+            *advancedBy += len;
+            
+            
+            break;
+        }
+        case AML_ProcessorOp:
+        {
+            size_t adv = 0;
+            size_t len = _GetPackageLength(buffer, bufSize, &adv, 0);
             *advancedBy += len;
         }
             break;
@@ -578,6 +600,9 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
         const size_t   operationSize = bufSize - advancedByte;
         
         size_t advancedOf = 0;
+        
+        
+      
         AMLParserError retOperation =  _AMLParserProcessOperation(state, op, startOfOP, operationSize, &advancedOf);
         
         if (retOperation != AMLParserError_None)

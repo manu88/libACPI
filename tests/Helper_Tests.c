@@ -46,6 +46,9 @@ static void ExtractNameSizeTests(void)
     
     assert(ExtractMaxNameSize((const uint8_t*)"\\S2", 3)   == 5);
     
+    uint8_t bb[] = { '\\' , 0 , 0x5d};
+    assert(ExtractMaxNameSize(bb, sizeof(bb))   == 2);
+    
     {
         // dual name
         const uint8_t b[] = { '^' , '^' , 0x2E  , 'P' ,'C' , 'I', '0'    , 'S' ,'B' , 'S'};
@@ -286,6 +289,17 @@ static void ResolvePath_Tests()
         {
             assert(name[i] != '\0');
         }
+    }
+    {
+        //5c  0  5b  80  46  43  46  47
+        
+        char name[512] = {0};
+        
+        uint8_t b[] = {AML_OP_RootChar,0 , 0x5b,  0x80  ,0x46  ,0x43  ,0x46  ,0x47};
+        size_t ret = ResolvePath(name, b);
+        
+        assert( ret == 2);
+        assert( strcmp(name, "\\") == 0);
     }
 }
 

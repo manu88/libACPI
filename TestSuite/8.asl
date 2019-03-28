@@ -1,4 +1,4 @@
-DefinitionBlock ("", "DSDT", 2, "BXPC", "BXDSDT", 1)
+DefinitionBlock ("", "DSDT", 120, "BXPC", "BXDSDT", 12)
 {
 
     Scope (_SB)
@@ -8,10 +8,13 @@ DefinitionBlock ("", "DSDT", 2, "BXPC", "BXDSDT", 1)
             Name (_HID, EisaId ("PNP0A03") /* PCI Bus */)  // _HID: Hardware ID
             Name (CRES, ResourceTemplate ()
             {
-                Memory32Fixed (ReadOnly,
-                    0xFED00000,         // Address Base
-                    0x00000400,         // Address Length
-                    )
+                QWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
+                0x0000000000000000, // Granularity
+                0x0000008000000000, // Range Minimum
+                0x000000ffffffffff, // Range Maximum
+                0x0000000000000000, // Translation Offset
+                0x0000008000000000, // Length
+                ,, _Y01, AddressRangeMemory, TypeStatic)
             })
         }
     }

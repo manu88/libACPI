@@ -83,21 +83,27 @@ decomp(decomp)
     };
      */
     
-    decomp.callbacks.startScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
+    decomp.callbacks.startScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIScope* scope) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->startScope(context, location);
+        return self->startScope(context, *scope);
     };
-    decomp.callbacks.endScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* location) -> int
+    decomp.callbacks.endScope = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIScope* scope) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        return self->endScope(context, location);
+        return self->endScope(context, *scope);
     };
     
     decomp.callbacks.onValue = []( AMLDecompiler* _decomp ,const ParserContext* context, uint64_t val) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
         return self->onValue(context, val);
+    };
+    
+    decomp.callbacks.onString = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* str) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->onString(context, str);
     };
 
     decomp.callbacks.onOperationRegion = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIOperationRegion* reg) -> int

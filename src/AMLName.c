@@ -53,6 +53,9 @@ uint8_t AMLNameHasPrefixRoot( const AMLName*name)
     {
         if (name->originalBufSize >= 2)
         {
+            if (name->originalBuf[1] == 0)
+                return 1;
+            
             // we must have some space left on the buffer , and the next byte must be a real name, ie not \ or ^
             if(IsRealName( name->originalBuf[1]  ) == 0)
             {
@@ -105,9 +108,15 @@ uint8_t AMLNameCountSegments( const AMLName*name)
     }
     else if (AMLNameHasPrefixRoot(name))
     {
+        
         if (IsRealName(name->originalBuf[1]))
         {
             return 1;
+        }
+        else
+        {
+            
+            return 0;
         }
     }
     const uint8_t numParents =  AMLNameCountParents(name);
@@ -187,7 +196,7 @@ char* AMLNameConstructNormalized( const AMLName* name)
     const uint8_t  numParents = AMLNameCountParents(name);
     
     const uint8_t numSegs = AMLNameCountSegments(name);
-    if ( /* == 0 &&*/ numParents == 0 && numSegs == 1)
+    if ( /* == 0 &&*/ numParents == 0 && numSegs <= 1)
     {
         
         size_t size = name->originalBufSize<4? name->originalBufSize :4;

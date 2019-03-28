@@ -1,17 +1,35 @@
-DefinitionBlock ("", "DSDT", 20, "BXPC", "BXDSDT", 42)
+DefinitionBlock ("", "DSDT", 1, "BXPC", "BXDSDT", 0x00000001)
 {
-
-    Scope (_SB)
+	Scope (_SB)
     {
-        Device (PCI0)
-        {
-            //Name (_HID, EisaId ("PNP0A03") /* PCI Bus */)  // _HID: Hardware ID
-            Name (BUF0, Buffer(4) {0x01,0x02,0x03,0x04})
-            Name (BUF1, Buffer() {"\tbcde"}) // This one will no be considered as a string since '\t' is not an ascii code (?)
-            Name (BUF2, Buffer() {"abcde"}) // Length = 6
+    	Device (PCI0)
+    	{
+            Name (_HID, EisaId ("PNP0A03") )
+            Name (_ADR, Zero) 
+            Name (_UID, One)
+    	}
 
+    	Scope(PCI0)
+    	{
+    		Device (ISA)
+        	{
+        		Name (_ADR, 0x00010000)
+        		
+        	}
+    	}
+
+    	Scope (PCI0.ISA)
+    	{
+        	Device (RTC)
+        	{
+            	Name (_HID, EisaId ("PNP0B00"))
+            }
         }
     }
 
-}
+    Scope (_SB.PCI0.ISA.RTC)
+    {
+    	Name (_UID, 0x12)
+    }
 
+}
