@@ -371,8 +371,6 @@ typedef struct
 
 typedef struct
 {
-    //char _name[32]; // 4 + NULL byte
-    AMLName name; // this is just a ref to original content! a deep copy should be made to keep content around if the original ACPI buffer was to be freed
     uint8_t accessType:4;
     /*
      0 AnyAcc
@@ -385,33 +383,21 @@ typedef struct
      */
     uint8_t lockRule:1; /* 0 NoLock 1 Lock */
     uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
-    
-    
-    
-    
-    //char valueName[5]; // 4 + NULL byte
-    //uint8_t value;
-    
-    //uint8_t offset;
-    
+}ACPIFieldFlags;
+
+typedef struct
+{
+    //char _name[32]; // 4 + NULL byte
+    AMLName name; // this is just a ref to original content! a deep copy should be made to keep content around if the original ACPI buffer was to be freed
+    ACPIFieldFlags flags;
 } ACPIField;
 
 typedef struct
 {
     AMLName name; // this is just a ref to original content! a deep copy should be made to keep content around if the original ACPI buffer was to be freed
     AMLName dataName; // this is just a ref to original content! a deep copy should be made to keep content around if the original ACPI buffer was to be freed
-    uint8_t accessType:4;
-    /*
-     0 AnyAcc
-     1 ByteAcc
-     2 WordAcc
-     3 DWordAcc
-     4 QWordAcc
-     5 BufferAcc
-     6 Reserved
-     */
-    uint8_t lockRule:1; /* 0 NoLock 1 Lock */
-    uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
+    
+    ACPIFieldFlags flags;
     
 } ACPIIndexField;
 

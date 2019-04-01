@@ -285,9 +285,9 @@ public:
         content << fieldName << ", ";
         free(fieldName);
         
-        content << accessTypeDesc( field.accessType) << ", ";
-        content << (field.lockRule? "Lock":"NoLock") << ", ";
-        content << updateRuleDesc(field.updateRule);
+        content << accessTypeDesc( field.flags.accessType) << ", ";
+        content << (field.flags.lockRule? "Lock":"NoLock") << ", ";
+        content << updateRuleDesc(field.flags.updateRule);
         content << " )" << std::endl;
         
         indent(); content << "{" << std::endl;
@@ -308,11 +308,105 @@ public:
     }
     
     
+    int startIndexField(const ParserContext* context, const ACPIIndexField& indexField) override
+    {
+        incScope();
+        
+        auto updateRuleDesc = [](uint8_t updateRule) -> std::string
+        {
+            switch (updateRule)
+            {
+                case 0:
+                    return "Preserve";
+                case 1:
+                    return "WriteAsOnes";
+                case 2:
+                    return "WriteAsZeros";
+                    
+                default:
+                    break;
+            }
+            assert(false);
+            return "";
+        };
+        
+        auto accessTypeDesc = [](uint8_t accessType) -> std::string
+        {
+            switch(accessType)
+            {
+                case 0:
+                    return "AnyAcc";
+                case 1:
+                    return "ByteAcc";
+                case 2:
+                    return "WordAcc";
+                case 3:
+                    return "DWordAcc";
+                case 4:
+                    return "QWordAcc";
+                case 5:
+                    return "BufferAcc";
+                    /*
+                     case 6:
+                     return "Reserved";
+                     */
+            }
+            
+            //assert(false);
+            return "Reserved";
+        };
+        
+        indent();content << "IndexField (";
+        
+        char* fieldName = AMLNameConstructNormalized(&indexField.name);
+        assert(fieldName);
+        content << fieldName << ", ";
+        free(fieldName);
+        
+        content << accessTypeDesc( indexField.flags.accessType) << ", ";
+        content << (indexField.flags.lockRule? "Lock":"NoLock") << ", ";
+        content << updateRuleDesc(indexField.flags.updateRule);
+        content << " )" << std::endl;
+        
+        indent(); content << "{" << std::endl;
+        incScope();
+        
+        return 0;
+    }
+    int onIndexFieldElement(const ParserContext* context, const ACPIIndexFieldElement& fieldElement)  override
+    {
+        if ( /*ACPIFieldElementIsOffset(&fieldElement))// */fieldElement.name[0] == 0)
+        {
+            if (fieldElement.offsetFromStart %8 == 0)
+            {
+                indent(); content << "Offset(" ; writeHexArg((uint8_t)(fieldElement.offsetFromStart / 8)); content << ")," << std::endl;
+            }
+            else
+            {
+                indent(); content << "," ; writeHexArg(fieldElement.value); content << "," << std::endl;
+            }
+        }
+        else
+        {
+            indent(); content << fieldElement.name << ", "; writeHexArg(fieldElement.value); content << "," << std::endl;
+            
+        }
+        
+        return 0;
+    }
     
-  
+    int endIndexField(const ParserContext* context, const ACPIIndexField&) override
+    {
+        decScope();
+        indent(); content << "}" << std::endl;
+        
+        decScope();
+        
+        return 0;
+    }
+    
     int onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer ) override
     {
-        
         
         content << "Buffer(";
         

@@ -99,7 +99,7 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
     
     memcpy(defBlk.OEMId, buffer + pos, 6);
     pos +=6;
-
+/*
     int acc = 5;
     
     while ( acc--)
@@ -114,7 +114,7 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
         }
     }
     
-    
+    */
     memcpy(defBlk.tableId, buffer + pos, 8);
     defBlk.tableId[8] = 0;
     pos +=8;

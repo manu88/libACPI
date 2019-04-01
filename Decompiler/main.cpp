@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
         
         auto ret = decomp.process(buffer, bufSize);
         
-        if (ret )
+        if (ret == 0 )
         {
             const std::string result = decomp.getStringResult();
             

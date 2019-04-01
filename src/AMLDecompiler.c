@@ -388,6 +388,19 @@ static ssize_t _DecodeIndexFieldElement(AMLDecompiler* decomp ,ParserContext *ct
     return advancedOf + offsetBeforeValue;
 }
 
+static AMLParserError _DecodeFieldFlags( const uint8_t byte, ACPIFieldFlags* toFlags)
+{
+    if ( (byte & 0b10000000) !=0)
+    {
+        return AMLParserError_UnexpectedValue;
+    }
+    assert(toFlags);
+    toFlags->accessType = byte & 0b00001111;
+    toFlags->lockRule   = (byte & 0b00010000) >> 4;
+    toFlags->updateRule = (byte & 0b01100000) >> 5;
+    return AMLParserError_None;
+}
+
 static int _DecodeIndexField(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
 {
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
@@ -409,10 +422,12 @@ static int _DecodeIndexField(AMLParserState* parser ,ParserContext *ctx ,const u
     
     const uint8_t bytesConfig = buffer[  retParseIndexName + retParseDataName];
     
+    const int retFlags = _DecodeFieldFlags(bytesConfig, &indexField.flags);
     
-    indexField.accessType = bytesConfig & 0b00001111;
-    indexField.lockRule   = (bytesConfig & 0b00010000) >> 4;
-    indexField.updateRule = (bytesConfig & 0b01100000) >> 5;
+    if (retFlags != AMLParserError_None)
+        return retFlags;
+    
+    
     
     int callb = decomp->callbacks.startIndexField(decomp , ctx , &indexField);
     if (callb != 0)
@@ -443,6 +458,8 @@ static int _DecodeIndexField(AMLParserState* parser ,ParserContext *ctx ,const u
     return 0;
 }
 
+
+
 static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
 {
     AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
@@ -468,14 +485,12 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
     //field.name[nameSize] = 0;
     
     const uint8_t bytesConfig = buffer[ advancedFromName ];
-    assert( (bytesConfig & 0b10000000) == 0); // bit7 : Reserved (must be 0)
     
-    // bit 0-3: accessType
-    // bit 4: lock Rule
-    // bit 5-6: update rule
-    field.accessType = bytesConfig & 0b00001111;
-    field.lockRule   = (bytesConfig & 0b00010000) >> 4;
-    field.updateRule = (bytesConfig & 0b01100000) >> 5;
+    const int retFlags = _DecodeFieldFlags(bytesConfig, &field.flags);
+    if ( retFlags != AMLParserError_None)
+        return retFlags;
+    
+    
     
     int retCallb = decomp->callbacks.startField(decomp ,ctx , &field);
     if (retCallb != AMLParserError_None)

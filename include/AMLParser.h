@@ -27,6 +27,7 @@ typedef enum
     AMLParserError_UnexpectedToken,
     AMLParserError_ElementAllocError,
     AMLParserError_InvalidState,
+    AMLParserError_UnexpectedValue,
     
     
     
