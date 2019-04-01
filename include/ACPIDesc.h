@@ -107,7 +107,7 @@ typedef struct
     ACPIDWord tableLength; // Length of the table in bytes including the block header.
     uint8_t complianceRevision;
     uint8_t tableCheckSum; // Byte checksum of the entire table.
-    char    OEMId[6];
+    char    OEMId[7];
     char    tableId[9]; // 8 + 1 NULL
     
     ACPIDWord OEMRev;
@@ -396,6 +396,24 @@ typedef struct
     
 } ACPIField;
 
+typedef struct
+{
+    AMLName name; // this is just a ref to original content! a deep copy should be made to keep content around if the original ACPI buffer was to be freed
+    AMLName dataName; // this is just a ref to original content! a deep copy should be made to keep content around if the original ACPI buffer was to be freed
+    uint8_t accessType:4;
+    /*
+     0 AnyAcc
+     1 ByteAcc
+     2 WordAcc
+     3 DWordAcc
+     4 QWordAcc
+     5 BufferAcc
+     6 Reserved
+     */
+    uint8_t lockRule:1; /* 0 NoLock 1 Lock */
+    uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
+    
+} ACPIIndexField;
 
 typedef struct
 {
@@ -404,8 +422,11 @@ typedef struct
     
     size_t offsetFromStart;
     
-    const ACPIField* fieldRef;
+    const void* fieldRef; // and ACPIIndexField if ACPIFieldElement or an ACPIField if ACPIFieldElement
 } ACPIFieldElement;
+
+
+typedef ACPIFieldElement ACPIIndexFieldElement;
 
 
 

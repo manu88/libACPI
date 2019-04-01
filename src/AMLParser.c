@@ -96,9 +96,24 @@ static AMLParserError _ParseDefinitionBlock(AMLParserState* state, const uint8_t
     defBlk.tableCheckSum = buffer[pos];
     pos +=1;// CheckSum
     
+    
     memcpy(defBlk.OEMId, buffer + pos, 6);
     pos +=6;
 
+    int acc = 5;
+    
+    while ( acc--)
+    {
+        if (defBlk.OEMId[acc] == ' ')
+        {
+            defBlk.OEMId[acc] = 0;
+        }
+        else
+        {
+            break;
+        }
+    }
+    
     
     memcpy(defBlk.tableId, buffer + pos, 8);
     defBlk.tableId[8] = 0;

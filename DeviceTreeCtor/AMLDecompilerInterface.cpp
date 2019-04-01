@@ -112,6 +112,25 @@ decomp(decomp)
         return self->onOperationRegion(context, *reg);
     };
     
+    
+    decomp.callbacks.startIndexField = [] ( AMLDecompiler* _decomp , const ParserContext* context , const ACPIIndexField* indexField) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->startIndexField(context, *indexField);
+    };
+    
+    decomp.callbacks.onIndexFieldElement = [] (AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexFieldElement* fieldElement) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(decomp->userData);
+        return self->onIndexFieldElement(context, *fieldElement);
+    };
+    
+    decomp.callbacks.endIndexField = [] ( AMLDecompiler* _decomp , const ParserContext* context , const ACPIIndexField* indexField) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->endIndexField(context, *indexField);
+    };
+    
     decomp.callbacks.startField = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIField* field) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);

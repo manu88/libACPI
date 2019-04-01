@@ -66,6 +66,9 @@ struct TreeNode
     std::vector<ACPIOperationRegion> _opRegions;
     std::vector<ACPI::FieldDeclaration>    _fields;
     std::vector<ACPIMethod>          _methods;
+    
+    std::vector<ACPI::IndexFieldDeclaration>    _indexFields;
+    
 };
 
 struct DeviceTree

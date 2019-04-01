@@ -1,0 +1,58 @@
+{
+  "def": {
+    "OEMId": "VBOX",
+    "OEMRev": 2,
+    "complianceRevision": 2,
+    "creatorID": 1280593481,
+    "tableId": "VBOXBIOS",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Fields": [
+      {
+        "content": [
+          {
+            "name": "IDX0",
+            "value": 32
+          },
+          {
+            "name": "DAT0",
+            "value": 32
+          }
+        ],
+        "name": "CBAT"
+      }
+    ],
+    "IndexFields": [
+      {
+        "content": [
+          {
+            "name": "STA",
+            "value": 32
+          },
+          {
+            "name": "_RAT",
+            "value": 32
+          },
+          {
+            "name": "",
+            "value": 120
+          },
+          {
+            "name": "APSR",
+            "value": 32
+          }
+        ],
+        "dataName": "DAT0",
+        "name": "IDX0"
+      }
+    ],
+    "OperationRegions": {
+      "CBAT": {
+        "length": 8,
+        "offset": 16448,
+        "space": 1
+      }
+    }
+  }
+}

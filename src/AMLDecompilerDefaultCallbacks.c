@@ -86,7 +86,19 @@ static int _Default_onPackage(AMLDecompiler* decomp,const ParserContext* context
     return 0;
 }
     
+static int _Default_startIndexField(AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexField* field)
+{
+    return 0;
+}
+static int _Default_onIndexFieldElement(AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexFieldElement* fieldElement)
+{
+    return 0;
+}
 
+static int _Default_endIndexField(AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexField* field)
+{
+    return 0;
+}
 
 
 static AMLDecompilerCallbacks _defaultCallbacks =
@@ -103,6 +115,9 @@ static AMLDecompilerCallbacks _defaultCallbacks =
     _Default_startField,
     _Default_onFieldElement,
     _Default_endField,
+    _Default_startIndexField,
+    _Default_onIndexFieldElement,
+    _Default_endIndexField,
     _Default_onBuffer,
     _Default_startScope,
     _Default_endScope,

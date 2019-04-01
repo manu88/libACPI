@@ -342,6 +342,7 @@ static int _DecodeFieldElementList(AMLParserState* parser ,ParserContext *ctx ,c
     while ( fieldElementsDataSize >0 )
     {
         const ssize_t retElement =  _DecodeFieldElement(parser, ctx, fieldElementsData, fieldElementsDataSize, &offsetAccum,  fieldRef);
+        assert(retElement >=0);
         fieldElementsData+=retElement;
         fieldElementsDataSize -= retElement;
     }
@@ -351,14 +352,94 @@ static int _DecodeFieldElementList(AMLParserState* parser ,ParserContext *ctx ,c
     return 0;
 }
 
+static ssize_t _DecodeIndexFieldElement(AMLDecompiler* decomp ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize , size_t* offsetAccum,const ACPIIndexField *fieldRef)
+{
+    assert(offsetAccum);
+    
+    
+    ACPIFieldElement element = {0};
+    element.fieldRef = fieldRef;
+    
+    size_t offsetBeforeValue = 0;
+    if (buffer[0] == 0) // anonymous
+    {
+        offsetBeforeValue = 1;
+        
+    }
+    else if (IsName(buffer[0]))
+    {
+        offsetBeforeValue = ExtractNameString(buffer, 4, element.name);
+    }
+    
+    size_t advancedOf = 0;
+    element.value = GetPackageLength(buffer+offsetBeforeValue, bufferSize-offsetBeforeValue, &advancedOf);
+    
+    *offsetAccum += element.value;
+    element.offsetFromStart = *offsetAccum;
+    
+    int callb = decomp->callbacks.onIndexFieldElement(decomp , ctx , &element);
+    if (callb != 0)
+        return callb;
+    /*
+    int retCallB = decomp->callbacks.onFieldElement(decomp , ctx , &element);
+    if (retCallB <0)
+        return  retCallB;
+    */
+    return advancedOf + offsetBeforeValue;
+}
+
 static int _DecodeIndexField(AMLParserState* parser ,ParserContext *ctx ,const uint8_t* buffer , size_t bufferSize)
 {
-    char name[5] ={0};
+    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
+    assert(decomp);
     
-    const uint8_t nameSize = ExtractNameString(buffer, bufferSize, name );
-    name[4] = 0;
-    printf("IndexField(%s)\n",name);
-    assert(0);
+    ACPIIndexField indexField = {0};
+    
+    
+    const ssize_t retParseIndexName = AMLNameCreateFromBuffer(&indexField.name, buffer, bufferSize);
+    assert(retParseIndexName > 0);
+    
+    const ssize_t retParseDataName = AMLNameCreateFromBuffer(&indexField.dataName, buffer+retParseIndexName, bufferSize-retParseIndexName);
+    assert(retParseDataName > 0);
+    
+    char*name = AMLNameConstructNormalized(&indexField.name);
+    char*datname = AMLNameConstructNormalized(&indexField.dataName);
+    assert(name);
+    assert(datname);
+    
+    const uint8_t bytesConfig = buffer[  retParseIndexName + retParseDataName];
+    
+    
+    indexField.accessType = bytesConfig & 0b00001111;
+    indexField.lockRule   = (bytesConfig & 0b00010000) >> 4;
+    indexField.updateRule = (bytesConfig & 0b01100000) >> 5;
+    
+    int callb = decomp->callbacks.startIndexField(decomp , ctx , &indexField);
+    if (callb != 0)
+        return callb;
+    
+    
+    const uint8_t*  indexElementsStart =  buffer + retParseIndexName + retParseDataName + 1;
+    size_t   indexElementsSize  = bufferSize - retParseIndexName - retParseDataName - 1;
+    
+    if (!indexElementsStart || indexElementsSize == 0)
+    {
+        return AMLParserError_BufferTooShort;
+    }
+    size_t offsetAccum = 0;
+    while (indexElementsSize)
+    {
+        const ssize_t retElement = _DecodeIndexFieldElement(decomp, ctx, indexElementsStart, indexElementsSize , &offsetAccum , &indexField);
+        assert(retElement >=0);
+        indexElementsSize -= (size_t)retElement;
+        indexElementsStart += retElement;
+        
+    }
+    
+    callb = decomp->callbacks.endIndexField(decomp , ctx , &indexField);
+    if (callb != 0)
+        return callb;
+    
     return 0;
 }
 

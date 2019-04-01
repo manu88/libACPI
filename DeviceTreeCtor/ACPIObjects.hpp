@@ -137,4 +137,21 @@ namespace ACPI
         std::vector<FieldElement> elements;
     };
     
+    
+    struct IndexFieldElement
+    {
+        std::string name;
+        uint8_t value;
+    };
+    
+    struct IndexFieldDeclaration
+    {
+        std::string name;
+        std::string dataName;
+        uint8_t accessType:4;
+        uint8_t lockRule:1; /* 0 NoLock 1 Lock */
+        uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
+        std::vector<IndexFieldElement> elements;
+    };
+    
 }

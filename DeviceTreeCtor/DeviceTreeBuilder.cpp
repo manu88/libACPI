@@ -201,7 +201,6 @@ int DeviceTreeBuilder::onOperationRegion(const ParserContext* context, const ACP
 int DeviceTreeBuilder::startField(const ParserContext* context, const ACPIField&field)
 {
     char* fieldName = AMLNameConstructNormalized(&field.name);
-    
     ACPI::FieldDeclaration decl;
     decl.name = fieldName;
     currentNode.top()->_fields.push_back(decl);
@@ -228,6 +227,41 @@ int DeviceTreeBuilder::endField(const ParserContext* context, const ACPIField&)
     
     
     _currentFieldDecl  = nullptr;
+    return 0;
+}
+
+
+int DeviceTreeBuilder::startIndexField(const ParserContext* context, const ACPIIndexField& indexField)
+{
+    char* fieldName = AMLNameConstructNormalized(&indexField.name);
+    char* fieldDataName = AMLNameConstructNormalized(&indexField.dataName);
+    ACPI::IndexFieldDeclaration decl;
+    decl.name = fieldName;
+    decl.dataName = fieldDataName;
+    currentNode.top()->_indexFields.push_back(decl);
+    
+    _currentIndexFieldDecl = &currentNode.top()->_indexFields.back();
+    free(fieldName);
+    free(fieldDataName);
+    
+    return 0;
+}
+int DeviceTreeBuilder::onIndexFieldElement(const ParserContext* context, const ACPIIndexFieldElement& fieldElement)
+{
+    assert(_currentIndexFieldDecl);
+    
+    ACPI::IndexFieldElement el;
+    
+    el.name = fieldElement.name;
+    el.value = fieldElement.value;
+    _currentIndexFieldDecl->elements.push_back(el);
+    
+    return 0;
+}
+
+int DeviceTreeBuilder::endIndexField(const ParserContext* context, const ACPIIndexField&)
+{
+    _currentIndexFieldDecl = nullptr;
     return 0;
 }
 

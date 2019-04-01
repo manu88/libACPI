@@ -67,6 +67,12 @@ protected:
     int onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement)override;
     int endField(const ParserContext* context, const ACPIField&)override;
     
+    int startIndexField(const ParserContext* context, const ACPIIndexField&) override;
+    int onIndexFieldElement(const ParserContext* context, const ACPIIndexFieldElement& fieldElement)  override;
+    int endIndexField(const ParserContext* context, const ACPIIndexField&) override;
+    
+    
+    
     int onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)override;
     
     
@@ -100,6 +106,7 @@ private:
     //std::string currentName;
     
     ACPI::FieldDeclaration *_currentFieldDecl = nullptr;
+    ACPI::IndexFieldDeclaration *_currentIndexFieldDecl = nullptr;
 
 };
 

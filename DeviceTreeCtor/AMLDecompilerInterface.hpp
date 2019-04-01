@@ -46,6 +46,10 @@ protected:
     virtual int onFieldElement(const ParserContext* context, const ACPIFieldElement& fieldElement) = 0;
     virtual int endField(const ParserContext* context, const ACPIField&)= 0;
     
+    virtual int startIndexField(const ParserContext* context, const ACPIIndexField&)= 0;
+    virtual int onIndexFieldElement(const ParserContext* context, const ACPIIndexFieldElement& fieldElement) = 0;
+    virtual int endIndexField(const ParserContext* context, const ACPIIndexField&)= 0;
+    
     
     virtual int onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)= 0;
     
