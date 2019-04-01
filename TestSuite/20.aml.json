@@ -20,7 +20,10 @@
                     "value": 32
                   }
                 ],
-                "name": "PCIC"
+                "name": "PCIC",
+                "accessType": "DWordAcc",
+                "lockRule": "NoLock",
+                "updateRule": "Preserve"
               },
               {
                 "content": [
@@ -29,7 +32,10 @@
                     "value": 10
                   }
                 ],
-                "name": "PCIC"
+                "name": "PCIC",
+                "accessType": "DWordAcc",
+                "lockRule": "NoLock",
+                "updateRule": "Preserve"
               }
             ],
             "Methods": {

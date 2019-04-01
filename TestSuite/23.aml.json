@@ -18,7 +18,10 @@
                 "value": 16
               }
             ],
-            "name": "FCFG"
+            "name": "FCFG",
+            "accessType": "WordAcc",
+            "lockRule": "NoLock",
+            "updateRule": "Preserve"
           },
           {
             "content": [
@@ -31,7 +34,10 @@
                 "value": 8
               }
             ],
-            "name": "FCFG"
+            "name": "FCFG",
+            "accessType": "ByteAcc",
+            "lockRule": "NoLock",
+            "updateRule": "Preserve"
           }
         ],
         "Methods": {

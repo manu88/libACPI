@@ -224,11 +224,63 @@ static nlohmann::json serializeName( const ACPI::NameDeclaration&name)
     
     return res;
 }
+
+static void serializeFielFlags( const ACPIFieldFlags& flags ,nlohmann::json &toObject )
+{
+    auto updateRuleDesc = [](uint8_t updateRule) -> std::string
+    {
+        switch (updateRule)
+        {
+            case 0:
+                return "Preserve";
+            case 1:
+                return "WriteAsOnes";
+            case 2:
+                return "WriteAsZeros";
+                
+            default:
+                break;
+        }
+        assert(false);
+        return "";
+    };
+    
+    auto accessTypeDesc = [](uint8_t accessType) -> std::string
+    {
+        switch(accessType)
+        {
+            case 0:
+                return "AnyAcc";
+            case 1:
+                return "ByteAcc";
+            case 2:
+                return "WordAcc";
+            case 3:
+                return "DWordAcc";
+            case 4:
+                return "QWordAcc";
+            case 5:
+                return "BufferAcc";
+                /*
+                 case 6:
+                 return "Reserved";
+                 */
+        }
+        
+        //assert(false);
+        return "Reserved";
+    };
+    
+    toObject["accessType"] = accessTypeDesc(flags.accessType);
+    toObject["lockRule"] =   flags.lockRule? "Lock":"NoLock";
+    toObject["updateRule"] = updateRuleDesc( flags.updateRule);
+}
 static nlohmann::json serializeIndexFields( const ACPI::IndexFieldDeclaration &field)
 {
     nlohmann::json ret;
     ret["name"] = field.name;
     ret["dataName"] = field.dataName;
+    serializeFielFlags(field.flags, ret);
     
     for( const auto &el : field.elements)
     {
@@ -247,7 +299,7 @@ static nlohmann::json serializeFields( const ACPI::FieldDeclaration &field)
 {
     nlohmann::json ret;
     ret["name"] = field.name;
-    
+    serializeFielFlags(field.flags, ret);
     for( const auto &el : field.elements)
     {
         

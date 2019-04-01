@@ -20,7 +20,10 @@
             "value": 32
           }
         ],
-        "name": "CBAT"
+        "name": "CBAT",
+        "accessType": "DWordAcc",
+        "lockRule": "NoLock",
+        "updateRule": "Preserve"
       }
     ],
     "IndexFields": [
@@ -44,7 +47,10 @@
           }
         ],
         "dataName": "DAT0",
-        "name": "IDX0"
+        "name": "IDX0",
+        "accessType": "DWordAcc",
+        "lockRule": "NoLock",
+        "updateRule": "Preserve"
       }
     ],
     "OperationRegions": {

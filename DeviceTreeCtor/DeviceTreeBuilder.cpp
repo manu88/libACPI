@@ -203,6 +203,7 @@ int DeviceTreeBuilder::startField(const ParserContext* context, const ACPIField&
     char* fieldName = AMLNameConstructNormalized(&field.name);
     ACPI::FieldDeclaration decl;
     decl.name = fieldName;
+    decl.flags = field.flags;
     currentNode.top()->_fields.push_back(decl);
     _currentFieldDecl = &currentNode.top()->_fields.back();
     free(fieldName);
@@ -238,6 +239,7 @@ int DeviceTreeBuilder::startIndexField(const ParserContext* context, const ACPII
     ACPI::IndexFieldDeclaration decl;
     decl.name = fieldName;
     decl.dataName = fieldDataName;
+    decl.flags = indexField.flags;
     currentNode.top()->_indexFields.push_back(decl);
     
     _currentIndexFieldDecl = &currentNode.top()->_indexFields.back();

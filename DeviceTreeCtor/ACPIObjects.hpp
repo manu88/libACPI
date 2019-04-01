@@ -131,9 +131,9 @@ namespace ACPI
     struct FieldDeclaration
     {
         std::string name;
-        uint8_t accessType:4;
-        uint8_t lockRule:1; /* 0 NoLock 1 Lock */
-        uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
+        ACPIFieldFlags flags;
+        
+
         std::vector<FieldElement> elements;
     };
     
@@ -148,9 +148,7 @@ namespace ACPI
     {
         std::string name;
         std::string dataName;
-        uint8_t accessType:4;
-        uint8_t lockRule:1; /* 0 NoLock 1 Lock */
-        uint8_t updateRule:2; /*0 Preserve 1 WriteAsOnes 2 WriteAsZeros */
+        ACPIFieldFlags flags;
         std::vector<IndexFieldElement> elements;
     };
     
