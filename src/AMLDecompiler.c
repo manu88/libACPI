@@ -764,7 +764,14 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
             assert( bufferSize == sizeof(ACPIOperationRegion));
             assert(bufferPos);
-            const ACPIOperationRegion* reg = (const ACPIOperationRegion*)  bufferPos;
+            
+            const ACPIOperationRegion *reg =  (const ACPIOperationRegion*)  bufferPos;
+            
+            
+            
+            
+            
+            
             
             decomp->callbacks.onOperationRegion(decomp ,&ctx , reg);
             

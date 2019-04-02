@@ -199,6 +199,7 @@ public:
     int onString(const ParserContext* context, const char* str) override
     {
         content << "\"" << str << "\"" ;
+        content << ")" << std::endl;
         return 0;
     }
     
@@ -360,8 +361,11 @@ public:
         
         char* fieldName = AMLNameConstructNormalized(&indexField.name);
         assert(fieldName);
-        content << fieldName << ", ";
+        char* fieldDataName = AMLNameConstructNormalized(&indexField.dataName);
+        assert(fieldDataName);
+        content << fieldName << ", " << fieldDataName << ", ";
         free(fieldName);
+        free(fieldDataName);
         
         content << accessTypeDesc( indexField.flags.accessType) << ", ";
         content << (indexField.flags.lockRule? "Lock":"NoLock") << ", ";
@@ -524,6 +528,7 @@ public:
     void EndName()
     {
         content << ")\n";
+    
         decScope();
     }
     
@@ -659,7 +664,7 @@ public:
         
         incScope();
         indent();content << "OperationRegion(";
-        content << region.name << ",";
+        content << region.name << " ,";
         
         
         content << regionSpaceGetStr( region.space);

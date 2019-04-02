@@ -269,7 +269,8 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             assert(IsName(*namePos));
             const uint8_t nameSize = ExtractNameString(namePos, 5, reg.name);// GetNameSize(namePos , bufSize);
             assert(nameSize <=5); // ACPIOperationRegion.name is size 6 so we need to check this one
-            
+            reg.name[nameSize] = 0;
+            reg.name[5] = 0;
             //memset(reg.name, 0, 6);
             //ExtractName(namePos, nameSize, reg.name, NULL);
             //reg.name[4] = 0;
