@@ -1,0 +1,21 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 1,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": 
+  {
+  	"Methods": {
+      "_OSC": {
+        "argCount": 4,
+        "body": "some",
+        "serializeFlag": 0,
+        "syncLevel": 0
+      }
+    }
+  }
+}
