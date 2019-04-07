@@ -114,7 +114,7 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "AML_" ) == 0);
+        assert(strcmp(segName, "AML" ) == 0);
     }
     {
         AMLName name = {0};
@@ -143,7 +143,7 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "AML_" ) == 0);
+        assert(strcmp(segName, "AML" ) == 0);
     }
     {
         AMLName name = {0};
@@ -157,7 +157,7 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "AML_" ) == 0);
+        assert(strcmp(segName, "AML" ) == 0);
     }
     {
         AMLName name = {0};
@@ -171,10 +171,10 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "PCI_" ) == 0);
+        assert(strcmp(segName, "PCI" ) == 0);
         
         assert(AMLNameGetSegment(&name, 1, segName));
-        assert(strcmp(segName, "SBS_" ) == 0);
+        assert(strcmp(segName, "SBS" ) == 0);
     }
     {
         //^^^S2.MEM.SET
@@ -191,13 +191,13 @@ void doAMLNameTests()
         
         char segName[5] = {0};
         assert(AMLNameGetSegment(&name, 0, segName));
-        assert(strcmp(segName, "S2__" ) == 0);
+        assert(strcmp(segName, "S2" ) == 0);
         
         assert(AMLNameGetSegment(&name, 1, segName));
-        assert(strcmp(segName, "MEM_" ) == 0);
+        assert(strcmp(segName, "MEM" ) == 0);
         
         assert(AMLNameGetSegment(&name, 2, segName));
-        assert(strcmp(segName, "SET_" ) == 0);
+        assert(strcmp(segName, "SET" ) == 0);
     }
     {
         //^^^S2.MEM.SET
@@ -243,7 +243,19 @@ void doAMLNameNormalizedTests()
         
         char* ret = AMLNameConstructNormalized(&name);
         assert(ret);
-        assert(strcmp(ret, "AML_")==0);
+        assert(strcmp(ret, "AML")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = {'\\' ,0 ,/*Junk*/ 0xA , 'L','_'  ,0x1 , 0x10  };
+        
+        const ssize_t retC = AMLNameCreateFromBuffer(&name, b, sizeof(b));
+        assert(retC);
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "\\")==0);
         free(ret);
     }
     {
@@ -253,7 +265,7 @@ void doAMLNameNormalizedTests()
         
         char* ret = AMLNameConstructNormalized(&name);
         assert(ret);
-        assert(strcmp(ret, "\\AML_")==0);
+        assert(strcmp(ret, "\\AML")==0);
         free(ret);
     }
     {
@@ -283,7 +295,17 @@ void doAMLNameNormalizedTests()
         
         char* ret = AMLNameConstructNormalized(&name);
         assert(ret);
-        assert(strcmp(ret, "^^PCI_.SBS_")==0);
+        assert(strcmp(ret, "^^PCI.SBS")==0);
+        free(ret);
+    }
+    {
+        AMLName name = {0};
+        const uint8_t b[] = { 0x2E  , 'P' ,'C' , 'I' , '_'    , 'S' ,'B' , 'S', '_'};
+        assert( AMLNameCreateFromBuffer(&name, b, sizeof(b)) );
+        
+        char* ret = AMLNameConstructNormalized(&name);
+        assert(ret);
+        assert(strcmp(ret, "PCI.SBS")==0);
         free(ret);
     }
     {
@@ -293,7 +315,7 @@ void doAMLNameNormalizedTests()
         
         char* ret = AMLNameConstructNormalized(&name);
         assert(ret);
-        assert(strcmp(ret, "^^^^^PCI_.SBS_")==0);
+        assert(strcmp(ret, "^^^^^PCI.SBS")==0);
         free(ret);
     }
     {
@@ -303,7 +325,7 @@ void doAMLNameNormalizedTests()
         
         char* ret = AMLNameConstructNormalized(&name);
         assert(ret);
-        assert(strcmp(ret, "^^^S2__.MEM_.SET_")==0);
+        assert(strcmp(ret, "^^^S2.MEM.SET")==0);
         free(ret);
     }
     {
@@ -314,7 +336,7 @@ void doAMLNameNormalizedTests()
         
         char* ret = AMLNameConstructNormalized(&name);
         assert(ret);
-        assert(strcmp(ret, "^^^S2__.MEM_.SET_.TEST")==0);
+        assert(strcmp(ret, "^^^S2.MEM.SET.TEST")==0);
         free(ret);
     }
     

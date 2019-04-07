@@ -31,6 +31,8 @@ typedef struct// _AMLName
 
 
 uint8_t AMLNameHasPrefixRoot( const AMLName*name);
+
+// count the `^`
 uint8_t AMLNameCountParents( const AMLName*name);
 uint8_t AMLNameCountSegments( const AMLName*name);
 uint8_t AMLNameGetSegment(const AMLName*name, uint8_t index , char toBuffer[5] );

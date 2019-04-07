@@ -589,6 +589,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
     ParserContext ctx;
     //ctx.currentScope = decomp->currentScope;
     ctx.nextOp = AML_Unknown;
+    AMLParserError err = AMLParserError_None;
     
     switch (forObjectType)
     {
@@ -596,45 +597,47 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         {
             const ACPIDefinitionBlock* desc =(const ACPIDefinitionBlock*) bufferPos;
             
-
-            decomp->callbacks.onDefinitionBlock(decomp,&ctx , desc);
+            err = decomp->callbacks.onDefinitionBlock(decomp,&ctx , desc);
             
         }
             break;
             
         case ACPIObject_Type_Scope:
         {
-            if( exceptState(decomp, AMLState_Unknown))
+            //if( exceptState(decomp, AMLState_Unknown))
             {
                 setState(decomp, AMLState_StartedScope);
                 
                 
                 char name[SCOPE_STR_SIZE];
                 ACPIScope scope = {0};
-                scope.name = name;
+                //scope.name = name;
                 
-                AMLName scopeName = {0};
-                const ssize_t advanced = AMLNameCreateFromBuffer(&scopeName, bufferPos, bufferSize);
+                //AMLName scopeName = {0};
+                const ssize_t advanced = AMLNameCreateFromBuffer(&scope._name, bufferPos, bufferSize);
+                
                 size_t __advanced = ResolvePath(name,  bufferPos);
-                
-                assert(__advanced == advanced);
+                //assert(__advanced == advanced);
                 decomp->callbacks.startScope(decomp ,&ctx , &scope);
                 
-                AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
+                err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
                 if(err != AMLParserError_None)
                 {
+                    assert(parser->parserPolicy.assertOnError == 0);
                     setState(decomp, AMLState_Unknown);
-                    return err;
+                    break;
                 }
                 
                 decomp->callbacks.endScope(decomp ,&ctx , &scope);
 
                 setState(decomp, AMLState_Unknown);
             }
+            /*
             else
             {
-                return AMLParserError_InvalidState;
+                err = AMLParserError_InvalidState;
             }
+             */
 
         }
             break;
@@ -643,17 +646,12 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         {
             if (exceptState(decomp, AMLState_WaitingNameValue))
             {
-                AMLParserError err =  _DecodeBufferObjects(parser, &ctx, bufferPos, bufferSize);
+                err =  _DecodeBufferObjects(parser, &ctx, bufferPos, bufferSize);
                 setState(decomp, AMLState_Unknown);
-                
-                if(err != AMLParserError_None)
-                {
-                    return err;
-                }
             }
             else if (decomp->parserPolicy.pedantic)
             {
-                return AMLParserError_InvalidState;
+                err = AMLParserError_InvalidState;
             }
         }
             break;
@@ -670,14 +668,11 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             decomp->callbacks.startDevice(decomp ,&ctx , &dev);
 
             // advance bufferPos to skip the name
-            AMLParserError err =  AMLParserProcessInternalBuffer(parser, bufferPos + nameSize, bufferSize-nameSize);
-            if(err != AMLParserError_None)
+            err =  AMLParserProcessInternalBuffer(parser, bufferPos + nameSize, bufferSize-nameSize);
+            if(err == AMLParserError_None)
             {
-                return err;
+                err = decomp->callbacks.endDevice(decomp ,&ctx , &dev);
             }
-            
-            decomp->callbacks.endDevice(decomp ,&ctx , &dev);
-
             
         }
             break;
@@ -706,7 +701,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                && ctx.nextOp !=  AML_StringPrefix // really allowed ?
                )
             {
-                return AMLParserError_UnexpectedToken;
+                assert(parser->parserPolicy.assertOnError == 0);
+                err = AMLParserError_UnexpectedToken;
+                break;
             }
             
 
@@ -720,8 +717,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         case ACPIObject_Type_NumericValue:
         {
             
-                uint64_t w;
-                GetInteger(bufferPos,bufferSize, &w);
+            uint64_t w;
+            GetInteger(bufferPos,bufferSize, &w);
+            
             if (exceptState(decomp, AMLState_WaitingNameValue))
             {
                 
@@ -731,7 +729,8 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             }
             else if (decomp->parserPolicy.pedantic)
             {
-                    return AMLParserError_InvalidState;
+                assert(parser->parserPolicy.assertOnError == 0);
+                err =  AMLParserError_InvalidState;
             }
             
         }
@@ -740,14 +739,14 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         case ACPIObject_Type_StringValue:
         {
             
-            decomp->callbacks.onString(decomp, &ctx , (const char*) bufferPos);
+            err = decomp->callbacks.onString(decomp, &ctx , (const char*) bufferPos);
         }
             break;
             
         case ACPIObject_Type_Package:
         {
 
-            decomp->callbacks.onPackage( decomp , &ctx , (const ACPIPackage*) bufferPos);
+            err = decomp->callbacks.onPackage( decomp , &ctx , (const ACPIPackage*) bufferPos);
 
         }
             break;
@@ -767,24 +766,20 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
             const ACPIOperationRegion *reg =  (const ACPIOperationRegion*)  bufferPos;
             
+            err = decomp->callbacks.onOperationRegion(decomp ,&ctx , reg);
             
-            
-            
-            
-            
-            
-            decomp->callbacks.onOperationRegion(decomp ,&ctx , reg);
-            
-            
+            break;
         }
             break;
         case ACPIObject_Type_IndexField:
         {
-            return _DecodeIndexField(parser, &ctx, bufferPos, bufferSize);
+            err = _DecodeIndexField(parser, &ctx, bufferPos, bufferSize);
+            break;
         }
         case ACPIObject_Type_Field:
         {
-            return _DecodeField(parser, &ctx, bufferPos, bufferSize);
+            err =  _DecodeField(parser, &ctx, bufferPos, bufferSize);
+            break;
         }
 //            break;
         case ACPIObject_Type_Method:
@@ -812,7 +807,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
             
 
-            decomp->callbacks.onMethod(decomp ,&ctx , &method);
+            err = decomp->callbacks.onMethod(decomp ,&ctx , &method);
 
             /*
             if (decomp->callbacks.endMethod)
@@ -832,7 +827,12 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
     }
     
     
-    return AMLParserError_None;
+    if(err != AMLParserError_None)
+    {
+        assert(parser->parserPolicy.assertOnError == 0);
+    }
+    
+    return err;
 }
 
 

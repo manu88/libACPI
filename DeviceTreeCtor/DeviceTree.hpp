@@ -75,7 +75,8 @@ struct DeviceTree
 {
     TreeNode root;
     
-    TreeNode* getNodeForPathAndCreateIfNeeded( const std::string &path , const std::string &relativeTo);
+    TreeNode* getNodeForPathAndCreateIfNeeded( const AMLName& name, TreeNode* current);
+    TreeNode* getNodeForPathAndCreateIfNeeded( const std::string &path ,  TreeNode* current);
     TreeNode* getNodeForPath( const std::string &path , const std::string &relativeTo);
     
     

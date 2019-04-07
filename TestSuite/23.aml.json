@@ -8,60 +8,58 @@
     "tableSignature": "DSDT"
   },
   "tree": {
-    "Children": {
-      "\\": {
-        "Fields": [
+    "Fields": [
+      {
+        "content": [
           {
-            "content": [
-              {
-                "name": "FSEL",
-                "value": 16
-              }
-            ],
-            "name": "FCFG",
-            "accessType": "WordAcc",
-            "lockRule": "NoLock",
-            "updateRule": "Preserve"
-          },
-          {
-            "content": [
-              {
-                "name": "",
-                "value": 8
-              },
-              {
-                "name": "FDAT",
-                "value": 8
-              }
-            ],
-            "name": "FCFG",
-            "accessType": "ByteAcc",
-            "lockRule": "NoLock",
-            "updateRule": "Preserve"
+            "name": "FSEL",
+            "value": 16
           }
         ],
-        "Methods": {
-          "FRDB": {
-            "argCount": 1,
-            "body": "some",
-            "serializeFlag": 0,
-            "syncLevel": 0
-          },
-          "FRDI": {
-            "argCount": 1,
-            "body": "some",
-            "serializeFlag": 0,
-            "syncLevel": 0
-          }
-        },
-        "OperationRegions": {
-          "FCFG": {
-            "length": 2,
-            "offset": 1296,
-            "space": 1
-          }
-        }
+        "name": "FCFG",
+        "accessType": "WordAcc",
+        "lockRule": "NoLock",
+        "updateRule": "Preserve"
       },
+      {
+        "content": [
+          {
+            "name": "",
+            "value": 8
+          },
+          {
+            "name": "FDAT",
+            "value": 8
+          }
+        ],
+        "name": "FCFG",
+        "accessType": "ByteAcc",
+        "lockRule": "NoLock",
+        "updateRule": "Preserve"
+      }
+    ],
+    "Methods": {
+      "FRDB": {
+        "argCount": 1,
+        "body": "some",
+        "serializeFlag": 0,
+        "syncLevel": 0
+      },
+      "FRDI": {
+        "argCount": 1,
+        "body": "some",
+        "serializeFlag": 0,
+        "syncLevel": 0
+      }
+    },
+    "OperationRegions": {
+      "FCFG": {
+        "length": 2,
+        "offset": 1296,
+        "space": 1
+      }
+    },
+    "Children": {
       "PCI0": {
         "Methods": {
           "FRDF": {

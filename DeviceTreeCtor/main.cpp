@@ -155,8 +155,7 @@ int main(int argc, const char * argv[])
     for( const auto &file : amlFiles)
     {
         const auto fullPath = testDirPath + file;
-        
-         assert(DeviceTreeTester()( fullPath , fullPath + ".json"));
+        assert(DeviceTreeTester()( fullPath , fullPath + ".json"));
     }
     
     return 0;

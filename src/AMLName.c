@@ -120,7 +120,6 @@ uint8_t AMLNameCountSegments( const AMLName*name)
         }
     }
     const uint8_t numParents =  AMLNameCountParents(name);
-    assert(numParents);
     
     if (IsRealName(name->originalBuf[numParents]))
     {
@@ -179,9 +178,14 @@ uint8_t AMLNameGetSegment(const AMLName*name, uint8_t index , char toBuffer[5] )
     
     memset(toBuffer, 0, 5);
     
-    const size_t sizeToCopy = remainsSize < 4? remainsSize : 4;
+    size_t sizeToCopy = remainsSize < 4? remainsSize : 4;
     memcpy(toBuffer, bufPos, sizeToCopy);
     
+    while (toBuffer[sizeToCopy-1] == '_')
+    {
+        toBuffer[sizeToCopy-1] = 0;
+        sizeToCopy--;
+    }
     
     return 1;
 }
@@ -193,13 +197,20 @@ char* AMLNameConstructNormalized( const AMLName* name)
     
     
     const uint8_t hasRoot = AMLNameHasPrefixRoot(name);
-    const uint8_t  numParents = AMLNameCountParents(name);
+    const uint8_t numParents = AMLNameCountParents(name);
     
     const uint8_t numSegs = AMLNameCountSegments(name);
+    
     if ( /* == 0 &&*/ numParents == 0 && numSegs <= 1)
     {
         
         size_t size = name->originalBufSize<4? name->originalBufSize :4;
+        
+        while (name->originalBuf[hasRoot + size-1] == '_')
+        {
+            size--;
+        }
+        
         size += hasRoot;
         
         return strndup( (const char*)name->originalBuf, size);
@@ -251,7 +262,14 @@ char* AMLNameConstructNormalized( const AMLName* name)
         const uint8_t* copyFrom = bufPos+(seg*4);
 
         //memcpy(addAtt, copyFrom, 4);
-        strncat(ret, (const char*)copyFrom, 4);
+        
+        uint8_t nameSize = 4;
+        while (copyFrom[nameSize-1] == '_')
+        {
+            nameSize--;
+        }
+        
+        strncat(ret, (const char*)copyFrom, nameSize);
         //size-=4;
         
     }

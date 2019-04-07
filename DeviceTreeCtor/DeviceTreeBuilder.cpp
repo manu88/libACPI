@@ -20,16 +20,82 @@
 #include "DeviceTreeBuilder.hpp"
 #include <EISAID.h>
 
-TreeNode*  DeviceTree::getNodeForPathAndCreateIfNeeded( const std::string &path , const std::string &relativeTo)
+
+TreeNode* DeviceTree::getNodeForPathAndCreateIfNeeded( const AMLName& name,TreeNode* current)
 {
-    std::istringstream fullPath(relativeTo + (path[0] == '.'?"":".") + path);
+    //char* resolved = AMLNameConstructNormalized(&name);
+    
+    TreeNode* ret = nullptr;
     
     
-    TreeNode* ret = &root;
+    if (AMLNameHasPrefixRoot(&name))
+    {
+        ret = &root;
+    }
+    else
+    {
+        ret = current;
+    }
+    
+    uint8_t numParents =  AMLNameCountParents(&name);
+    
+    
+    while (numParents--)
+    {
+        ret = ret->parent;
+    }
+    
+    
+    uint8_t numSegments = AMLNameCountSegments(&name);
+    
+    for (uint8_t i = 0;i<numSegments;i++)
+    {
+        char toBuffer[5] = {0};
+        assert(AMLNameGetSegment(&name, i, toBuffer));
+        
+        TreeNode*n = ret->getChildByName(toBuffer);
+        if (n == nullptr)
+        {
+            ret->children.push_back( std::make_unique<TreeNode>(TreeNode(toBuffer , ret)));
+        }
+        ret = ret->getChildByName(toBuffer);
+    }
+    
+    
+    
+    return ret;
+}
+
+TreeNode*  DeviceTree::getNodeForPathAndCreateIfNeeded( const std::string &path , TreeNode* current)
+{
+    if (path == "\\")
+        return &root;
+    
+    
+    TreeNode*n = current->getChildByName(path);
+    
+    if (n == nullptr)
+    {
+        current->children.push_back( std::make_unique<TreeNode>(
+                                                                TreeNode(path , current)
+                                                                ));
+        return current->getChildByName(path);
+    }
+    return n;
+    
+    /*
+    std::istringstream fullPath((relativeTo == "\\"? "":relativeTo) + (path[0] == '.'?"":".") +  path);
+    
+    const std::string test = fullPath.str();
+    
+    printf("Resolve '%s' relative to '%s'\n" , path.c_str() , relativeTo.c_str());
+    
+    
     
     std::string s;
     while (getline(fullPath, s, '.'))
     {
+        assert( s.size() < 5);
         if (!s.empty())
         {
             TreeNode*n = ret->getChildByName(s);
@@ -45,6 +111,7 @@ TreeNode*  DeviceTree::getNodeForPathAndCreateIfNeeded( const std::string &path 
     }
     
     return ret;
+     */
 }
 
 TreeNode* DeviceTree::getNodeForPath( const std::string &path , const std::string &relativeTo)
@@ -80,7 +147,7 @@ AMLDecompilerInterface(decomp)
 {
     decomp.parserPolicy.assertOnError = 1;
     decomp.parserPolicy.assertOnInvalidState = 1;
-    _scopes.push("");
+    //_scopeResolver.reset();
 }
 
 static void printDefBlock( const ACPIDefinitionBlock& defBlock)
@@ -279,7 +346,7 @@ int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod& 
 
 int DeviceTreeBuilder::startDevice(const ParserContext* context, const ACPIDevice& device)
 {
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name, _scopes.empty()? "" :  _scopes.top()) );
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name , currentNode.top()) );
     return 0;
 }
 
@@ -293,20 +360,26 @@ int DeviceTreeBuilder::endDevice(const ParserContext* context, const ACPIDevice&
 int DeviceTreeBuilder::startScope(const ParserContext* context, const ACPIScope& scope)
 {
     
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(scope.name, _scopes.empty()? "" :  _scopes.top()) );
+    //char* scopeName = AMLNameConstructNormalized(&scope._name);
+    //assert(scopeName);
     
-    _scopes.push( (_scopes.empty()? "" :  _scopes.top() )+  scope.name);
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded( scope._name , currentNode.top()));// scopeName,   _scopeResolver.top()) );
+    
+    
+    //_scopeResolver.pushNamespace(  scopeName);
     assert(!currentNode.empty());
 
+    //free(scopeName);
     return 0;
 }
 
 int DeviceTreeBuilder::endScope(const ParserContext* context, const ACPIScope& scope)
 {
     //printf("End scope '%s' '%s'\n" , location , _scopes.back().c_str());
-    assert(!_scopes.empty());
+    //assert(!_scopeResolver.isEmpty());
     
-    _scopes.pop();
+    //_scopeResolver.pop();
+    currentNode.pop();
     return 0;
 }
 
@@ -428,7 +501,7 @@ int DeviceTreeBuilder::onWORDAddressSpaceDescriptor( const ParserContext* contex
 AMLParserError DeviceTreeBuilder::start(const uint8_t* buffer , size_t size)
 {
     
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded("" ,  "") );
+    currentNode.push( &_deviceTree.root );
     
     return AMLDecompilerStart(&decomp, buffer, size);
 }

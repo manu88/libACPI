@@ -20,12 +20,13 @@
 #include <map>
 #include <vector>
 #include <memory>
-#include <stack>
+
 #include <list>
 #include <deque>
 #include <string>
 #include <sstream>
 
+#include <stack>
 
 #include "AMLDecompilerInterface.hpp"
 #include "DeviceTree.hpp"
@@ -95,7 +96,8 @@ protected:
     int onPackage( const ParserContext*context , const ACPIPackage& package) override;
 private:
     
-    std::stack<std::string> _scopes;
+    //ScopeResolver _scopeResolver;
+    
     DeviceTree _deviceTree;
     
     std::stack<TreeNode*> currentNode;// = nullptr;

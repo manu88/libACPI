@@ -340,7 +340,7 @@ typedef struct
 typedef struct
 {
     AMLName _name;
-    const char* name;
+    //const char* name;
 } ACPIScope;
 
 typedef struct
@@ -404,6 +404,7 @@ typedef struct
 
 typedef struct
 {
+    // an empty name denotes an anonymous value/offset
     char name[5]; // 4 + NULL byte
     uint8_t value;
     

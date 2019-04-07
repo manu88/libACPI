@@ -456,7 +456,7 @@ public:
     
     int startScope(const ParserContext* context, const ACPIScope& scope)override
     {
-        const char* realLoc = scope.name[0] == '.' ? scope.name+1 : scope.name;
+        char* realLoc = AMLNameConstructNormalized(&scope._name);// scope.name[0] == '.' ? scope.name+1 : scope.name;
         incScope();
         indent();
         
@@ -464,6 +464,8 @@ public:
         
         indent();
         content << "{" << std::endl;
+        
+        free(realLoc);
         return 0;
     }
     int endScope(const ParserContext* context, const ACPIScope& scope)override
@@ -789,7 +791,7 @@ int AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
     
     //decomp.parserPolicy.assertOnError = 1;
     
-    decomp.parserPolicy.assertOnInvalidState = 1;
+    //decomp.parserPolicy.assertOnInvalidState = 1;
     decomp.parserPolicy.assertOnError = 1;
     
     DecompilerImpl impl(decomp);

@@ -95,7 +95,7 @@ ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  )
             //return ExtractMaxNameSize(buff+1, size-1) + 1;
             
         }
-        case AML_OP_RootChar: // /
+        case AML_OP_RootChar: // '\‘
         {
             if (size > 1) 
             {
