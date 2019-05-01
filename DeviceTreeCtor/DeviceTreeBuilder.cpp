@@ -419,11 +419,15 @@ int DeviceTreeBuilder::startPackage( const ParserContext*context , const ACPIPac
     
     if (!currentPackage.empty() && currentPackage.top() == &getCurrentName()->_packageV)
     {
-        currentPackage.push( &getCurrentName()->_packageV );
+        ACPI::Package newPack;
+        newPack.type = ACPI::Package::PackageType;
+        getCurrentName()->_packageV._items.push_back(newPack );
+        currentPackage.push( &getCurrentName()->_packageV._items.back());
     }
     else
     {
-        currentPackage.push( &getCurrentName()->_packageV);
+        currentPackage.push( &getCurrentName()->_packageV );
+        
     }
     
     
@@ -455,8 +459,8 @@ int DeviceTreeBuilder::onPackageElement( const ParserContext* context , const AC
                 break;
         }
         
-        
-        getCurrentName()->addPackageItem(item);
+        currentPackage.top()->_items.push_back(item);
+        //getCurrentName()->addPackageItem(item);
     }
     
     return 0;

@@ -1,0 +1,60 @@
+{
+  "def": 
+  {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 1,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": {
+      "LNK": {
+        "_HID": {
+          "eisaid": true,
+          "type": 0,
+          "value": 252497985
+        }
+      },
+      "LNKB": {
+        "_HID": {
+          "eisaid": true,
+          "type": 0,
+          "value": 252497985
+        }
+      }
+    },
+    "PR00": {
+      "type": 17,
+      "value": {
+        "value": [
+          {
+            "type": 0,
+            "value": 196607
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 1,
+            "value": "LNKB"
+          },
+          {
+            "type": 0,
+            "value": 1
+          },
+          {
+            "type": 1,
+            "value": "LNK"
+          },
+          {
+            "type": 0,
+            "value": 18446744073709551615
+          }
+        ]
+      }
+    }
+  }
+}

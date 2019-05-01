@@ -18,6 +18,7 @@
 #include "JSONConverter.hpp"
 #include "DeviceTree.hpp"
 
+static nlohmann::json serializePackage( const ACPI::Package & package);
 
 static bool isString(const std::vector<uint8_t> &bytes)
 {
@@ -143,7 +144,9 @@ static nlohmann::json serializePackageItem( const ACPI::Package & packageItem)
         case ACPI::Package::StringType:
             res["value"] = packageItem.strV;
             break;
-            
+        case ACPI::Package::PackageType:
+            res["value"] = serializePackage( packageItem);
+            break;
         default:
             assert(false);
             break;
