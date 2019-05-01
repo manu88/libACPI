@@ -93,7 +93,11 @@ protected:
     
     int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc)override;
     
-    int onPackage( const ParserContext*context , const ACPIPackage& package) override;
+    int startPackage( const ParserContext*context , const ACPIPackage& package) override;
+    int endPackage( const ParserContext*context , const ACPIPackage& package) override;
+    int onPackageElement( const ParserContext* context , const ACPIPackageElement& element) override;
+    
+    int onCreateField(const ParserContext* contextn , const ACPICreateFieldBase *field) override;
 private:
     
     //ScopeResolver _scopeResolver;
@@ -101,7 +105,7 @@ private:
     DeviceTree _deviceTree;
     
     std::stack<TreeNode*> currentNode;// = nullptr;
-    
+    std::stack<ACPI::Package*> currentPackage;
     
     ACPI::NameDeclaration* getCurrentName();
     //ACPI::NameDeclaration* currentName = nullptr;

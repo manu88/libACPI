@@ -64,13 +64,16 @@ typedef enum
 
 typedef enum
 {
-   SystemMemory         =  0,
-   SystemIO             =  1,
-   PCI_Config           =  2,
-   EmbeddedControl      =  3,
-   SMBus                =  4,
-   CMOS                 =  5,
-   PCIBARTarget         =  6,
+    SystemMemory         =  0,
+    SystemIO             =  1,
+    PCI_Config           =  2,
+    EmbeddedControl      =  3,
+    SMBus                =  4,
+    CMOS                 =  5,
+    PCIBARTarget         =  6,
+    IPMI                 = 7,
+    GeneralPurposeIO     = 8,
+    GenericSerialBus     = 9
     
     //In addition, OEMs may define Operation Regions types 0x80 to 0xFF.
     
@@ -94,7 +97,9 @@ typedef enum
     ACPIObject_Type_StringValue,
     
     ACPIObject_Type_Package,
+    ACPIObject_Type_PackageValue,
     ACPIObject_Type_IndexField,
+    ACPIObject_Type_CreateField,
     
     //ACPIObject_Type_DWord, // should remove this one
     
@@ -406,7 +411,7 @@ typedef struct
 {
     // an empty name denotes an anonymous value/offset
     char name[5]; // 4 + NULL byte
-    uint8_t value;
+    size_t value;
     
     size_t offsetFromStart;
     
@@ -416,15 +421,69 @@ typedef struct
 
 typedef ACPIFieldElement ACPIIndexFieldElement;
 
-
+typedef struct
+{
+    char nameSource[5];
+    char nameString[5];
+    
+    enum Type
+    {
+        CreateByteField,
+        CreateWordField,
+        CreateField
+    } type;
+} ACPICreateFieldBase;
 
 typedef struct
 {
+    ACPICreateFieldBase base;
+    uint64_t byteIndex;
+    uint64_t numBytes;
+} ACPICreateField;
+
+typedef struct
+{
+    ACPICreateFieldBase base;
+    uint64_t byteIndex;
+} ACPICreateByteField;
+
+typedef struct
+{
+    ACPICreateFieldBase base;
+    uint64_t byteIndex;
+} ACPICreateWordField;
+
+typedef  struct _ACPIPackage
+{
+    const struct _ACPIPackage* packageRef; // the parent package if this package is included inside another package, NULL otherwise
+    
     uint8_t numElements;
     const uint8_t* buffer;
     size_t bufSize;
     
 } ACPIPackage;
+
+
+typedef struct
+{
+    const ACPIPackage* packageRef;
+    
+    union
+    {
+        const char* string;
+        uint64_t value;
+        const ACPIPackage* package;
+    } value;
+    
+    enum PackageElementType
+    {
+        Integer,
+        String,
+        Buffer,
+        Package
+    } type;
+    
+} ACPIPackageElement;
 /*
 static inline size_t ACPIDeviceGetNamesCount(const ACPIDevice* dev)
 {

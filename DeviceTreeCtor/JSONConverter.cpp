@@ -130,6 +130,41 @@ static nlohmann::json serializeWordAddressSpaceDescriptor(const WordAddressSpace
     return ret;
 }
 
+static nlohmann::json serializePackageItem( const ACPI::Package & packageItem)
+{
+    nlohmann::json res;
+    res["type"] = packageItem.type;
+    
+    switch (packageItem.type)
+    {
+        case ACPI::Package::IntegerType:
+            res["value"] = packageItem.v;
+            break;
+        case ACPI::Package::StringType:
+            res["value"] = packageItem.strV;
+            break;
+            
+        default:
+            assert(false);
+            break;
+    }
+    
+    
+    return res;
+}
+
+static nlohmann::json serializePackage( const ACPI::Package & package)
+{
+    nlohmann::json res;
+    
+    for( const auto &item : package._items)
+    {
+        res["value"].push_back( serializePackageItem(item));
+    }
+    
+    return res;
+}
+
 static nlohmann::json serializeResourseTemplate( const ACPI::ResourceTemplate&resTemplate)
 {
     nlohmann::json res;
@@ -211,7 +246,12 @@ static nlohmann::json serializeName( const ACPI::NameDeclaration&name)
             
         }
             break;
-            
+        
+        case ACPI::ValueType::Type_Package:
+        {
+            res["value"] = serializePackage( name._packageV);
+        }
+            break;
         case ACPI::ValueType::Type_StringValue:
             res["value"] = name.valueStr;
             break;
@@ -333,6 +373,18 @@ static nlohmann::json serializeOperationRegion( const ACPIOperationRegion&reg)
     return ret;
 }
 
+static nlohmann::json serializeCreateField( const ACPI::CreateField &createField)
+{
+    nlohmann::json ret;
+    
+    ret["nameSource"] = createField.nameSource;
+    ret["nameString"] = createField.nameString;
+    ret["type"]       = createField.type;
+    ret["v1"]         = createField.v1;
+    ret["v2"]         = createField.v2;
+    
+    return ret;
+}
 static nlohmann::json serializeMethod( const ACPIMethod& method)
 {
     nlohmann::json ret;
@@ -386,6 +438,11 @@ static nlohmann::json serializeNode( const TreeNode& node)
     for( const auto &method : node._methods)
     {
         res["Methods"][method.name] = serializeMethod(method);
+    }
+    
+    for( const auto &createField : node._createField)
+    {
+        res["CreateFields"].push_back( serializeCreateField(createField));
     }
     
     return res;

@@ -75,6 +75,12 @@ decomp(decomp)
         return self->startName(context, name);
     };
     
+    decomp.callbacks.onCreateField = [](AMLDecompiler* decomp, const ParserContext* context , const ACPICreateFieldBase *field) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(decomp->userData);
+        
+        return self->onCreateField(context, field);
+    };
     /*
     decomp.callbacks.EndName = []( AMLDecompiler* _decomp ,const ParserContext* context, const char* name) -> int
     {
@@ -177,12 +183,22 @@ decomp(decomp)
     };
     
     
-    decomp.callbacks.onPackage = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIPackage* package) -> int
+    decomp.callbacks.startPackage = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIPackage* package) -> int
     {
         AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
-        
-        //return self->onPackage(context, itemType, buffer, bufferSize);
-        return self->onPackage(context, *package);
+        return self->startPackage(context, *package);
+    };
+    
+    decomp.callbacks.onPackageElement = []( AMLDecompiler* _decomp , const ParserContext* context , const ACPIPackageElement* element) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->onPackageElement(context, *element);
+    };
+    
+    decomp.callbacks.endPackage = []( AMLDecompiler* _decomp ,const ParserContext* context, const ACPIPackage* package) -> int
+    {
+        AMLDecompilerInterface* self = reinterpret_cast<AMLDecompilerInterface*>(_decomp->userData);
+        return self->endPackage(context, *package);
     };
     
     

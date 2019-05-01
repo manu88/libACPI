@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		590D3EBE225A0DF900E2525E /* AMLMethodParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 590D3EBC225A0DF900E2525E /* AMLMethodParser.h */; };
+		590D3EBF225A0DF900E2525E /* AMLMethodParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 590D3EBD225A0DF900E2525E /* AMLMethodParser.c */; };
 		592B51EB224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 592B51E9224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h */; };
 		592B51EC224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 592B51EA224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.c */; };
 		59459A4C21DE25FC00DD9396 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A4B21DE25FC00DD9396 /* main.c */; };
@@ -94,6 +96,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		590D3EBC225A0DF900E2525E /* AMLMethodParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLMethodParser.h; sourceTree = "<group>"; };
+		590D3EBD225A0DF900E2525E /* AMLMethodParser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLMethodParser.c; sourceTree = "<group>"; };
 		592B51E9224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLDecompilerDefaultCallbacks.h; sourceTree = "<group>"; };
 		592B51EA224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLDecompilerDefaultCallbacks.c; sourceTree = "<group>"; };
 		59459A2921DE25C800DD9396 /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -325,6 +329,8 @@
 			children = (
 				59459AE7221B1DA800DD9396 /* ParseSmallItems.c */,
 				59459AE522180D9600DD9396 /* Parse_WORDAddressSpaceDescriptor.c */,
+				590D3EBC225A0DF900E2525E /* AMLMethodParser.h */,
+				590D3EBD225A0DF900E2525E /* AMLMethodParser.c */,
 			);
 			path = ItemParsers;
 			sourceTree = "<group>";
@@ -340,6 +346,7 @@
 				59459AC62204175900DD9396 /* AMLTypes.h in Headers */,
 				59459A6021DE269100DD9396 /* ACPIDesc.h in Headers */,
 				59459A6121DE269100DD9396 /* EISAID.h in Headers */,
+				590D3EBE225A0DF900E2525E /* AMLMethodParser.h in Headers */,
 				59459A9021E7274300DD9396 /* AMLParser.h in Headers */,
 				59459A9221E7279C00DD9396 /* AMLByteCode.h in Headers */,
 				592B51EB224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h in Headers */,
@@ -505,6 +512,7 @@
 				59459A5821DE266500DD9396 /* AMLRouter.c in Sources */,
 				59459A5921DE266500DD9396 /* ACPIDesc.c in Sources */,
 				595BAC1F223CE5240044D8A3 /* AMLName.c in Sources */,
+				590D3EBF225A0DF900E2525E /* AMLMethodParser.c in Sources */,
 				59459ADD22173F5B00DD9396 /* AMLBufferInterpreter.c in Sources */,
 				59459A5A21DE266500DD9396 /* AMLParser.c in Sources */,
 				59459AE8221B1DA800DD9396 /* ParseSmallItems.c in Sources */,
@@ -583,6 +591,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -643,6 +652,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

@@ -383,7 +383,7 @@ public:
         {
             if (fieldElement.offsetFromStart %8 == 0)
             {
-                indent(); content << "Offset(" ; writeHexArg((uint8_t)(fieldElement.offsetFromStart / 8)); content << ")," << std::endl;
+                indent(); content << "Offset(" ; writeHexArg((uint16_t)(fieldElement.offsetFromStart / 8)); content << ")," << std::endl;
             }
             else
             {
@@ -534,6 +534,58 @@ public:
         decScope();
     }
     
+    
+    int onCreateField( const ParserContext* context , const ACPICreateFieldBase *_field) override
+    {
+        incScope();
+        indent();
+        decScope();
+        switch (_field->type)
+        {
+            case ACPICreateFieldBase::CreateByteField:
+            {
+                const ACPICreateByteField* field = reinterpret_cast<const ACPICreateByteField*>(_field);
+                assert(field);
+                
+                content << "CreateByteField" << "(" << field->base.nameSource << ",";
+                writeHexArg( (uint8_t)field->byteIndex);
+                content << "," << field->base.nameString << ")" << std::endl;
+                
+            }
+                break;
+            case ACPICreateFieldBase::CreateWordField:
+            {
+                const ACPICreateWordField* field = reinterpret_cast<const ACPICreateWordField*>(_field);
+                assert(field);
+                
+                content << "CreateWordField" << "(" << field->base.nameSource << ",";
+                writeHexArg((uint16_t)field->byteIndex);
+                content << "," << field->base.nameString << ")" << std::endl;
+            }
+                break;
+            case ACPICreateFieldBase::CreateField:
+            {
+                const ACPICreateField* field = reinterpret_cast<const ACPICreateField*>(_field);
+                assert(field);
+                
+                content << "CreateField" << "(" << field->base.nameSource << ",";
+                writeHexArg(field->byteIndex);
+                content << ",";
+                writeHexArg(field->numBytes);
+                content << "," << field->base.nameString << ")" << std::endl;
+                
+                
+            }
+                break;
+                
+            default:
+                assert(false);
+                break;
+        }
+        
+        return 0;
+    }
+    
     int onMethod(const ParserContext* context, const ACPIMethod& method) override
     {
         incScope();
@@ -657,6 +709,13 @@ public:
                 case PCIBARTarget:
                     return "PCIBARTarget";
                     
+                case IPMI:
+                    return "IPMI";
+                case GeneralPurposeIO:
+                    return "GeneralPurposeIO";
+                case GenericSerialBus:
+                    return "GenericSerialBus";
+                    
                 default:
                     break;
             }
@@ -686,12 +745,31 @@ public:
         return 0;
     }
     
-    int onPackage( const ParserContext*context , const ACPIPackage& package) override
+    int startPackage( const ParserContext*context , const ACPIPackage& package) override
     {
-        const size_t s = sizeof(FloppyDiskInformation);
         
-        const FloppyDiskInformation *disk = reinterpret_cast<const FloppyDiskInformation *>(&package);
         
+        indent(); content << "Package(";
+        writeHexArg(package.numElements);
+        content << ")" << std::endl;
+        
+        indent();content << "{"<< std::endl;
+        
+        incScope();
+        
+        return 0;
+    }
+    
+    int onPackageElement( const ParserContext* context , const ACPIPackageElement& element) override
+    {
+        return 0;
+    }
+    
+    int endPackage( const ParserContext*context , const ACPIPackage& package) override
+    {
+        decScope();
+        indent();
+        content << "}"<< std::endl;
         
         return 0;
     }

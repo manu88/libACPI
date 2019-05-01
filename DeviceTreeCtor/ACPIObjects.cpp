@@ -72,10 +72,16 @@ void ACPI::NameDeclaration::setValue( uint64_t val)
     type = ACPI::Type_NumericValue;
     value64 = val;
 }
+void ACPI::NameDeclaration::addPackageItem( const Package& item)
+{
+    assert(type == ACPI::Type_Package);
+    
+    _packageV._items.push_back(item);
+}
 
 void ACPI::NameDeclaration::addTemplateItem( const RessourceItem& item)
 {
     assert(type == ACPI::Type_RessourceTemplate);
     
     resTemplate.items.push_back(item);
-    }
+}

@@ -247,6 +247,31 @@ int GetDWord(const uint8_t* buffer , int32_t* word)
     return 1;
 }
 
+size_t getIntegerSizeFromOpCode( AMLOperation opCode)
+{
+    switch (opCode)
+    {
+        case AML_ZeroOp:
+        case AML_OneOp:
+        case AML_OnesOp:
+            return 0;
+            
+        case AML_BytePrefix:
+            return 1;
+        case AML_WordPrefix:
+            return 2;
+            
+        case AML_DWordPrefix:
+            return 4;
+            
+        case AML_QWordPrefix:
+            return 8;
+        default:
+            break;
+    }
+    return 0;
+}
+
 // taken from https://github.com/tadryanom/lux/blob/master/kernel/acpi/eval.c
 // acpins_eval_integer(): Evaluates an integer object
 // Param:    uint8_t *object - pointer to object

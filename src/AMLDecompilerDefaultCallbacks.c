@@ -62,6 +62,12 @@ static int _Default_endField(AMLDecompiler* decomp,const ParserContext* context,
 {
     return 0;
 }
+
+static int _Default_onCreateField(AMLDecompiler* decomp, const ParserContext* context , const ACPICreateFieldBase *field)
+{
+    return 0;
+}
+
 static int _Default_onBuffer(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
 {
     return 0;
@@ -127,6 +133,7 @@ static AMLDecompilerCallbacks _defaultCallbacks =
     _Default_startIndexField,
     _Default_onIndexFieldElement,
     _Default_endIndexField,
+    _Default_onCreateField,
     _Default_onBuffer,
     _Default_startScope,
     _Default_endScope,

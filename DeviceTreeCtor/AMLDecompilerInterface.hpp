@@ -53,6 +53,7 @@ protected:
     
     virtual int onBuffer(const ParserContext* context , size_t bufferSize , const uint8_t* buffer)= 0;
     
+    virtual int onCreateField( const ParserContext* context , const ACPICreateFieldBase *field) = 0;
     
     virtual int startScope(const ParserContext* context, const ACPIScope& scope)= 0;
     virtual int endScope(const ParserContext* context, const ACPIScope& scope)= 0;
@@ -71,7 +72,9 @@ protected:
     virtual int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) = 0;
     virtual int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) = 0;
     
-    virtual int onPackage( const ParserContext*context , const ACPIPackage& package) = 0;
+    virtual int startPackage( const ParserContext*context , const ACPIPackage& package) = 0;
+    virtual int onPackageElement( const ParserContext* context , const ACPIPackageElement& element) = 0;
+    virtual int endPackage( const ParserContext*context , const ACPIPackage& package) = 0;
 
     
 //

@@ -19,6 +19,7 @@
 
 #include "DeviceTreeBuilder.hpp"
 #include <EISAID.h>
+#include <ACPIDesc.h>
 
 
 TreeNode* DeviceTree::getNodeForPathAndCreateIfNeeded( const AMLName& name,TreeNode* current)
@@ -409,9 +410,64 @@ int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, cons
     return 0;
 }
 
-int DeviceTreeBuilder::onPackage( const ParserContext*context , const ACPIPackage& package)
+int DeviceTreeBuilder::startPackage( const ParserContext*context , const ACPIPackage& package)
 {
-    assert(false);
+    printf("Start package Got %hhu elements \n" , package.numElements);
+    
+    assert(getCurrentName());
+    getCurrentName()->type = ACPI::ValueType::Type_Package;
+    
+    if (!currentPackage.empty() && currentPackage.top() == &getCurrentName()->_packageV)
+    {
+        currentPackage.push( &getCurrentName()->_packageV );
+    }
+    else
+    {
+        currentPackage.push( &getCurrentName()->_packageV);
+    }
+    
+    
+    return 0;
+}
+
+int DeviceTreeBuilder::onPackageElement( const ParserContext* context , const ACPIPackageElement& element)
+{
+    assert(!currentPackage.empty());
+    
+    if(getCurrentName())
+    {
+        ACPI::Package item;
+        
+        switch (element.type)
+        {
+            case ACPIPackageElement::Integer:
+                item.type = ACPI::Package::IntegerType;
+                item.v = element.value.value;
+                break;
+                
+            case ACPIPackageElement::String:
+                item.type = ACPI::Package::StringType;
+                item.strV = element.value.string;
+                break;
+                
+            default:
+                assert(false);
+                break;
+        }
+        
+        
+        getCurrentName()->addPackageItem(item);
+    }
+    
+    return 0;
+}
+
+int DeviceTreeBuilder::endPackage( const ParserContext*context , const ACPIPackage& package)
+{
+    assert(!currentPackage.empty());
+    currentPackage.pop();
+    assert(getCurrentName()->type == ACPI::Type_Package);
+    printf("End package Got %hhu elements \n" , package.numElements);
     return 0;
 }
 
@@ -484,6 +540,59 @@ int DeviceTreeBuilder::onDWORDAddressSpaceDescriptor( const ParserContext* conte
     item.setValue(desc);
     getCurrentName()->addTemplateItem(item);
 
+    return 0;
+}
+
+int DeviceTreeBuilder::onCreateField(const ParserContext* contextn , const ACPICreateFieldBase *_field)
+{
+    ACPI::CreateField f;
+    f.type = _field->type;
+    
+    switch (_field->type)
+    {
+        case ACPICreateFieldBase::CreateByteField:
+        {
+            const ACPICreateByteField* field = reinterpret_cast<const ACPICreateByteField*>(_field);
+            assert(field);
+             
+            f.nameSource = field->base.nameSource;
+            f.nameString = field->base.nameString;
+            
+            f.v1 = field->byteIndex;
+        }
+            break;
+        case ACPICreateFieldBase::CreateWordField:
+        {
+            const ACPICreateWordField* field = reinterpret_cast<const ACPICreateWordField*>(_field);
+            assert(field);
+            
+            f.nameSource = field->base.nameSource;
+            f.nameString = field->base.nameString;
+            
+            f.v1 = field->byteIndex;
+            
+        }
+            break;
+        case ACPICreateFieldBase::CreateField:
+        {
+            const ACPICreateField* field = reinterpret_cast<const ACPICreateField*>(_field);
+            assert(field);
+            
+            f.nameSource = field->base.nameSource;
+            f.nameString = field->base.nameString;
+            
+            f.v1 = field->byteIndex;
+            f.v2 = field->numBytes;
+        }
+            break;
+            
+        default:
+            assert(false);
+            break;
+    }
+    
+    currentNode.top()->_createField.push_back(f);
+    
     return 0;
 }
 

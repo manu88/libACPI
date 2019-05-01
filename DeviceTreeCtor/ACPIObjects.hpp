@@ -35,6 +35,7 @@ namespace ACPI
         Type_IOPortDescriptor,
         Type_DWordAddressSpaceDescriptor,
         Type_QWordAddressSpaceDescriptor,
+        Type_Package,
         
         //Type_OperationRegion
         Type_Invalid = 300,
@@ -92,6 +93,23 @@ namespace ACPI
     };
     
     
+    
+    
+    struct Package
+    {
+        std::vector<Package> _items;
+        uint64_t v;
+        std::string strV;
+        
+        enum Type
+        {
+            IntegerType,
+            StringType,
+            PackageType
+        } type;
+        
+    };
+    
     struct NameDeclaration
     {
         
@@ -112,6 +130,7 @@ namespace ACPI
         void setValue( uint64_t val);
         
         void addTemplateItem( const RessourceItem& item);
+        void addPackageItem( const Package& item);
         
         ACPI::ValueType type = ACPI::Type_Invalid;
         
@@ -121,6 +140,8 @@ namespace ACPI
         std::vector<uint8_t> rawBuffer; // type = Type_Buffer
         size_t rawBufferSize = 0;
         std::string valueStr;
+        
+        Package _packageV;
     };
     
     struct FieldElement
@@ -135,6 +156,16 @@ namespace ACPI
         
 
         std::vector<FieldElement> elements;
+    };
+    
+    struct CreateField
+    {
+        
+        std::string nameSource;
+        std::string nameString;
+        ACPICreateFieldBase::Type type;
+        uint64_t v1;
+        uint64_t v2;
     };
     
     

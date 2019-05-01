@@ -22,6 +22,7 @@
 #include <AMLTypes.h>
 #include <stddef.h>
 #include <sys/types.h>
+#include <AMLRouter.h>
 
 int IsName(char character);
 int IsRealName(char character);
@@ -35,7 +36,7 @@ ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  );
 uint8_t ExtractNameSize(const uint8_t *buff, size_t size  );
 uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar );
 
-
+size_t getIntegerSizeFromOpCode( AMLOperation opCode);
 size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);
 
 // returns the number of consummed bytes

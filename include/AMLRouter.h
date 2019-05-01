@@ -157,4 +157,4 @@ size_t GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advance
 
 uint8_t GetByteValue(const uint8_t* buffer , size_t bufSize , size_t* advance);
 uint32_t GetDWordValue(const uint8_t* buffer , size_t bufSize , size_t* advance);
-uint8_t ExtractInteger( const uint8_t* buffer , size_t bufSize , size_t* advance, uint64_t *toVal);
+//uint8_t ExtractInteger( const uint8_t* buffer , size_t bufSize , size_t* advance, uint64_t *toVal);

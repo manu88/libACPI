@@ -98,6 +98,7 @@ uint32_t GetDWordValue(const uint8_t* buffer , size_t bufSize , size_t* advance)
     return c.v;
 }
 
+/*
 uint8_t ExtractInteger( const uint8_t* buffer , size_t bufSize , size_t* advance, uint64_t *toVal)
 {
     if (*buffer == AML_OP_BytePrefix)
@@ -114,33 +115,74 @@ uint8_t ExtractInteger( const uint8_t* buffer , size_t bufSize , size_t* advance
     assert(0);
     return 0;
 }
+*/
 
 size_t GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advance)
 {
+    
+    //return _GetPackageLength(buffer, bufSize, advance,0);
+    
     uint8_t bytecount = (buffer[0] >> 6) & 3;
     *advance = bytecount +1;
-    if (bytecount == 0)
-    {
-        uint8_t v = buffer[0] & 0x3F;
-        assert(v <= 63);
-        return v;
+    
+
+    switch (bytecount) {
+        case 0:
+        {
+            assert(bufSize > 0);
+            size_t destination = (size_t)(buffer[0] & 0x3F);
+            //uint8_t v = buffer[0] & 0x3F;
+            assert(destination <= 63);
+            return destination;
+        }
+        case 1:
+        {
+            assert(bufSize > 1);
+            /*
+            size_t destination = (size_t)(buffer[0] & 0x0F);
+            destination       |= (size_t)(buffer[1] << 4);
+            
+            return destination;
+            */
+            const uint8_t leastFromByte0 = buffer[0] & 0b00001111;
+            const uint8_t leastFromByte1 = buffer[1];
+            
+            size_t v0 = leastFromByte0;// << 1;
+            size_t v1 = leastFromByte1 << 4;
+            size_t v = v0  + v1;
+            
+            return v;
+             
+        }
+        case 2:
+        {
+            //assert(0);// to check
+            assert(bufSize > 2);
+            /*
+            const uint8_t leastFromByte0 = buffer[0];// & 0b00000111;
+            const uint8_t leastFromByte1 = buffer[1];
+            const uint8_t leastFromByte2 = buffer[2];
+            */
+            uint16_t destination = (size_t)(buffer[0] & 0x0F);
+            destination |= (size_t)(buffer[1] << 4);
+            destination |= (size_t)(buffer[2] << 12);
+            
+            return destination;
+            /*
+            uint16_t test = 0xFE6;
+            uint16_t v0 = leastFromByte0 << 8;
+            uint16_t v1 = leastFromByte1 << 1;
+            uint16_t v2 = leastFromByte2 << 1;
+            uint16_t v = v0  + v1 + v2;
+            
+            return v;
+             */
+        }
+            
+        default:
+            assert(0);
     }
-    if (bytecount == 1)
-    {
-        const uint8_t leastFromByte0 = buffer[0] & 0b00000111;
-        const uint8_t leastFromByte1 = buffer[1];
-        
-        uint16_t v0 = leastFromByte0 << 8;
-        uint16_t v1 = leastFromByte1 << 1;
-        uint16_t v = v0  + v1;
-        
-        return v;
-        
-    }
-    else
-    {
-        assert(0);
-    }
+    
     return 0;//bytecount+1;
 }
 /*

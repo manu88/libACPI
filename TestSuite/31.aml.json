@@ -7,14 +7,56 @@
     "tableId": "BXDSDT",
     "tableSignature": "DSDT"
   },
-  "tree": 
-  {
-  	"Methods": {
-      "_OSC": {
-        "argCount": 4,
-        "body": "some",
-        "serializeFlag": 0,
-        "syncLevel": 0
+  "tree": {
+    "BUFF": {
+      "type": 1,
+      "value": {
+        "buf": [],
+        "size": 34
+      }
+    },
+    "CreateFields": [
+      {
+        "nameSource": "BUFF",
+        "nameString": "STAT",
+        "type": 0,
+        "v1": 0,
+        "v2": 0
+      },
+      {
+        "nameSource": "BUFF",
+        "nameString": "LEN",
+        "type": 0,
+        "v1": 1,
+        "v2": 0
+      },
+      {
+        "nameSource": "BUFF",
+        "nameString": "DATW",
+        "type": 1,
+        "v1": 3,
+        "v2": 0
+      },
+      {
+        "nameSource": "BUFF",
+        "nameString": "DBUF",
+        "type": 2,
+        "v1": 16,
+        "v2": 256
+      },
+      {
+        "nameSource": "BUFF",
+        "nameString": "DATD",
+        "type": 2,
+        "v1": 16,
+        "v2": 32
+      }
+    ],
+    "OperationRegions": {
+      "TOP1": {
+        "length": 256,
+        "offset": 0,
+        "space": 9
       }
     }
   }

@@ -42,14 +42,74 @@ static void AML_PackageLengthTests()
     }
 
     {
-        const uint8_t b[] = {0x40 ,0x2d};
+        const uint8_t b[] = {0x20 ,0x00};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 1);
+        assert(ret == 0x20);
+    }
+    {
+        const uint8_t b[] = {0x41, 0x07};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0x71);
+    }
+    
+
+    
+    {
+        const uint8_t b[] = {0x4F ,0x0F};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0xFF);
+    }
+    {
+        const uint8_t b[] = {0x42 ,0x07};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0x72);
+    }
+    {
+        const uint8_t b[] = {0x46 ,0x07};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0x76);
+    }
+    {
+        const uint8_t b[] = {0x48 ,0x07};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0x78);
+    }
+    {
+        const uint8_t b[] = {0x48 ,0x09};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 2);
+        assert(ret == 0x98);
+    }
+    {
+        const uint8_t b[] = {0x80, 0xf4, 0x07};
+        size_t advanced = 0;
+        size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
+        assert(advanced == 3);
+        assert(ret == 0x7f40); // 0xFEC
+    }
+    
+    {
+        const uint8_t b[] = {0x4A ,0x05};
         size_t advanced = 0;
         size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
         assert(advanced == 2);
         assert(ret == 0x5A);
     }
     {
-        const uint8_t b[] = {0x40, 0x78};
+        const uint8_t b[] = {0x40, 0x0F};
         size_t advanced = 0;
         size_t ret =  GetPackageLength(b, sizeof(b), &advanced);
         assert(advanced == 2);

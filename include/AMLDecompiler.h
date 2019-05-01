@@ -70,7 +70,7 @@ typedef struct _AMLDecompilerCallbacks
     int (*endIndexField)(AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexField* field);
     
     
-    
+    int (*onCreateField)(AMLDecompiler* decomp, const ParserContext* context , const ACPICreateFieldBase *field);
     int (*onBuffer)(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer);
     
     int (*startScope)(AMLDecompiler* decomp,const ParserContext* context, const ACPIScope* scope);
@@ -84,7 +84,9 @@ typedef struct _AMLDecompilerCallbacks
     
     int (*onMethod)(AMLDecompiler* decomp,const ParserContext* context, const ACPIMethod* method);
     
-    int (*onPackage)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package);
+    int (*startPackage)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package);
+    int (*onPackageElement)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackageElement* element);
+    int (*endPackage)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package);
     //int (*endMethod)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
 } AMLDecompilerCallbacks;

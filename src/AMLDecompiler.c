@@ -252,9 +252,13 @@ static int _DecodeBufferObjects(AMLParserState* parser ,ParserContext *ctx ,cons
     
     //size_t adv = 0;
     uint64_t numOfBufferElements = 0;
-    uint8_t valSize = ExtractInteger(buffer, bufferSize, &advance, &numOfBufferElements);
+    //uint8_t valSize = ExtractInteger(buffer, bufferSize, &advance, &numOfBufferElements);
     
-    assert(valSize == 1 || valSize == 4 );
+    //uint64_t val = 0;
+    advance  +=  GetInteger(buffer, bufferSize, &numOfBufferElements);
+    
+    //assert(numOfBufferElements == val);
+    //assert(valSize == 1 || valSize == 4 );
     
     //uint8_t __s =  GetByteValue(buffer, bufferSize, &advance);
     //assert(numOfBufferElements == __s);
@@ -374,12 +378,15 @@ static ssize_t _DecodeIndexFieldElement(AMLDecompiler* decomp ,ParserContext *ct
     size_t advancedOf = 0;
     element.value = GetPackageLength(buffer+offsetBeforeValue, bufferSize-offsetBeforeValue, &advancedOf);
     
-    *offsetAccum += element.value;
+    
     element.offsetFromStart = *offsetAccum;
     
     int callb = decomp->callbacks.onIndexFieldElement(decomp , ctx , &element);
     if (callb != 0)
+    {
         return callb;
+    }
+    *offsetAccum += element.value;
     /*
     int retCallB = decomp->callbacks.onFieldElement(decomp , ctx , &element);
     if (retCallB <0)
@@ -501,16 +508,7 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
     // This is the payload
     uint8_t* fieldElementsData = (uint8_t*) buffer + advancedFromName +1;
     ssize_t  fieldElementsDataSize = bufferSize - advancedFromName- 1;
-    /*
-    for(int i=0;i<fieldElementsDataSize;i++)
-    {
-        if (i%8==0)
-            printf("\n");
-        
-        printf(" 0x%x (%c)" , fieldElementsData[i],fieldElementsData[i]);
-    }
-    printf("\n");
-    */
+
     
     const int retDecodeList =  _DecodeFieldElementList(parser, ctx, fieldElementsData, fieldElementsDataSize, &field);
     
@@ -522,64 +520,41 @@ static int _DecodeField(AMLParserState* parser ,ParserContext *ctx ,const uint8_
     {
         return retCallb;
     }
-    
-    
-/*
-    const uint8_t v1 = data[1];
-    const uint8_t v2 = data[2];
-    const uint8_t v3 =  0x5A;
-    
-    size_t adv;
-    uint8_t test = _GetPackageLength(data+1, dataSize-1, &adv, 0);
-    if (IsName(data[0]) == 0 ) // We have an offset
-    {
-        
-        if (IsName(data[1] != 0))
-        {
-            for(int i=0;i<dataSize; i++)
-            {
-                if (i%8==0)
-                    printf("\n");
-                
-                printf(" %x  " , data[i]);
-            }
-            
-            printf("\n");
-        }
-        assert(IsName(data[1]) == 0);
-        printf("Got an offset\n");
-        field.offset = data[1];
-        
-        data +=2;
-        dataSize -=2;
-    }
-    
-    assert(dataSize >= 5); // 4 chars + value
-    memset(field.valueName, 0, 5);
-    const uint8_t valNameSize = ExtractNameString(data, 4, field.valueName);
-    assert(valNameSize <= 4);
-    
-    field.value = data[valNameSize];
-    
-    data += valNameSize +1;
-    dataSize-= valNameSize + 1;
-    
-    while (dataSize)
-    {
-        ACPIField otherField ={0} ;
-        uint8_t valueNameSize = ExtractNameString(data, 4, otherField.valueName);
-        const uint8_t*v = data  + valueNameSize;
-        otherField.value = *v;
-        
-        dataSize -= valNameSize + 1;
-        data += valNameSize +1;
-    }
-    
-    decomp->callbacks.startField(decomp ,ctx , &field);
-    */
+
     
     return AMLParserError_None;
 }
+
+
+static AMLParserError _DecodePackage(AMLParserState* parser ,ParserContext *ctx ,const ACPIPackage* package)
+{
+    AMLDecompiler* decomp = (AMLDecompiler*) parser->userData;
+    
+    AMLParserError err = decomp->callbacks.startPackage( decomp , ctx , package);
+    
+    if (err != AMLParserError_None)
+    {
+        return err;
+    }
+    
+    // Start parsing the package content
+    err = AMLParserProcessPackageContent(parser,package, package->buffer, package->bufSize);
+    
+    if (err != AMLParserError_None)
+    {
+        return err;
+    }
+    
+    err = decomp->callbacks.endPackage( decomp , ctx , package);
+    
+    if (err != AMLParserError_None)
+    {
+        return err;
+    }
+    
+    return AMLParserError_None;
+}
+
 static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,const uint8_t* bufferPos , size_t bufferSize)
 {
     assert(parser);
@@ -609,14 +584,14 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 setState(decomp, AMLState_StartedScope);
                 
                 
-                char name[SCOPE_STR_SIZE];
+                //char name[SCOPE_STR_SIZE];
                 ACPIScope scope = {0};
                 //scope.name = name;
                 
                 //AMLName scopeName = {0};
                 const ssize_t advanced = AMLNameCreateFromBuffer(&scope._name, bufferPos, bufferSize);
                 
-                size_t __advanced = ResolvePath(name,  bufferPos);
+                //size_t __advanced = ResolvePath(name,  bufferPos);
                 //assert(__advanced == advanced);
                 decomp->callbacks.startScope(decomp ,&ctx , &scope);
                 
@@ -720,18 +695,21 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             uint64_t w;
             GetInteger(bufferPos,bufferSize, &w);
             
+            /*
             if (exceptState(decomp, AMLState_WaitingNameValue))
             {
-                
+              */
                 decomp->callbacks.onValue(decomp,&ctx , w);
 
                 setState(decomp, AMLState_Unknown);
+            /*
             }
             else if (decomp->parserPolicy.pedantic)
             {
                 assert(parser->parserPolicy.assertOnError == 0);
                 err =  AMLParserError_InvalidState;
             }
+             */
             
         }
             break;
@@ -745,9 +723,16 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
         case ACPIObject_Type_Package:
         {
-
-            err = decomp->callbacks.onPackage( decomp , &ctx , (const ACPIPackage*) bufferPos);
-
+            const ACPIPackage* thePackage = (const ACPIPackage*) bufferPos;
+            return _DecodePackage(parser, &ctx, thePackage);
+        }
+            break;
+        case ACPIObject_Type_PackageValue:
+        {
+            const ACPIPackageElement *element = (const ACPIPackageElement *) bufferPos;
+            
+            err = decomp->callbacks.onPackageElement(decomp,&ctx, element);
+            
         }
             break;
         case ACPIObject_Type_VarPackage:
@@ -816,6 +801,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             }
              */
         }
+            break;
+        case ACPIObject_Type_CreateField:
+            err = decomp->callbacks.onCreateField(decomp ,&ctx ,(const ACPICreateFieldBase*) bufferPos);
             break;
         case ACPIObject_Type_Root:
 

@@ -69,6 +69,8 @@ struct TreeNode
     
     std::vector<ACPI::IndexFieldDeclaration>    _indexFields;
     
+    std::vector<ACPI::CreateField> _createField;
+    
 };
 
 struct DeviceTree

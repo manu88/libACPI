@@ -157,6 +157,132 @@ AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8
     return _AMLParserProcessBuffer(state, buffer, bufSize, 0);
 }
 
+static AMLParserError _AMLParserProcessPackageElement(AMLParserState* state,AMLOperation op,const ACPIPackage* fromPackage, const uint8_t* buffer , size_t bufSize , size_t* advancedBy)
+{
+    
+    ACPIPackageElement element= {0};
+    element.packageRef = fromPackage;
+    
+    switch (op)
+    {
+        case AML_PackageOp:
+        {
+            size_t adv = 0;
+            const size_t packLen = _GetPackageLength(buffer, bufSize, &adv, 0);
+            
+            const uint8_t numElements = buffer[adv];
+            *advancedBy +=packLen;
+            
+            const size_t packSize = packLen - adv - 1;
+            const uint8_t* startPack = buffer + adv + 1;
+            
+            ACPIPackage pack = {0};
+            pack.packageRef = fromPackage;
+            pack.buffer = startPack;
+            pack.bufSize = packSize;
+            pack.numElements = numElements;
+            
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_Package ,(const uint8_t*) &pack , sizeof(ACPIPackage));
+            if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
+                return err;
+            }
+        }break;
+        case AML_ZeroOp:
+        case AML_OneOp:
+        case AML_OnesOp:
+        case AML_DWordPrefix:
+        {
+            const uint8_t* valPosition = buffer -1; // we step back one byte
+            
+            size_t valSize = getIntegerSizeFromOpCode(op);
+            
+            
+            
+            element.type = Integer;
+            assert( GetInteger(valPosition, bufSize+1, &element.value.value) == valSize+1);
+            
+            AMLParserError err = state->callbacks.OnElement(state,
+                                                            ACPIObject_Type_PackageValue ,
+                                                            (const uint8_t *)&element , sizeof(ACPIPackageElement)
+                                                            );
+            if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
+                return err;
+            }
+            
+            *advancedBy += valSize;
+        }
+            break;
+        case AML_Char:
+        {
+            const uint8_t* valPosition = buffer -1; // we step back one byte
+            
+            char name[5] = {0};
+            uint8_t nameSize = 0;
+            ExtractName(valPosition, 4, name, &nameSize);
+            element.type = String;
+            element.value.string = name;
+            assert(nameSize > 0);
+            
+            AMLParserError err = state->callbacks.OnElement(state,
+                                                            ACPIObject_Type_PackageValue ,
+                                                            (const uint8_t *)&element , sizeof(ACPIPackageElement)
+                                                            );
+            if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
+                return err;
+            }
+            
+            *advancedBy +=nameSize -1;
+            
+        }
+            break;
+        case AML_StringPrefix:
+        {
+            const char* valPosition = (const char*) buffer;
+            
+            const size_t valSize = strlen( (const char*)valPosition) + 1; // +1 for null byte
+
+            *advancedBy += valSize;
+
+        }break;
+       
+        /*
+         • Integer Constant
+         • String Constant
+         • Buffer Constant
+         • Package Constant
+         */
+        default:
+            if (IsRealName(buffer[0]))
+            {
+                
+                char name[5] = {0};
+                
+                size_t nameSize = bufSize;
+                assert(nameSize <= 5);
+                assert(nameSize > 0);
+                strncpy(name,(const char*) buffer , nameSize);
+                
+                *advancedBy = bufSize;
+                
+                return AMLParserError_None;
+                
+            }
+            else
+            {
+                assert(0);
+            }
+            
+            return AMLParserError_UnexpectedOp;
+    }
+    return AMLParserError_None;
+}
+
 static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperation op, const uint8_t* buffer , size_t bufSize , size_t* advancedBy)
 {
     switch (op)
@@ -164,7 +290,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         case AML_VarPackageOp:
         {
             size_t varSizeLen = 0;
-            size_t varSize = _GetPackageLength(buffer, bufSize, &varSizeLen, 0);
+            size_t varSize = GetPackageLength(buffer, bufSize, &varSizeLen);
             
             *advancedBy += varSizeLen;
             assert(varSizeLen == 1);// For now this only works for 1 byte varPackageOp
@@ -208,7 +334,12 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         case AML_DeviceOpList:
         {
             size_t deviceSizeLen = 0;
-            size_t deviceSize = _GetPackageLength(buffer,bufSize, &deviceSizeLen, 0)  ;
+            size_t deviceSize = GetPackageLength(buffer,bufSize, &deviceSizeLen)  ;
+            //size_t deviceSizeLen2 = 0;
+            //size_t deviceSize2 = _GetPackageLength(buffer,bufSize, &deviceSizeLen2 , 0)  ;
+            
+            //assert(deviceSize == deviceSize2);
+            //assert(deviceSizeLen == deviceSizeLen2);
             
             *advancedBy += deviceSizeLen;
             deviceSize   -= deviceSizeLen;
@@ -251,38 +382,19 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         case AML_OpRegionOp:
         {
             const uint8_t* namePos = buffer;
-            
-/*
-             for(int i=0;i<bufSize;i++)
-             {
-                 if (i%8==0)
-                    printf("\n");
-             
-                    printf(" 0x%.2x (%c)", buffer[i],buffer[i]);
-             }
-             
-             printf("\n");
-            */
-            
-            
+
             ACPIOperationRegion reg;
             assert(IsName(*namePos));
             const uint8_t nameSize = ExtractNameString(namePos, 5, reg.name);// GetNameSize(namePos , bufSize);
             assert(nameSize <=5); // ACPIOperationRegion.name is size 6 so we need to check this one
             reg.name[nameSize] = 0;
             reg.name[5] = 0;
-            //memset(reg.name, 0, 6);
-            //ExtractName(namePos, nameSize, reg.name, NULL);
-            //reg.name[4] = 0;
             
             *advancedBy +=nameSize;
             
             reg.space = buffer[ *advancedBy ];
             *advancedBy +=1;
-            
-            
-            //*advancedBy += GetInteger(regSpace,bufSize-*advancedBy, &reg.space);
-            
+
             const uint8_t* regOffset = buffer +  *advancedBy;
             *advancedBy += GetInteger(regOffset,bufSize-*advancedBy, &reg.offset);
             
@@ -497,15 +609,13 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             size_t adv = 0;
             const size_t packLen = _GetPackageLength(buffer, bufSize, &adv, 0);
             
-            //PackageOp PkgLength NumElements PackageElementList
             const uint8_t numElements = buffer[adv];
             *advancedBy +=packLen;
             
             const size_t packSize = packLen - adv - 1;
             const uint8_t* startPack = buffer + adv + 1;
             
-            
-            ACPIPackage pack;
+            ACPIPackage pack ={0} ;
             pack.buffer = startPack;
             pack.bufSize = packSize;
             pack.numElements = numElements;
@@ -516,34 +626,115 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
                 assert(state->parserPolicy.assertOnError == 0);
                 return err;
             }
-            /*
-            for(int i=0;i<packSize;i++)
-            {
-                if (i%8==0)
-                    printf("\n");
-                
-                printf(" 0x%x " , startPack[i]);
-            }
-            
-            printf("\n");
-            printf("\n");
-            */
-            
         }
             break;
             
         case AML_AliasOp:
         {
-//            printf("%s\n" , buffer);
             char name1[5] = {0};
             char name2[5] = {0};
             const uint8_t name1Size = ExtractNameString(buffer, 4, name1);
+            assert(name1[4] == 0);
             const uint8_t name2Size = ExtractNameString(buffer + name1Size, 4, name2);
+            assert(name2[4] == 0);
             
             *advancedBy += name1Size + name2Size;
         }
             break;
+        
+        case AML_CreateFieldOp:
+        {
+            ACPICreateField fieldOp = {0};
+            fieldOp.base.type = CreateField;
+            size_t fieldBufSize = bufSize;
+            const uint8_t nameSourceSize = ExtractNameString(buffer, 4, fieldOp.base.nameSource);
+            assert(fieldOp.base.nameSource[4] == 0); // still null-terminated
             
+            fieldBufSize-= nameSourceSize;
+            *advancedBy += nameSourceSize;
+            
+            const uint8_t* readPos = buffer + nameSourceSize;
+            
+            const size_t byteIndexSize =  GetInteger(readPos, fieldBufSize, &fieldOp.byteIndex);
+            
+            fieldBufSize-= byteIndexSize;
+            *advancedBy += byteIndexSize;
+            
+            //
+            readPos += byteIndexSize;
+            //const uint8_t* numBytesPos = buffer + byteIndexSize;
+            
+            const size_t numBytesSize =  GetInteger(readPos, fieldBufSize, &fieldOp.numBytes);
+            
+            fieldBufSize-= numBytesSize;
+            *advancedBy += numBytesSize;
+            
+            //
+            readPos+=numBytesSize;
+            //const uint8_t* nameStringPos = byteIndexPos +numBytesSize;
+            
+            const uint8_t nameStringSize = ExtractNameString(readPos, 4, fieldOp.base.nameString);
+            assert(fieldOp.base.nameString[4] == 0); // still null-terminated
+            
+            *advancedBy += nameStringSize;
+            
+            
+            
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_CreateField , (const uint8_t*)&fieldOp , sizeof(fieldOp));
+            if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
+                return err;
+            }
+        }
+            break;
+        case AML_CreateWordFieldOp:
+        case AML_CreateByteFieldOp:
+        {
+            
+            ACPICreateByteField fieldOp = {0};
+            
+            switch (op)
+            {
+                case AML_CreateWordFieldOp:
+                    fieldOp.base.type = CreateWordField;
+                    break;
+                case AML_CreateByteFieldOp:
+                    fieldOp.base.type = CreateByteField;
+                default:
+                    break;
+            }
+            
+            size_t fieldBufSize = bufSize;
+            const uint8_t nameSourceSize = ExtractNameString(buffer, 4, fieldOp.base.nameSource);
+            assert(fieldOp.base.nameSource[4] == 0); // still null-terminated
+            
+            fieldBufSize-= nameSourceSize;
+            *advancedBy += nameSourceSize;
+            
+            const uint8_t* byteIndexPos = buffer + nameSourceSize;
+            
+            const size_t byteIndexSize =  GetInteger(byteIndexPos, fieldBufSize, &fieldOp.byteIndex);
+            
+            fieldBufSize-= byteIndexSize;
+            *advancedBy += byteIndexSize;
+            
+            const uint8_t* nameStringPos = byteIndexPos +byteIndexSize;
+            
+            const uint8_t nameStringSize = ExtractNameString(nameStringPos, 4, fieldOp.base.nameString);
+            assert(fieldOp.base.nameString[4] == 0); // still null-terminated
+            
+            *advancedBy += nameStringSize;
+            
+            AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_CreateField , (const uint8_t*)&fieldOp , sizeof(fieldOp));
+            if (err != AMLParserError_None)
+            {
+                assert(state->parserPolicy.assertOnError == 0);
+                return err;
+            }
+            
+        }
+            break;
         case AML_IndexFieldOp:
         {
             size_t adv = 0;
@@ -569,6 +760,15 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             *advancedBy += len;
         }
             break;
+            
+            
+        case AML_IfOp:
+            printf(" Got an IF OP to implement \n");
+            size_t adv = 0;
+            size_t len =GetPackageLength(buffer, bufSize, &adv);
+            
+            *advancedBy+= len;
+            break;
             /* Unimplemented operators*/
             /*
         
@@ -576,7 +776,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             /*
         case AML_DualNamePrefix:
         case AML_RootChar:
-        case AML_IfOp:
+        
         case AML_PowerResOp:
             break;
              */
@@ -587,12 +787,57 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
     return AMLParserError_None;
 }
 
+
+AMLParserError AMLParserProcessPackageContent(AMLParserState* state, const ACPIPackage* fromPackage,const uint8_t* buffer , size_t bufSize)
+{
+    size_t advancedByte = 0;
+    
+    
+    size_t pos = advancedByte;
+    bufSize -= advancedByte;
+
+    while (bufSize)
+    {
+        AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
+        
+        const uint8_t* startOfOP = buffer +pos+ advancedByte;
+        const size_t   operationSize = bufSize - advancedByte;
+        
+        size_t advancedOf = 0;
+        
+        AMLParserError retOperation =  _AMLParserProcessPackageElement(state, op, fromPackage, startOfOP, operationSize, &advancedOf);
+        
+        if (retOperation != AMLParserError_None)
+        {
+            assert(state->parserPolicy.assertOnError == 0);
+            return retOperation;
+        }
+        advancedByte += advancedOf;
+        
+        // Check if wrapped
+        if( (ssize_t)bufSize - (ssize_t)advancedByte <= 0)
+        {
+            break;
+        }
+        
+        bufSize -= advancedByte;
+        pos     += advancedByte;
+        
+        if (!_EnsureValidBuffer(state, buffer+pos, bufSize))
+        {
+            assert( state->parserPolicy.assertOnError == 0);
+            return AMLParserError_BufferTooShort;
+        }
+        
+    } // end while
+    
+    
+    
+    return AMLParserError_None;
+}
+
 static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock)
 {
-    
-    // 1st step is to try to get a valid DefinitionBlock
-    //ACPIDefinitionBlock defBlk = {0};
-    
     size_t advancedByte = 0;
     
     if (parseDefBlock)
@@ -611,7 +856,6 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
     
     while (bufSize)
     {
-        
         AMLOperation op = _GetNextOp( buffer+pos, bufSize, &advancedByte ,  0/*offset*/ );
 
         const uint8_t* startOfOP = buffer +pos+ advancedByte;

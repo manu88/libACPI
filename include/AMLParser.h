@@ -28,6 +28,7 @@ typedef enum
     AMLParserError_ElementAllocError,
     AMLParserError_InvalidState,
     AMLParserError_UnexpectedValue,
+    AMLParserError_UnexpectedOp,
     
     
     
@@ -76,3 +77,5 @@ AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buff
 AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize);
 
 AMLOperation AMLParserPeekOp( const uint8_t* buffer , size_t bufSize , size_t *advance);
+
+AMLParserError AMLParserProcessPackageContent(AMLParserState* state, const ACPIPackage* fromPackage, const uint8_t* buffer , size_t bufSize);
