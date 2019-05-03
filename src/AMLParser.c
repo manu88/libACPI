@@ -189,6 +189,7 @@ static AMLParserError _AMLParserProcessPackageElement(AMLParserState* state,AMLO
                 return err;
             }
         }break;
+        case AML_BytePrefix:
         case AML_ZeroOp:
         case AML_OneOp:
         case AML_OnesOp:

@@ -11,7 +11,7 @@ DefinitionBlock ("", "DSDT", 1, "BXPC", "BXDSDT", 0x00000001)
 	    Name (_HID, EisaId ("PNP0C0F") /* PCI Interrupt Link Device */)
 	}
 
-	Name (PR00, Package (0x02)
+	Name (PR00, Package (0x03)
     {
         Package (0x04)
         {
@@ -27,7 +27,8 @@ DefinitionBlock ("", "DSDT", 1, "BXPC", "BXDSDT", 0x00000001)
             One, 
             LNKC, 
             Ones
-        }
+        },
+        10
     })
 
 

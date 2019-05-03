@@ -762,6 +762,26 @@ public:
     
     int onPackageElement( const ParserContext* context , const ACPIPackageElement& element) override
     {
+        incScope();
+        
+        indent();
+        switch (element.type)
+        {
+            case ACPIPackageElement::Integer:
+                writeNumValue(element.value.value);
+                content << "," << "\n";
+                break;
+                
+            case ACPIPackageElement::String:
+                content << element.value.string << "," << "\n";
+                break;
+                
+            default:
+                
+                break;
+        }
+        
+        decScope();
         return 0;
     }
     
@@ -769,7 +789,19 @@ public:
     {
         decScope();
         indent();
-        content << "}"<< std::endl;
+        content << "}";
+        
+        if (package.packageRef != NULL)
+        {
+            content << ",";
+        }
+        else
+        {
+            content << ")";
+        }
+            
+        
+        content << std::endl;
         
         return 0;
     }
