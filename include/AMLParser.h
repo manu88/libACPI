@@ -16,9 +16,9 @@
  */
 
 #pragma once
-
+#include <AMLOperations.h>
 #include "ACPIDesc.h"
-#include "AMLRouter.h"
+//#include "AMLRouter.h"
 
 typedef enum
 {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5900C6CA227C0A6F00A3C29F /* AMLOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 5900C6C9227C0A6F00A3C29F /* AMLOperations.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		590D3EBE225A0DF900E2525E /* AMLMethodParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 590D3EBC225A0DF900E2525E /* AMLMethodParser.h */; };
 		590D3EBF225A0DF900E2525E /* AMLMethodParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 590D3EBD225A0DF900E2525E /* AMLMethodParser.c */; };
 		592B51EB224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 592B51E9224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h */; };
@@ -96,6 +97,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5900C6C9227C0A6F00A3C29F /* AMLOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLOperations.h; sourceTree = "<group>"; };
 		590D3EBC225A0DF900E2525E /* AMLMethodParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLMethodParser.h; sourceTree = "<group>"; };
 		590D3EBD225A0DF900E2525E /* AMLMethodParser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLMethodParser.c; sourceTree = "<group>"; };
 		592B51E9224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLDecompilerDefaultCallbacks.h; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				59459A7321DF51C900DD9396 /* AMLDecompiler.h */,
 				59459A5C21DE269000DD9396 /* ACPIDesc.h */,
 				59459AC52204175900DD9396 /* AMLTypes.h */,
+				5900C6C9227C0A6F00A3C29F /* AMLOperations.h */,
 				59459A8E21E7274200DD9396 /* AMLParser.h */,
 				59459A8D21E7274200DD9396 /* AMLRouter.h */,
 				59459A5D21DE269000DD9396 /* EISAID.h */,
@@ -353,6 +356,7 @@
 				59459A7421DF51C900DD9396 /* AMLDecompiler.h in Headers */,
 				59459ADC22173F5B00DD9396 /* AMLBufferInterpreter.h in Headers */,
 				59459A9121E7279C00DD9396 /* AMLHelpers.h in Headers */,
+				5900C6CA227C0A6F00A3C29F /* AMLOperations.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
