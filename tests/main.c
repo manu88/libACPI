@@ -16,7 +16,7 @@
  */
 
 #include <stdio.h>
-#include "ACPI_Tests.h"
+
 #include "AMLParser_Tests.h"
 #include "Decompiler_Tests.h"
 #include "Helper_Tests.h"

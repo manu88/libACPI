@@ -80,7 +80,7 @@ ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  )
                 return 0;
             
             
-            ssize_t remain = size - parsed;
+            ssize_t remain = 0;// = size - parsed;
             while (buff[++parsed] == AML_OP_ParentPrefixChar)
             {
                 

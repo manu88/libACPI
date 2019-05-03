@@ -667,7 +667,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t numBytesSize =  GetInteger(readPos, fieldBufSize, &fieldOp.numBytes);
             
-            fieldBufSize-= numBytesSize;
+            //fieldBufSize-= numBytesSize;
             *advancedBy += numBytesSize;
             
             //
@@ -717,7 +717,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             
             const size_t byteIndexSize =  GetInteger(byteIndexPos, fieldBufSize, &fieldOp.byteIndex);
             
-            fieldBufSize-= byteIndexSize;
+            //fieldBufSize-= byteIndexSize;
             *advancedBy += byteIndexSize;
             
             const uint8_t* nameStringPos = byteIndexPos +byteIndexSize;
