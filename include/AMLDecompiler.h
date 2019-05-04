@@ -84,6 +84,7 @@ typedef struct _AMLDecompilerCallbacks
     
     int (*onMethod)(AMLDecompiler* decomp,const ParserContext* context, const ACPIMethod* method);
     
+    
     int (*startPackage)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package);
     int (*onPackageElement)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackageElement* element);
     int (*endPackage)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package);
