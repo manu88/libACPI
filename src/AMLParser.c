@@ -193,6 +193,7 @@ static AMLParserError _AMLParserProcessPackageElement(AMLParserState* state,AMLO
         case AML_ZeroOp:
         case AML_OneOp:
         case AML_OnesOp:
+        case AML_WordPrefix:
         case AML_DWordPrefix:
         {
             const uint8_t* valPosition = buffer -1; // we step back one byte

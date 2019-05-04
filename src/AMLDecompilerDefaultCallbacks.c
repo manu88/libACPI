@@ -96,7 +96,16 @@ static int _Default_onMethod(AMLDecompiler* decomp,const ParserContext* context,
 {
     return 0;
 }
-static int _Default_onPackage(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package)
+static int _Default_startPackage(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package)
+{
+    return 0;
+}
+
+static int _Default_onPackageElement(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackageElement* element)
+{
+    return 0;
+}
+static int _Default_endPackage(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package)
 {
     return 0;
 }
@@ -141,7 +150,9 @@ static AMLDecompilerCallbacks _defaultCallbacks =
     _Default_endDevice,
     _Default_startName,
     _Default_onMethod,
-    _Default_onPackage
+    _Default_startPackage,
+    _Default_onPackageElement,
+    _Default_endPackage
  
 };
 
