@@ -26,7 +26,7 @@ int getEisaidString( uint64_t value , char* toBuff)
     const uint64_t vendor  = value & 0xFFFF;
     const uint64_t device = value >> 16;
     const uint8_t device1 = device & 0xff;
-    const uint8_t device2 = device >> 8;
+    const uint8_t device2 = (uint8_t)( device >> 8);
     
     const uint64_t vendorRev = ((vendor & 0xFF) << 8) | vendor >> 8;
     const uint8_t vendor1   = ((vendorRev >> 10)&0x1f)+64;
@@ -52,7 +52,7 @@ int getValueFromEisaidString(const char* buffer , uint64_t* toVal)
     
     const uint64_t vendorRev = ((buffer[0] - 64) << 10) | ((buffer[1] - 64) << 5) | buffer[2] - 64;
     
-    conv.b[0]  = ((vendorRev & 0xFF) << 8) | vendorRev >> 8;
+    conv.b[0]  = (uint16_t) (((vendorRev & 0xFF) << 8) | vendorRev >> 8);
     
     const  char p1[5] = { buffer[5] , buffer[6] , buffer[3] , buffer[4] , 0};
     
@@ -94,7 +94,7 @@ const char* GetEisaId( uint64_t val)
     return NULL;
 }
 */
-int isUpperCase(int ch)
+static int isUpperCase(int ch)
 {
     return (ch >= 'A' && ch <= 'Z');
 }

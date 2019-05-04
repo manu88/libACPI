@@ -21,13 +21,15 @@
 #include "AMLRouter.h"
 #include "AMLByteCode.h"
 
+static size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination );
+
 // borrowed from https://github.com/tadryanom/lux/blob/master/kernel/acpi/eval.c
 // acpins_parse_pkgsize(): Parses package size
 // Param:    uint8_t *data - pointer to package size data
 // Param:    size_t *destination - destination to store package size
 // Return:    size_t - size of package size encoding
 
-size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
+static size_t acpins_parse_pkgsize(const uint8_t *data, size_t *destination )
 {
     destination[0] = 0;
     
@@ -163,7 +165,7 @@ size_t GetPackageLength(const uint8_t* buffer , size_t bufSize , size_t* advance
             const uint8_t leastFromByte1 = buffer[1];
             const uint8_t leastFromByte2 = buffer[2];
             */
-            uint16_t destination = (size_t)(buffer[0] & 0x0F);
+            uint16_t destination = (uint16_t)(buffer[0] & 0x0F);
             destination |= (size_t)(buffer[1] << 4);
             destination |= (size_t)(buffer[2] << 12);
             

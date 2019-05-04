@@ -52,27 +52,27 @@ static void ExtractNameSizeTests(void)
     {
         // dual name
         const uint8_t b[] = { '^' , '^' , 0x2E  , 'P' ,'C' , 'I', '0'    , 'S' ,'B' , 'S'};
-        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        ssize_t s = ExtractMaxNameSize( b , sizeof(b) );
         assert(s == 11);
     }
     {
         // dual name
         const uint8_t b[] = { '^' , '^' , 0x2E  , 'P' ,'C' , 'I'    , 'S' ,'B' , 'S'};
-        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        ssize_t s = ExtractMaxNameSize( b , sizeof(b) );
         assert(s == 11);
     }
     //^^S2.MEM.SET
     {
         // multi name
         const uint8_t b[] = { '^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
-        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        ssize_t s = ExtractMaxNameSize( b , sizeof(b) );
         assert(s == 16);
     }
     //^^^S2.MEM.SET
     {
         // multi name
         const uint8_t b[] = { '^','^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
-        uint8_t s = ExtractMaxNameSize( b , sizeof(b) );
+        ssize_t s = ExtractMaxNameSize( b , sizeof(b) );
         assert(s == 17);
     }
     

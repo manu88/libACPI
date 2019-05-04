@@ -132,6 +132,7 @@ AMLParserError ParseSmall_EndDependentFunctionsDescriptor(AMLDecompiler*decomp,c
     return AMLParserError_None;
 }
 
+
 AMLParserError ParseSmall_FixedLocationIOPortDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
     assert(0);

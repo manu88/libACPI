@@ -285,7 +285,7 @@ int DeviceTreeBuilder::onFieldElement(const ParserContext* context, const ACPIFi
     ACPI::FieldElement el;
     
     el.name = fieldElement.name;
-    el.value = fieldElement.value;
+    el.value = (uint8_t) fieldElement.value;
     _currentFieldDecl->elements.push_back(el);
     
     return 0;
@@ -323,7 +323,7 @@ int DeviceTreeBuilder::onIndexFieldElement(const ParserContext* context, const A
     ACPI::IndexFieldElement el;
     
     el.name = fieldElement.name;
-    el.value = fieldElement.value;
+    el.value = (uint8_t)fieldElement.value;
     _currentIndexFieldDecl->elements.push_back(el);
     
     return 0;

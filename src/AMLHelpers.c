@@ -25,11 +25,8 @@
 
 
 
+static uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize );
 
-
-// acpins_is_name(): Evaluates a name character
-// Param:    char character - character from name
-// Return:    int - 1 if it's a name, 0 if it's not
 
 
 int IsName(char character)
@@ -50,7 +47,7 @@ int IsRealName(char character)
     return 0;
 }
 
-uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize )
+static uint8_t GetNameSize(const uint8_t *buff, uint8_t maxSize )
 {
     uint8_t ret = 0;
     while (ret <maxSize && IsName(*(buff++) )  )
@@ -195,7 +192,8 @@ uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar )
 
 uint8_t ExtractName(const uint8_t *buff, size_t size ,char* outChar,uint8_t* advanced)
 {
-    const uint8_t computedSize = GetNameSize(buff,size);
+    assert(size < 256); // GetNameSize only accepts a uint8_t size
+    const uint8_t computedSize = GetNameSize(buff,(uint8_t) size);
     if (advanced)
         *advanced = computedSize;
     

@@ -42,7 +42,7 @@ void doAMLNameTests()
     {
         AMLName name = {0};
         const uint8_t b[] = {0x0 , 0x1};
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
+        ssize_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
         assert(ret == 0);
         assert(NameIsInvalid(&name));
         assert(AMLNameCountParents(&name) == 0);
@@ -75,7 +75,7 @@ void doAMLNameTests()
         // VALID cause only '\'
         AMLName name = {0};
         const uint8_t b[] = {'\\' };
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
+        ssize_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
         assert(ret == 1);
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 0);
@@ -85,7 +85,7 @@ void doAMLNameTests()
         // invalid cause only '^'
         AMLName name = {0};
         const uint8_t b[] = {'^' };
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
+        ssize_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
         assert(ret == 0);
         assert( NameIsInvalid(&name));
         assert(AMLNameCountParents(&name) == 0);
@@ -95,7 +95,7 @@ void doAMLNameTests()
         // invalid cause only '^^'
         AMLName name = {0};
         const uint8_t b[] = {'^' , '^' };
-        uint8_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
+        ssize_t ret = AMLNameCreateFromBuffer(&name, b, sizeof(b));
         assert(ret == 0);
         assert( NameIsInvalid(&name));
         assert(AMLNameCountParents(&name) == 0);
