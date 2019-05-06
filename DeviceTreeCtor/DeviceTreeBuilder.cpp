@@ -347,7 +347,7 @@ int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod& 
 
 int DeviceTreeBuilder::startDevice(const ParserContext* context, const ACPIDevice& device)
 {
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name , currentNode.top()) );
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device._name , currentNode.top()) );
     return 0;
 }
 

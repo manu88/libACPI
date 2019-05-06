@@ -33,6 +33,7 @@ public:
     
     std::string getStringResult() const;
     
+    
 private:
     std::string result;
 };

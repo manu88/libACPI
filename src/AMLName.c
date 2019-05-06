@@ -51,6 +51,7 @@ uint8_t AMLNameHasPrefixRoot( const AMLName*name)
     assert(name);
     if (name->originalBuf && name->originalBufSize )
     {
+        /*
         if (name->originalBufSize >= 2)
         {
             if (name->originalBuf[1] == 0)
@@ -62,6 +63,7 @@ uint8_t AMLNameHasPrefixRoot( const AMLName*name)
                 return 0;
             }
         }
+         */
         return name->originalBuf[0] == AML_OP_RootChar;
     }
     
@@ -113,9 +115,17 @@ uint8_t AMLNameCountSegments( const AMLName*name)
         {
             return 1;
         }
+        else if ( name->originalBuf[1] == AML_OP_DualNamePrefix)
+        {
+            return 2;
+        }
+        else if ( name->originalBuf[1] == AML_OP_MultiNamePrefix)
+        {
+            return name->originalBuf[2];
+        }
         else
         {
-            
+                
             return 0;
         }
     }
@@ -240,6 +250,10 @@ char* AMLNameConstructNormalized( const AMLName* name)
     
     memset(ret, 0, sizeToAlloc);
     
+    if (hasRoot)
+    {
+        ret[0] = '\\';
+    }
     for(uint8_t i=0;i<numParents ;i++)
     {
         ret[i] = '^';

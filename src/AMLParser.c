@@ -783,7 +783,18 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
             break;
              */
         default:
+            printf("OP-code %i not handled: Will assert\n" , op);
+            for (int i=0;i<bufSize;i++)
+            {
+                if (i%8==0)
+                    printf("\n");
+                
+                printf(" 0X%X (%c) " , buffer[i] , buffer[i]);
+            }
+            printf("\n");
             assert(0);
+            
+            
     }
             
     return AMLParserError_None;
@@ -864,9 +875,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
         const size_t   operationSize = bufSize - advancedByte;
         
         size_t advancedOf = 0;
-        
-        
-      
+
         AMLParserError retOperation =  _AMLParserProcessOperation(state, op, startOfOP, operationSize, &advancedOf);
         
         if (retOperation != AMLParserError_None)

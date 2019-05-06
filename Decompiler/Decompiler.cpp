@@ -17,6 +17,7 @@
 
 #include <string>
 #include <iomanip>
+#include <iostream>
 #include <vector>
 #include <math.h>       /* floor */
 //#include <iostream>
@@ -24,6 +25,38 @@
 #include "Decompiler.hpp"
 #include "AMLDecompilerInterface.hpp"
 #include "EISAID.h"
+
+
+struct ContentString
+{
+    template< typename T>
+    ContentString& operator<<(const T &t)
+    {
+        _content << t;
+        
+        if (printOnWrite)
+        {
+            std::cout << "------- START --------" << std::endl;
+            std::cout << _content.str() << std::endl;
+            std::cout << "------- END   --------" << std::endl;
+        }
+        return *this;
+    }
+    
+    std::string str() const
+    {
+        return _content.str();
+    }
+    
+    std::stringstream _content;
+    
+    bool printOnWrite;
+};
+
+
+
+
+
 
 static bool isString(const uint8_t* buffer,size_t bufferSize )
 {
@@ -147,11 +180,12 @@ public:
     /*
     void addheaderText()
     {
-        content << "// generated with AML::Decompiler + libACPI" << std::endl;
+        content << "// generated with AML::Decompiler + libACPI" << "\n";
     }
     */
     int onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock& desc) override
     {
+        
         content << "DefinitionBlock ("
                 << "\"\"" << ","
                 << "\"" << desc.tableSignature << "\"" << ","
@@ -160,9 +194,9 @@ public:
                 << "\"" << desc.tableId << "\"" << ","
                 << desc.OEMRev
                 << ")"
-                << std::endl;
+                << "\n";
         
-        content << "{" << std::endl;
+        content << "{" << "\n";
         
         return 0;
     }
@@ -190,7 +224,7 @@ public:
             writeNumValue(value);
             
         }
-        content << ")" << std::endl;
+        content << ")" << "\n";
         
         decScope();
         return 0;
@@ -199,14 +233,14 @@ public:
     int onString(const ParserContext* context, const char* str) override
     {
         content << "\"" << str << "\"" ;
-        content << ")" << std::endl;
+        content << ")" << "\n";
         return 0;
     }
     
     int endField(const ParserContext* context, const ACPIField& )override
     {
         decScope();
-        indent(); content << "}" << std::endl;
+        indent(); content << "}" << "\n";
         
         decScope();
         return 0;
@@ -217,16 +251,16 @@ public:
         {
             if (fieldElement.offsetFromStart %8 == 0)
             {
-                indent(); content << "Offset(" ; writeHexArg((uint8_t)(fieldElement.offsetFromStart / 8)); content << ")," << std::endl;
+                indent(); content << "Offset(" ; writeHexArg((uint8_t)(fieldElement.offsetFromStart / 8)); content << ")," << "\n";
             }
             else
             {
-                indent(); content << "," ; writeHexArg(fieldElement.value); content << "," << std::endl;
+                indent(); content << "," ; writeHexArg(fieldElement.value); content << "," << "\n";
             }
         }
         else
         {
-            indent(); content << fieldElement.name << ", "; writeHexArg(fieldElement.value); content << "," << std::endl;
+            indent(); content << fieldElement.name << ", "; writeHexArg(fieldElement.value); content << "," << "\n";
             
         }
         return 0;
@@ -289,9 +323,9 @@ public:
         content << accessTypeDesc( field.flags.accessType) << ", ";
         content << (field.flags.lockRule? "Lock":"NoLock") << ", ";
         content << updateRuleDesc(field.flags.updateRule);
-        content << " )" << std::endl;
+        content << " )" << "\n";
         
-        indent(); content << "{" << std::endl;
+        indent(); content << "{" << "\n";
         incScope();
         
         /*
@@ -299,10 +333,10 @@ public:
         if (realOffset)
         {
             //Offset (1),
-            indent(); content << "Offset ("<< std::to_string( realOffset ) <<")," << std::endl;
+            indent(); content << "Offset ("<< std::to_string( realOffset ) <<")," << "\n";
         }
         
-        indent(); content << field->valueName << ", "; writeHexArg(field->value); content << "," << std::endl;
+        indent(); content << field->valueName << ", "; writeHexArg(field->value); content << "," << "\n";
         */
         
         return 0;
@@ -370,9 +404,9 @@ public:
         content << accessTypeDesc( indexField.flags.accessType) << ", ";
         content << (indexField.flags.lockRule? "Lock":"NoLock") << ", ";
         content << updateRuleDesc(indexField.flags.updateRule);
-        content << " )" << std::endl;
+        content << " )" << "\n";
         
-        indent(); content << "{" << std::endl;
+        indent(); content << "{" << "\n";
         incScope();
         
         return 0;
@@ -383,16 +417,16 @@ public:
         {
             if (fieldElement.offsetFromStart %8 == 0)
             {
-                indent(); content << "Offset(" ; writeHexArg((uint16_t)(fieldElement.offsetFromStart / 8)); content << ")," << std::endl;
+                indent(); content << "Offset(" ; writeHexArg((uint16_t)(fieldElement.offsetFromStart / 8)); content << ")," << "\n";
             }
             else
             {
-                indent(); content << "," ; writeHexArg(fieldElement.value); content << "," << std::endl;
+                indent(); content << "," ; writeHexArg(fieldElement.value); content << "," << "\n";
             }
         }
         else
         {
-            indent(); content << fieldElement.name << ", "; writeHexArg(fieldElement.value); content << "," << std::endl;
+            indent(); content << fieldElement.name << ", "; writeHexArg(fieldElement.value); content << "," << "\n";
             
         }
         
@@ -402,7 +436,7 @@ public:
     int endIndexField(const ParserContext* context, const ACPIIndexField&) override
     {
         decScope();
-        indent(); content << "}" << std::endl;
+        indent(); content << "}" << "\n";
         
         decScope();
         
@@ -460,10 +494,10 @@ public:
         incScope();
         indent();
         
-        content << "Scope" << "(" << realLoc << ")" << std::endl;
+        content << "Scope" << "(" << realLoc << ")" << "\n";
         
         indent();
-        content << "{" << std::endl;
+        content << "{" << "\n";
         
         free(realLoc);
         return 0;
@@ -471,7 +505,7 @@ public:
     int endScope(const ParserContext* context, const ACPIScope& scope)override
     {
         indent();
-        content << "}" << std::endl;
+        content << "}" << "\n";
         decScope();
         return 0;
     }
@@ -479,9 +513,9 @@ public:
     int startResourceTemplate( const ParserContext* context , size_t numItems ) override
     {
         
-        content << " ResourceTemplate ()"  << std::endl;
+        content << " ResourceTemplate ()"  << "\n";
         indent();
-        content << "{" << std::endl;
+        content << "{" << "\n";
         incScope();
         return 0;
     }
@@ -490,7 +524,7 @@ public:
     {
         decScope();
         indent();
-        content << "})" << std::endl;
+        content << "})" << "\n";
         decScope();
         
         return 0;
@@ -501,16 +535,16 @@ public:
     {
         incScope();
         indent();
-        content << "Device" << "(" << device.name << ")" << std::endl;
+        content << "Device" << "(" << device.name << ")" << "\n";
         
         indent();
-        content << "{" << std::endl;
+        content << "{" << "\n";
         return 0;
     }
     int endDevice(const ParserContext* context, const ACPIDevice&)override
     {
         indent();
-        content << "}" << std::endl;
+        content << "}" << "\n";
         
         decScope();
         return 0;
@@ -549,7 +583,7 @@ public:
                 
                 content << "CreateByteField" << "(" << field->base.nameSource << ",";
                 writeHexArg( (uint8_t)field->byteIndex);
-                content << "," << field->base.nameString << ")" << std::endl;
+                content << "," << field->base.nameString << ")" << "\n";
                 
             }
                 break;
@@ -560,7 +594,7 @@ public:
                 
                 content << "CreateWordField" << "(" << field->base.nameSource << ",";
                 writeHexArg((uint16_t)field->byteIndex);
-                content << "," << field->base.nameString << ")" << std::endl;
+                content << "," << field->base.nameString << ")" << "\n";
             }
                 break;
             case ACPICreateFieldBase::CreateField:
@@ -572,7 +606,7 @@ public:
                 writeHexArg(field->byteIndex);
                 content << ",";
                 writeHexArg(field->numBytes);
-                content << "," << field->base.nameString << ")" << std::endl;
+                content << "," << field->base.nameString << ")" << "\n";
                 
                 
             }
@@ -594,13 +628,13 @@ public:
         content << std::to_string( method.argCount );
         content << ")" << "\n";
         
-        indent(); content << "{" << std::endl;
+        indent(); content << "{" << "\n";
         incScope();
         
-        indent(); content << "// Some Stuff" << std::endl;
+        indent(); content << "// Some Stuff" << "\n";
         
         decScope();
-        indent(); content << "}" << std::endl;
+        indent(); content << "}" << "\n";
         
         
         decScope();
@@ -617,20 +651,20 @@ public:
         content << (desc.maf? " MaxFixed,":"");
         content << (desc.specificFlags.MEM== 2? " Cacheable,":"");
         content << (desc.specificFlags.RW== 1? " ReadWrite,":"");
-        content << std::endl;
+        content << "\n";
         
-        indent();writeHexArg(desc.addrSpaceGranularity);  content << "," << std::endl;
-        indent();writeHexArg(desc.addrRangeMin);  content << "," << std::endl;
-        indent();writeHexArg(desc.addrRangeMax);  content << "," << std::endl;
-        indent();writeHexArg(desc.addrTranslationOffset);  content << "," << std::endl;
-        indent();writeHexArg(desc.addrTranslationLength);  content << "," << std::endl;
+        indent();writeHexArg(desc.addrSpaceGranularity);  content << "," << "\n";
+        indent();writeHexArg(desc.addrRangeMin);  content << "," << "\n";
+        indent();writeHexArg(desc.addrRangeMax);  content << "," << "\n";
+        indent();writeHexArg(desc.addrTranslationOffset);  content << "," << "\n";
+        indent();writeHexArg(desc.addrTranslationLength);  content << "," << "\n";
 
         indent();
         content << ",,, "; // empty args
         content << (desc.specificFlags.TTP== 0? " AddressRangeMemory,":"");
         content << (desc.specificFlags.MTP== 0? " TypeStatic":"");
         
-        content <<  ")" << std::endl;
+        content <<  ")" << "\n";
         
         return 0;
     }
@@ -652,22 +686,22 @@ public:
         content << (desc.maf?"MaxFixed":"_MaxNOTFixed_") << ",";
         content << (desc.specificFlags.MEM== 2? " Cacheable,":"NonCacheable,");
         content << (desc.specificFlags.RW== 1? " ReadWrite,":"");
-        content << std::endl;
+        content << "\n";
         
-        indent(); writeHexArg(desc.addrSpaceGranularity); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrRangeMin); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrRangeMax); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrTranslationOffset); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrTranslationLength); content << "," << std::endl;
+        indent(); writeHexArg(desc.addrSpaceGranularity); content << "," << "\n";
+        indent(); writeHexArg(desc.addrRangeMin); content << "," << "\n";
+        indent(); writeHexArg(desc.addrRangeMax); content << "," << "\n";
+        indent(); writeHexArg(desc.addrTranslationOffset); content << "," << "\n";
+        indent(); writeHexArg(desc.addrTranslationLength); content << "," << "\n";
         indent();
         content << ",,, "; // empty args
         content << (desc.specificFlags.TTP== 0? " AddressRangeMemory,":"");
         content << (desc.specificFlags.MTP== 0? " TypeStatic":"");
         
-        content <<  ")" << std::endl;
+        content <<  ")" << "\n";
         
         
-        content << std::endl;
+        content << "\n";
         
         
         decScope();
@@ -681,10 +715,10 @@ public:
         indent();content << "Memory32Fixed(";
         
         content << (desc.writeStatus == 0? " ReadOnly,":"");
-        content << std::endl;
-        indent();writeHexArg(desc.rangeBaseAddr);  content << "," << std::endl;
-        indent();writeHexArg(desc.rangeLength);  content << "," << std::endl;
-        indent();content << ")" << std::endl;
+        content << "\n";
+        indent();writeHexArg(desc.rangeBaseAddr);  content << "," << "\n";
+        indent();writeHexArg(desc.rangeLength);  content << "," << "\n";
+        indent();content << ")" << "\n";
         return 0;
     }
     
@@ -738,7 +772,7 @@ public:
         
         writeNumValue( (uint16_t) region.length);
         
-        content << ")" << std::endl;
+        content << ")" << "\n";
         
         
         decScope();
@@ -751,9 +785,9 @@ public:
         
         indent(); content << "Package(";
         writeHexArg(package.numElements);
-        content << ")" << std::endl;
+        content << ")" << "\n";
         
-        indent();content << "{"<< std::endl;
+        indent();content << "{"<< "\n";
         
         incScope();
         
@@ -801,7 +835,7 @@ public:
         }
             
         
-        content << std::endl;
+        content << "\n";
         
         return 0;
     }
@@ -816,16 +850,16 @@ public:
         content << (desc.mif?"MinFixed":"_MinNOTFixed_") << ",";
         content << (desc.maf?"MaxFixed":"_MaxNOTFixed_") << ",";
         content << (desc.decodeType?"SubDecode":"PosDecode") << ",";
-        content << std::endl;
+        content << "\n";
         
-        indent(); writeHexArg(desc.addrSpaceGranularity); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrRangeMin); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrRangeMax); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrTranslationOffset); content << "," << std::endl;
-        indent(); writeHexArg(desc.addrTranslationLength); content << "," << std::endl;
-        indent(); content << ",, )" << std::endl;
+        indent(); writeHexArg(desc.addrSpaceGranularity); content << "," << "\n";
+        indent(); writeHexArg(desc.addrRangeMin); content << "," << "\n";
+        indent(); writeHexArg(desc.addrRangeMax); content << "," << "\n";
+        indent(); writeHexArg(desc.addrTranslationOffset); content << "," << "\n";
+        indent(); writeHexArg(desc.addrTranslationLength); content << "," << "\n";
+        indent(); content << ",, )" << "\n";
         
-        content << std::endl;
+        content << "\n";
         
         
         decScope();
@@ -844,16 +878,16 @@ public:
          
          */
         incScope();
-        indent(); content << "IO (Decode16," << std::endl;
+        indent(); content << "IO (Decode16," << "\n";
         
-        indent(); writeHexArg(desc.rangeMinBaseAddr); content << "," << std::endl;
-        indent(); writeHexArg(desc.rangeMaxBaseAddr); content << "," << std::endl;
-        indent(); writeHexArg(desc.baseAlign); content << " ," << std::endl;
-        indent(); writeHexArg(desc.rangeLen); content << " ," << std::endl;
+        indent(); writeHexArg(desc.rangeMinBaseAddr); content << "," << "\n";
+        indent(); writeHexArg(desc.rangeMaxBaseAddr); content << "," << "\n";
+        indent(); writeHexArg(desc.baseAlign); content << " ," << "\n";
+        indent(); writeHexArg(desc.rangeLen); content << " ," << "\n";
         
-        indent(); content << ")" << std::endl;
+        indent(); content << ")" << "\n";
         
-        content << std::endl;
+        content << "\n";
         
         decScope();
         
@@ -882,7 +916,8 @@ public:
         
     }
     
-    std::stringstream content;
+    
+    ContentString content;
     
 private:
     int currentScope = 0;
@@ -906,11 +941,13 @@ int AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
     
     DecompilerImpl impl(decomp);
     
+    //impl.content.printOnWrite = true;
+    
     AMLParserError err = AMLDecompilerStart(&decomp, buffer, bufferSize);
     
     if (err == AMLParserError_None)
     {
-        impl.content << "}" << std::endl;
+        impl.content << "}" << "\n";
         
         
         result = impl.content.str();

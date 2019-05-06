@@ -635,11 +635,14 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
         case ACPIObject_Type_Device:
         {
             setState(decomp, AMLState_StartedDevice);
-            ACPIDevice dev;
+            ACPIDevice dev = {0};
             
-            const uint8_t nameSize = ExtractNameString(bufferPos, bufferSize, dev.name );
-            dev.name[4] = 0;
+            const ssize_t nameSize = AMLNameCreateFromBuffer(&dev._name, bufferPos, bufferSize);
             
+            
+            //const uint8_t advanced = ExtractNameString(bufferPos, bufferSize, dev.name );
+            //assert(advanced == nameSize);
+            //dev.name[4] = 0;
             
             decomp->callbacks.startDevice(decomp ,&ctx , &dev);
 

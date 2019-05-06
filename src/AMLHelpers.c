@@ -100,7 +100,7 @@ ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  )
                 {
                     return 2;
                 }
-                else if (  IsRealName(buff[1]))
+                else if (  IsRealName(buff[1]) || buff[1] == AML_OP_MultiNamePrefix)
                 {
                     const ssize_t nextRet = ExtractMaxNameSize(buff+1, size-1);
                     return nextRet<0? nextRet :   nextRet + 1;
@@ -150,6 +150,7 @@ uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar )
             parsed++;
             while (parsed < size && parsed < size && IsName(buff[parsed]))
             {
+                assert(buff[parsed]!= AML_OP_MultiNamePrefix);
                 outChar[parsed] = buff[parsed];
                 parsed++;
             }
@@ -160,12 +161,14 @@ uint8_t ExtractNameString(const uint8_t *buff, size_t size ,char* outChar )
             }
             
             break;
+        
         case AML_OP_RootChar:
         default:
             outChar[parsed] = buff[parsed];
             parsed++;
             while (parsed < 5 && parsed < size && IsName(buff[parsed]))
             {
+                assert(buff[parsed]!= AML_OP_MultiNamePrefix);
                 outChar[parsed] = buff[parsed];
                 parsed++;
             }

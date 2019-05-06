@@ -25,6 +25,25 @@ static int NameIsValid( const AMLName* name)
 void doAMLNameTests()
 {
     {
+        // RootChar MultiNamePrefix 3 'S2__' 'ISA_' 'COM1'
+        AMLName name = {0};
+        const uint8_t buff[] = { '\\',0x2F , 3  , 'S' ,'2' , '_', '_'     , 'I' ,'S' , 'A' , '_' , 'C' ,'O' , 'M' , '1' };
+        
+        ssize_t ret = AMLNameCreateFromBuffer(&name, buff, sizeof(buff));
+        assert(ret == 15);
+        
+        assert( NameIsValid(&name));
+        assert(AMLNameHasPrefixRoot(&name));
+        assert(AMLNameCountParents(&name) == 0);
+        assert(AMLNameCountSegments(&name) == 3);
+        char* resolved = AMLNameConstructNormalized(&name);
+        assert(resolved);
+        assert(strcmp(resolved, "\\S2.ISA.COM1")==0);
+        free(resolved);
+        
+    }
+     
+    {
         AMLName name = {0};
         const uint8_t b[] = { '\\',0  , 0x2F , 4  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' ,  'S' ,'E' , 'T' , '_' , 'T','E','S','T' ,0,0,0};
         
@@ -176,12 +195,14 @@ void doAMLNameTests()
         assert(AMLNameGetSegment(&name, 1, segName));
         assert(strcmp(segName, "SBS" ) == 0);
     }
+    
     {
         //^^^S2.MEM.SET
         // multi name
         AMLName name = {0};
-        const uint8_t b[] = { '^','^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
-        assert(AMLNameCreateFromBuffer(&name, b, sizeof(b)) == 17);
+        const uint8_t buff[] = { '^','^' , '^' , 0x2F , 3  , 'S' ,'2' , '_', '_'     , 'M' ,'E' , 'M' , '_' , 'S' ,'E' , 'T' , '_' };
+        
+        assert(AMLNameCreateFromBuffer(&name, buff, sizeof(buff)) == 17);
         
         assert( NameIsValid(&name));
         assert(AMLNameCountParents(&name) == 3);
