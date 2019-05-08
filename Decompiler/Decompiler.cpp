@@ -490,7 +490,7 @@ public:
     
     int startScope(const ParserContext* context, const ACPIScope& scope)override
     {
-        char* realLoc = AMLNameConstructNormalized(&scope._name);// scope.name[0] == '.' ? scope.name+1 : scope.name;
+        char* realLoc = AMLNameConstructNormalized(&scope.name);// scope.name[0] == '.' ? scope.name+1 : scope.name;
         incScope();
         indent();
         
@@ -533,7 +533,7 @@ public:
     
     int startDevice(const ParserContext* context, const ACPIDevice& device)override
     {
-        char* realName  = AMLNameConstructNormalized(&device._name);
+        char* realName  = AMLNameConstructNormalized(&device.name);
         incScope();
         indent();
         content << "Device" << "(" << realName << ")" << "\n";

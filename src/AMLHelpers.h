@@ -40,7 +40,7 @@ size_t getIntegerSizeFromOpCode( AMLOperation opCode);
 size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer);
 
 // returns the number of consummed bytes
-size_t ResolvePath(char *fullpath, const uint8_t *path);
+//size_t ResolvePath(char *fullpath, const uint8_t *path);
 
 
 ssize_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize );

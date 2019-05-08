@@ -106,7 +106,7 @@ struct _AMLDecompiler
 {
     AMLParserPolicy parserPolicy;
     AMLDecompilerCallbacks callbacks;
-    //char currentScope[SCOPE_STR_SIZE];
+    
     void* userData;
     const uint8_t* errorPos;
     

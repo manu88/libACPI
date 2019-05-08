@@ -347,7 +347,7 @@ int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod& 
 
 int DeviceTreeBuilder::startDevice(const ParserContext* context, const ACPIDevice& device)
 {
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device._name , currentNode.top()) );
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name , currentNode.top()) );
     return 0;
 }
 
@@ -364,7 +364,7 @@ int DeviceTreeBuilder::startScope(const ParserContext* context, const ACPIScope&
     //char* scopeName = AMLNameConstructNormalized(&scope._name);
     //assert(scopeName);
     
-    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded( scope._name , currentNode.top()));// scopeName,   _scopeResolver.top()) );
+    currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded( scope.name , currentNode.top()));// scopeName,   _scopeResolver.top()) );
     
     
     //_scopeResolver.pushNamespace(  scopeName);

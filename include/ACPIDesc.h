@@ -340,7 +340,7 @@ typedef struct
     char name[5]; // 4 chars max + null terminaison
                 //Warning: this is a non-terminated String! ; 00000 denotes an invalid device. invalid devices shall be at the end, ie no gaps in the list
      */
-    AMLName _name;
+    AMLName name;
     
     
 }ACPIDevice;
@@ -348,7 +348,7 @@ typedef struct
 
 typedef struct
 {
-    AMLName _name;
+    AMLName name;
     //const char* name;
 } ACPIScope;
 

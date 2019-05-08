@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define SCOPE_STR_SIZE 512
+
 
 typedef struct// _AMLName
 {

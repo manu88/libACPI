@@ -321,7 +321,7 @@ size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer)
     }
 }
 
-
+/*
 size_t ResolvePath(char *fullpath, const uint8_t *path)
 {
     size_t name_size = 0;
@@ -409,3 +409,4 @@ start:
     
     return name_size;
 }
+*/

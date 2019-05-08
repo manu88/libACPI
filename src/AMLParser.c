@@ -763,13 +763,15 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         }
             break;
             
-            
+        case AML_ElseOp:
         case AML_IfOp:
-            printf(" Got an IF OP to implement \n");
+            //printf(" Got an IF OP to implement \n");
+        {
             size_t adv = 0;
             size_t len =GetPackageLength(buffer, bufSize, &adv);
             
             *advancedBy+= len;
+        }
             break;
             /* Unimplemented operators*/
             /*

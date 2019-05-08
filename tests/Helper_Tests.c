@@ -173,135 +173,6 @@ static void ExtractNameTests(void)
     
 }
 
-static void ResolvePath_Tests()
-{
-    {
-        char name[SCOPE_STR_SIZE] = {0};
-        size_t ret = ResolvePath(name, (const uint8_t *)"");
-        
-        assert( strcmp(name, ".") == 0);
-        assert( ret == 4);
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    {
-        char name[512] = {0};
-        
-        uint8_t b[] = {'_' , 'D' , 'B', '_'};
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == 4);
-        assert( strcmp(name, "._DB") == 0);
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    {
-        char name[512] = {0};
-        
-        uint8_t b[] = {'_' , 'D' , '_', '_'};
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == 4);
-        assert( strcmp(name, "._D") == 0);
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    {
-        char name[512] = {0};
-        
-        uint8_t b[] = {'P' , '_' , '_', '_'};
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == 4);
-        assert( strcmp(name, ".P") == 0);
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    
-    
-    // dual name prefix
-    {
-        char name[512] = {0};
-        
-        uint8_t b[] = {AML_OP_DualNamePrefix , '_' ,'S' , 'B','_'     , 'P', 'C' , 'I' , '_'};
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == sizeof(b));
-        assert( strcmp(name, "._SB.PCI") == 0);
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    {
-        char name[512] = {0};
-        
-        uint8_t b[] = {AML_OP_DualNamePrefix , '_' ,'S' , 'B','_'     , 'P', 'C' , 'I' , '0'};
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == sizeof(b));
-        assert( strcmp(name, "._SB.PCI0") == 0);
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    {
-        char name[512] = {0};
-        
-        uint8_t b[] = {AML_OP_DualNamePrefix , '_' ,'S' , '_','_'     , 'P', 'C' , 'I' , '0'};
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == sizeof(b));
-        assert( strcmp(name, "._S.PCI0") == 0);
-        
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    
-    
-    // multi name prefix
-    {
-        char name[512] = {0};
-        
-        uint8_t b[] = {AML_OP_MultiNamePrefix , 3,
-            '_' ,'S' , 'B','_',
-            'P', 'C' , 'I' , '0',
-            'T', 'E' , 'C' , '_',
-            
-        };
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == sizeof(b));
-        assert( strcmp(name, "._SB.PCI0.TEC") == 0);
-        
-        for(int i=0;i<strlen(name);i++)
-        {
-            assert(name[i] != '\0');
-        }
-    }
-    {
-        //5c  0  5b  80  46  43  46  47
-        
-        char name[512] = {0};
-        
-        uint8_t b[] = {AML_OP_RootChar,0 , 0x5b,  0x80  ,0x46  ,0x43  ,0x46  ,0x47};
-        size_t ret = ResolvePath(name, b);
-        
-        assert( ret == 2);
-        assert( strcmp(name, "\\") == 0);
-    }
-}
 
 static void GetInteger_Tests()
 {
@@ -449,7 +320,7 @@ void Helper_Tests()
 {
     ExtractNameSizeTests();
     ExtractNameTests();
-    ResolvePath_Tests();
+    
     GetInteger_Tests();
     
     //DeviceIds_Tests();

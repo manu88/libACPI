@@ -585,12 +585,12 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 setState(decomp, AMLState_StartedScope);
                 
                 
-                //char name[SCOPE_STR_SIZE];
+                
                 ACPIScope scope = {0};
                 //scope.name = name;
                 
                 //AMLName scopeName = {0};
-                const ssize_t advanced = AMLNameCreateFromBuffer(&scope._name, bufferPos, bufferSize);
+                const ssize_t advanced = AMLNameCreateFromBuffer(&scope.name, bufferPos, bufferSize);
                 
                 //size_t __advanced = ResolvePath(name,  bufferPos);
                 //assert(__advanced == advanced);
@@ -637,7 +637,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             setState(decomp, AMLState_StartedDevice);
             ACPIDevice dev = {0};
             
-            const ssize_t nameSize = AMLNameCreateFromBuffer(&dev._name, bufferPos, bufferSize);
+            const ssize_t nameSize = AMLNameCreateFromBuffer(&dev.name, bufferPos, bufferSize);
             
             if (nameSize == 0)
             {
