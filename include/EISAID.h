@@ -36,6 +36,7 @@ extern "C" {
 #define PNP0C0F  0xF0CD041  // PCI interrupt link device
     
 // Pass a 8 bytes char buffer (7 EISAID str + NUll)
+
 int getEisaidString( uint64_t value , char* toBuff);
     
 // No null pointers !
