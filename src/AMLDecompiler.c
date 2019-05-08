@@ -639,7 +639,15 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
             const ssize_t nameSize = AMLNameCreateFromBuffer(&dev._name, bufferPos, bufferSize);
             
-            
+            if (nameSize == 0)
+            {
+                for (int i=0;i<16;i++)
+                {
+                    printf(" 0x%x (%c) " , bufferPos[i],bufferPos[i]);
+                }
+                printf("\n");
+            }
+            assert(nameSize); // TODO : handle name parsing error !
             //const uint8_t advanced = ExtractNameString(bufferPos, bufferSize, dev.name );
             //assert(advanced == nameSize);
             //dev.name[4] = 0;

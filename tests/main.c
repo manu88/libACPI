@@ -45,7 +45,7 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 
 int main(int argc, const char * argv[])
 {
-    
+
     Eisaid_Tests();
     AMLParserTests();
     Helper_Tests();
@@ -53,6 +53,7 @@ int main(int argc, const char * argv[])
 
     Decompile_Tests();
     Buffers_Tests();
+
     doAMLNameTests();
     doAMLNameNormalizedTests();
     /*

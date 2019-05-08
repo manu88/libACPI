@@ -1,0 +1,75 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 1,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": {
+      "TEST": {
+        "Methods": {
+          "_STA": {
+            "argCount": 0,
+            "body": "some",
+            "serializeFlag": 0,
+            "syncLevel": 0
+          }
+        },
+        "_LOL":
+        {
+          "eisaid": false,
+          "type": 0,
+          "value": 1234
+        },
+        "_HID": {
+          "eisaid": true,
+          "type": 0,
+          "value": 17158209
+        }
+      }
+    },
+    "Fields": [
+      {
+        "accessType": "DWordAcc",
+        "content": [
+          {
+            "name": "IDX0",
+            "value": 32
+          },
+          {
+            "name": "DAT0",
+            "value": 32
+          }
+        ],
+        "lockRule": "NoLock",
+        "name": "SYSI",
+        "updateRule": "Preserve"
+      }
+    ],
+    "IndexFields": [
+      {
+        "accessType": "DWordAcc",
+        "content": [
+          {
+            "name": "SL2B",
+            "value": 32
+          }
+        ],
+        "dataName": "DAT0",
+        "lockRule": "NoLock",
+        "name": "IDX0",
+        "updateRule": "Preserve"
+      }
+    ],
+    "OperationRegions": {
+      "SYSI": {
+        "length": 8,
+        "offset": 16456,
+        "space": 1
+      }
+    }
+  }
+}

@@ -25,6 +25,24 @@ static int NameIsValid( const AMLName* name)
 void doAMLNameTests()
 {
     {
+        AMLName name = {0};
+        const uint8_t buff[] = { '\\',0x2E ,'_','S','B','_','C','P','U','S'};
+        
+        ssize_t ret = AMLNameCreateFromBuffer(&name, buff, sizeof(buff));
+        assert(ret == sizeof(buff));
+        
+        assert( NameIsValid(&name));
+        assert(AMLNameHasPrefixRoot(&name));
+        assert(AMLNameCountParents(&name) == 0);
+        assert(AMLNameCountSegments(&name) == 2);
+        
+        char* resolved = AMLNameConstructNormalized(&name);
+        assert(resolved);
+        assert(strcmp(resolved, "\\_SB.CPUS")==0);
+        free(resolved);
+        
+    }
+    {
         // RootChar MultiNamePrefix 3 'S2__' 'ISA_' 'COM1'
         AMLName name = {0};
         const uint8_t buff[] = { '\\',0x2F , 3  , 'S' ,'2' , '_', '_'     , 'I' ,'S' , 'A' , '_' , 'C' ,'O' , 'M' , '1' };

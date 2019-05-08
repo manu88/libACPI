@@ -533,12 +533,15 @@ public:
     
     int startDevice(const ParserContext* context, const ACPIDevice& device)override
     {
+        char* realName  = AMLNameConstructNormalized(&device._name);
         incScope();
         indent();
-        content << "Device" << "(" << device.name << ")" << "\n";
+        content << "Device" << "(" << realName << ")" << "\n";
         
         indent();
         content << "{" << "\n";
+        
+        free(realName);
         return 0;
     }
     int endDevice(const ParserContext* context, const ACPIDevice&)override

@@ -100,7 +100,7 @@ ssize_t ExtractMaxNameSize(const uint8_t *buff, size_t size  )
                 {
                     return 2;
                 }
-                else if (  IsRealName(buff[1]) || buff[1] == AML_OP_MultiNamePrefix)
+                else if (  IsRealName(buff[1]) || buff[1] == AML_OP_MultiNamePrefix || buff[1] == AML_OP_DualNamePrefix)
                 {
                     const ssize_t nextRet = ExtractMaxNameSize(buff+1, size-1);
                     return nextRet<0? nextRet :   nextRet + 1;
