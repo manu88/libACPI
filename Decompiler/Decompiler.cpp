@@ -869,6 +869,19 @@ public:
         return 0;
     }
 
+    int onIRQFormatDescriptor( const ParserContext* context , const IRQDescriptor&desc) override
+    {
+        incScope();
+        
+        if (desc.hasInfos == 0)
+        {
+            indent(); content << "IRQNoFlags(){"; writeHexArg(desc.maskBits/4); content << "}" << "\n";
+        }
+        
+        decScope();
+        return 0;
+    }
+    
     int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) override
     {
         /*

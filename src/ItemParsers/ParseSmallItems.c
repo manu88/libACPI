@@ -28,7 +28,7 @@ AMLParserError ParseSmall_IOPortDescriptor(AMLDecompiler*decomp,const ParserCont
     
     union
     {
-        uint8_t b[8];
+        uint8_t b[2];
         uint16_t v;
     } c;
     
@@ -51,6 +51,32 @@ AMLParserError ParseSmall_IOPortDescriptor(AMLDecompiler*decomp,const ParserCont
                                   SmallResourceItemsType_IOPortDescriptor,
                                   (const uint8_t*) &desc , sizeof(IOPortDescriptor)
                                   );
+    
+    return AMLParserError_None;
+}
+
+
+AMLParserError ParseSmall_IRQFormatDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    
+    IRQDescriptor desc = {0};
+    
+    union
+    {
+        uint8_t b[2];
+        uint16_t v;
+    } c;
+    
+    c.b[0] = buffer[0];
+    c.b[1] = buffer[1];
+    
+    desc.maskBits = c.v;
+    
+    decomp->callbacks.onSmallItem(decomp , context ,
+                                  SmallResourceItemsType_IRQFormatDescriptor,
+                                  (const uint8_t*) &desc , sizeof(IRQDescriptor)
+                                  );
+    
     
     return AMLParserError_None;
 }

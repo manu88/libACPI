@@ -71,6 +71,7 @@ protected:
     virtual int onWORDAddressSpaceDescriptor( const ParserContext* context , const WordAddressSpaceDescriptor& desc) = 0;
     virtual int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc) = 0;
     virtual int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc) = 0;
+    virtual int onIRQFormatDescriptor( const ParserContext* context , const IRQDescriptor&desc) = 0;
     
     virtual int startPackage( const ParserContext*context , const ACPIPackage& package) = 0;
     virtual int onPackageElement( const ParserContext* context , const ACPIPackageElement& element) = 0;

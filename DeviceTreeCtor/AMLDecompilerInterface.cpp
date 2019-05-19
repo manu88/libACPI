@@ -235,6 +235,8 @@ int AMLDecompilerInterface::onSmallItem(const ParserContext* context, SmallResou
             
             return onIOPortDescriptor(context, reinterpret_cast<const IOPortDescriptor&>(*buffer));
             
+        case SmallResourceItemsType_IRQFormatDescriptor:
+            return onIRQFormatDescriptor(context, reinterpret_cast<const IRQDescriptor&>(*buffer));
         default:
             assert(0);
             break;

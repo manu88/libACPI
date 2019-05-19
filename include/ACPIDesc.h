@@ -334,6 +334,14 @@ typedef struct // 6.4.3.4
 } MemoryRangeDescriptor32;
 
 
+typedef struct // 6.4.2.1 IRQ Descriptor
+{
+    uint16_t maskBits;
+    uint8_t infos;
+    uint8_t hasInfos:1;
+} IRQDescriptor;
+
+
 typedef struct
 {
     /*

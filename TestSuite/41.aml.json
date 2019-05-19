@@ -1,0 +1,66 @@
+{
+  "def": {
+    "OEMId": "BXPC",
+    "OEMRev": 1,
+    "complianceRevision": 1,
+    "creatorID": 1280593481,
+    "tableId": "BXDSDT",
+    "tableSignature": "DSDT"
+  },
+  "tree": {
+    "Children": {
+      "PCI0": {
+        "Children": {
+          "COM1": {
+            "_CRS": {
+              "type": 10,
+              "value": [
+                {
+                  "type": 14,
+                  "value": {
+                    "baseAlign": 0,
+                    "isDecoder": 1,
+                    "rangeLen": 8,
+                    "rangeMaxBaseAddr": 1016,
+                    "rangeMinBaseAddr": 1016
+                  }
+                },
+                {
+                  "type": 18,
+                  "value": {
+                    "value": 16
+                  }
+                }
+              ]
+            },
+            "_HID": {
+              "eisaid": true,
+              "type": 0,
+              "value": 17158209
+            },
+            "_UID": {
+              "eisaid": false,
+              "type": 0,
+              "value": 1
+            }
+          }
+        },
+        "_ADR": {
+          "eisaid": false,
+          "type": 0,
+          "value": 0
+        },
+        "_HID": {
+          "eisaid": true,
+          "type": 0,
+          "value": 51040321
+        },
+        "_UID": {
+          "eisaid": false,
+          "type": 0,
+          "value": 1
+        }
+      }
+    }
+  }
+}
