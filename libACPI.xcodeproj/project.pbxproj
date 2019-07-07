@@ -12,6 +12,9 @@
 		590D3EBF225A0DF900E2525E /* AMLMethodParser.c in Sources */ = {isa = PBXBuildFile; fileRef = 590D3EBD225A0DF900E2525E /* AMLMethodParser.c */; };
 		592B51EB224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 592B51E9224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h */; };
 		592B51EC224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 592B51EA224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.c */; };
+		593268242299BD3200BBE79F /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 593268232299BD3200BBE79F /* main.c */; };
+		593268282299BD4800BBE79F /* libACPI.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 59459A5121DE263C00DD9396 /* libACPI.dylib */; };
+		5932682B2299BDAE00BBE79F /* ACPIDom.c in Sources */ = {isa = PBXBuildFile; fileRef = 5932682A2299BDAE00BBE79F /* ACPIDom.c */; };
 		59459A4C21DE25FC00DD9396 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A4B21DE25FC00DD9396 /* main.c */; };
 		59459A5521DE265500DD9396 /* EISAID.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3421DE25EC00DD9396 /* EISAID.c */; };
 		59459A5621DE266500DD9396 /* AMLHelpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 59459A3621DE25EC00DD9396 /* AMLHelpers.c */; };
@@ -57,6 +60,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		5932681F2299BD3200BBE79F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		59459A2721DE25C800DD9396 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -101,6 +113,10 @@
 		590D3EBD225A0DF900E2525E /* AMLMethodParser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLMethodParser.c; sourceTree = "<group>"; };
 		592B51E9224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLDecompilerDefaultCallbacks.h; sourceTree = "<group>"; };
 		592B51EA224C9EBE00D6B135 /* AMLDecompilerDefaultCallbacks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AMLDecompilerDefaultCallbacks.c; sourceTree = "<group>"; };
+		593268212299BD3200BBE79F /* DomTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DomTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		593268232299BD3200BBE79F /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		593268292299BDAE00BBE79F /* ACPIDom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ACPIDom.h; sourceTree = "<group>"; };
+		5932682A2299BDAE00BBE79F /* ACPIDom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ACPIDom.c; sourceTree = "<group>"; };
 		59459A2921DE25C800DD9396 /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		59459A3421DE25EC00DD9396 /* EISAID.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EISAID.c; sourceTree = "<group>"; };
 		59459A3621DE25EC00DD9396 /* AMLHelpers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AMLHelpers.c; sourceTree = "<group>"; };
@@ -160,6 +176,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5932681E2299BD3200BBE79F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				593268282299BD4800BBE79F /* libACPI.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		59459A2621DE25C800DD9396 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -202,6 +226,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		593268222299BD3200BBE79F /* DomTest */ = {
+			isa = PBXGroup;
+			children = (
+				593268232299BD3200BBE79F /* main.c */,
+				593268292299BDAE00BBE79F /* ACPIDom.h */,
+				5932682A2299BDAE00BBE79F /* ACPIDom.c */,
+			);
+			path = DomTest;
+			sourceTree = "<group>";
+		};
 		59459A2021DE25C800DD9396 = {
 			isa = PBXGroup;
 			children = (
@@ -210,6 +244,7 @@
 				59459A5B21DE269000DD9396 /* include */,
 				59459A3321DE25EC00DD9396 /* src */,
 				59459A4A21DE25FC00DD9396 /* tests */,
+				593268222299BD3200BBE79F /* DomTest */,
 				59459A2A21DE25C800DD9396 /* Products */,
 				59459A6A21DE26BE00DD9396 /* Frameworks */,
 			);
@@ -223,6 +258,7 @@
 				59459A8721E6512F00DD9396 /* TestsCpp */,
 				59459AB421F0BF5500DD9396 /* DeviceTreeCtor */,
 				59459ACB220F0B4F00DD9396 /* Decompiler */,
+				593268212299BD3200BBE79F /* DomTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -358,6 +394,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		593268202299BD3200BBE79F /* DomTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 593268272299BD3200BBE79F /* Build configuration list for PBXNativeTarget "DomTest" */;
+			buildPhases = (
+				5932681D2299BD3200BBE79F /* Sources */,
+				5932681E2299BD3200BBE79F /* Frameworks */,
+				5932681F2299BD3200BBE79F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DomTest;
+			productName = DomTest;
+			productReference = 593268212299BD3200BBE79F /* DomTest */;
+			productType = "com.apple.product-type.tool";
+		};
 		59459A2821DE25C800DD9396 /* Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 59459A3021DE25C800DD9396 /* Build configuration list for PBXNativeTarget "Tests" */;
@@ -452,6 +505,9 @@
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Manuel Deneu";
 				TargetAttributes = {
+					593268202299BD3200BBE79F = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
 					59459A2821DE25C800DD9396 = {
 						CreatedOnToolsVersion = 10.1;
 					};
@@ -480,11 +536,21 @@
 				59459A7B21E6512F00DD9396 /* TestsCpp */,
 				59459AA821F0BF5500DD9396 /* DeviceTreeCtor */,
 				59459ACA220F0B4F00DD9396 /* Decompiler */,
+				593268202299BD3200BBE79F /* DomTest */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5932681D2299BD3200BBE79F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				593268242299BD3200BBE79F /* main.c in Sources */,
+				5932682B2299BDAE00BBE79F /* ACPIDom.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		59459A2521DE25C800DD9396 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -554,6 +620,26 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		593268252299BD3200BBE79F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /usr/local/include/libACPI/;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		593268262299BD3200BBE79F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /usr/local/include/libACPI/;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		59459A2E21DE25C800DD9396 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -798,6 +884,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		593268272299BD3200BBE79F /* Build configuration list for PBXNativeTarget "DomTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				593268252299BD3200BBE79F /* Debug */,
+				593268262299BD3200BBE79F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		59459A2421DE25C800DD9396 /* Build configuration list for PBXProject "libACPI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

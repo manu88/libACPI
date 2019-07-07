@@ -55,8 +55,13 @@ typedef struct _AMLDecompilerCallbacks
     int (*onSmallItem)(AMLDecompiler* decomp,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize);
     
     int (*onValue)(AMLDecompiler* decomp,const ParserContext* context, uint64_t value);
+    
+    // Called when a string value is parsed. string points to the original content passed to `AMLDecompilerStart` so
+    // The pointer stays valid until the original buffer is.
     int (*onString)(AMLDecompiler* decomp,const ParserContext* context, const char* string);
     
+    // Called when a definition block is parsed. block points to the original content passed to `AMLDecompilerStart` so
+    // The pointer stays valid until the original buffer is.
     int (*onDefinitionBlock)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDefinitionBlock* block);
     
     int (*onOperationRegion)(AMLDecompiler* decomp,const ParserContext* context, const ACPIOperationRegion* reg);
@@ -83,7 +88,6 @@ typedef struct _AMLDecompilerCallbacks
     //int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     
     int (*onMethod)(AMLDecompiler* decomp,const ParserContext* context, const ACPIMethod* method);
-    
     
     int (*startPackage)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package);
     int (*onPackageElement)(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackageElement* element);

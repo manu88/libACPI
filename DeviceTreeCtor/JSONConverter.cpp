@@ -156,6 +156,19 @@ static nlohmann::json serializePackageItem( const ACPI::Package & packageItem)
     return res;
 }
 
+static nlohmann::json serializeIRQ( const IRQDescriptor & desc)
+{
+    nlohmann::json res;
+    res["value"] = desc.maskBits;
+    
+    if (desc.hasInfos)
+    {
+        res["infos"] = desc.infos;
+    }
+    
+    return res;
+}
+
 static nlohmann::json serializePackage( const ACPI::Package & package)
 {
     nlohmann::json res;
@@ -199,6 +212,11 @@ static nlohmann::json serializeResourseTemplate( const ACPI::ResourceTemplate&re
             
             case ACPI::Type_MemoryRangeDescriptor32:
                 it["value"] = serializeMemoryRangeDescriptor32(item.value.memoryRangeDesc32);
+                break;
+                
+            case ACPI::Type_IRQDescriptor:
+                it["value"] = serializeIRQ( item.value.iRQDescriptor);
+                
                 break;
             default:
                 assert(0);
@@ -451,21 +469,35 @@ static nlohmann::json serializeNode( const TreeNode& node)
     return res;
 }
 
-
-static nlohmann::json serializeDefBlock( const ACPIDefinitionBlock&block)
+static std::string StringFromBuffer( const char* b , size_t bLen)
+{
+    std::string r;
+    
+    for( int i=0;i<bLen ;i++)
+    {
+        if(b[i] != 0 )
+            r.push_back(b[i]);
+    }
+    return r;
+}
+static nlohmann::json serializeDefBlock( const ACPIDefinitionBlock*block)
 {
     nlohmann::json res;
     
-    if (block.OEMId[0] && block.tableId[0] && block.tableSignature[0])
-    {        
-        res["tableSignature"] = block.tableSignature;
+    if (block->OEMId[0] && block->tableId[0] && block->tableSignature[0])
+    {
+        
+        
+        res["tableSignature"] = StringFromBuffer(block->tableSignature , 4);
 //        res["tableLength"] = block.tableLength;
-        res["complianceRevision"] = block.complianceRevision;
+        res["complianceRevision"] = block->complianceRevision;
 //        res["tableCheckSum"] = block.tableCheckSum;
-        res["OEMId"] = block.OEMId;
-        res["tableId"] = block.tableId;
-        res["OEMRev"] = block.OEMRev;
-        res["creatorID"] = block.creatorID;
+        
+        const std::string t = StringFromBuffer( block->OEMId , 6);
+        res["OEMId"] = t;
+        res["tableId"] = StringFromBuffer( block->tableId , 8);
+        res["OEMRev"] = block->OEMRev;
+        res["creatorID"] = block->creatorID;
         
     }
     return res;

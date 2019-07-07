@@ -35,14 +35,23 @@ namespace ACPI
         Type_IOPortDescriptor,
         Type_DWordAddressSpaceDescriptor,
         Type_QWordAddressSpaceDescriptor,
-        Type_Package,
         
+        Type_Package,
+        Type_IRQDescriptor,
+
         //Type_OperationRegion
+        
+        
         Type_Invalid = 300,
     };
     
     struct RessourceItem
     {
+        void setValue( const IRQDescriptor& desc)
+        {
+            type = ACPI::Type_IRQDescriptor;
+            value.iRQDescriptor = desc;
+        }
         void setValue(const QWordAddressSpaceDescriptor& desc)
         {
             type = ACPI::Type_QWordAddressSpaceDescriptor;
@@ -81,6 +90,7 @@ namespace ACPI
             IOPortDescriptor            ioPortDescriptor;
             DWordAddressSpaceDescriptor dwordAddressSpaceDescriptor;
             QWordAddressSpaceDescriptor qwordAddressSpaceDescriptor;
+            IRQDescriptor               iRQDescriptor;
             
         } value;
         

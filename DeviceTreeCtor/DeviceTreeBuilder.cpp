@@ -151,17 +151,17 @@ AMLDecompilerInterface(decomp)
     //_scopeResolver.reset();
 }
 
-static void printDefBlock( const ACPIDefinitionBlock& defBlock)
+static void printDefBlock( const ACPIDefinitionBlock* defBlock)
 {
     
-    printf("tableSignature :'%s'\n" , defBlock.tableSignature);
-    printf("OEMId :'%s'\n" , defBlock.OEMId);
-    printf("tableId :'%s'\n" , defBlock.tableId);
-    printf("tableLength :%d\n" , defBlock.tableLength);
-    printf("complianceRevision :%hhu\n" , defBlock.complianceRevision);
-    printf("tableCheckSum :%hhu\n" , defBlock.tableCheckSum);
-    printf("OEMRev : %d\n" , defBlock.OEMRev);
-    printf("creatorID : %d\n" , defBlock.OEMRev);
+    printf("tableSignature :'%s'\n" , defBlock->tableSignature);
+    printf("OEMId :'%s'\n" , defBlock->OEMId);
+    printf("tableId :'%s'\n" , defBlock->tableId);
+    printf("tableLength :%d\n" , defBlock->tableLength);
+    printf("complianceRevision :%hhu\n" , defBlock->complianceRevision);
+    printf("tableCheckSum :%hhu\n" , defBlock->tableCheckSum);
+    printf("OEMRev : %d\n" , defBlock->OEMRev);
+    printf("creatorID : %d\n" , defBlock->OEMRev);
     
 }
 
@@ -347,12 +347,14 @@ int DeviceTreeBuilder::onMethod(const ParserContext* context, const ACPIMethod& 
 
 int DeviceTreeBuilder::startDevice(const ParserContext* context, const ACPIDevice& device)
 {
+    assert( device.obj.pos);
     currentNode.push( _deviceTree.getNodeForPathAndCreateIfNeeded(device.name , currentNode.top()) );
     return 0;
 }
 
 int DeviceTreeBuilder::endDevice(const ParserContext* context, const ACPIDevice& device)
 {
+    assert( device.obj.pos);
     assert(!currentNode.empty() );
     currentNode.pop();
     return 0;
@@ -360,7 +362,7 @@ int DeviceTreeBuilder::endDevice(const ParserContext* context, const ACPIDevice&
 
 int DeviceTreeBuilder::startScope(const ParserContext* context, const ACPIScope& scope)
 {
-    
+    assert( scope.obj.pos);
     //char* scopeName = AMLNameConstructNormalized(&scope._name);
     //assert(scopeName);
     
@@ -376,6 +378,7 @@ int DeviceTreeBuilder::startScope(const ParserContext* context, const ACPIScope&
 
 int DeviceTreeBuilder::endScope(const ParserContext* context, const ACPIScope& scope)
 {
+    assert( scope.obj.pos);
     //printf("End scope '%s' '%s'\n" , location , _scopes.back().c_str());
     //assert(!_scopeResolver.isEmpty());
     
@@ -406,7 +409,7 @@ int DeviceTreeBuilder::EndName(const ParserContext* context, const char* name)
 
 int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, const ACPIDefinitionBlock& desc)
 {
-    _deviceTree.defBlock = desc;
+    _deviceTree.defBlock = &desc;
     return 0;
 }
 
@@ -524,6 +527,18 @@ int DeviceTreeBuilder::onIOPortDescriptor( const ParserContext* context , const 
 
     return 0;
 }
+
+int DeviceTreeBuilder::onIRQFormatDescriptor( const ParserContext* context , const IRQDescriptor&desc)
+{
+    assert(getCurrentName());
+    
+    ACPI::RessourceItem item;
+    item.setValue(desc);
+    getCurrentName()->addTemplateItem(item);
+    
+    return 0;
+}
+
 
 int DeviceTreeBuilder::onMemoryRangeDescriptor32( const ParserContext* context , const MemoryRangeDescriptor32& desc)
 {

@@ -82,6 +82,6 @@ struct DeviceTree
     TreeNode* getNodeForPath( const std::string &path , const std::string &relativeTo);
     
     
-    ACPIDefinitionBlock defBlock = {0};
+    const ACPIDefinitionBlock *defBlock = nullptr;// = {0};
 };
 

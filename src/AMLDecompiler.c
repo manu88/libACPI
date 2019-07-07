@@ -579,16 +579,12 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             {
                 setState(decomp, AMLState_StartedScope);
                 
-                
-                
                 ACPIScope scope = {0};
-                //scope.name = name;
                 
-                //AMLName scopeName = {0};
                 const ssize_t advanced = AMLNameCreateFromBuffer(&scope.name, bufferPos, bufferSize);
                 
-                //size_t __advanced = ResolvePath(name,  bufferPos);
-                //assert(__advanced == advanced);
+                scope.obj.pos = bufferPos;
+                
                 decomp->callbacks.startScope(decomp ,&ctx , &scope);
                 
                 err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
@@ -603,12 +599,6 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
 
                 setState(decomp, AMLState_Unknown);
             }
-            /*
-            else
-            {
-                err = AMLParserError_InvalidState;
-            }
-             */
 
         }
             break;
@@ -647,6 +637,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             //assert(advanced == nameSize);
             //dev.name[4] = 0;
             
+            dev.obj.pos =bufferPos + nameSize;
             decomp->callbacks.startDevice(decomp ,&ctx , &dev);
 
             // advance bufferPos to skip the name

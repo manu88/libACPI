@@ -92,7 +92,7 @@ protected:
     int onDWORDAddressSpaceDescriptor( const ParserContext* context , const DWordAddressSpaceDescriptor& desc)override;
     
     int onIOPortDescriptor( const ParserContext* context , const IOPortDescriptor&desc)override;
-    
+    int onIRQFormatDescriptor( const ParserContext* context , const IRQDescriptor&desc) override;
     int startPackage( const ParserContext*context , const ACPIPackage& package) override;
     int endPackage( const ParserContext*context , const ACPIPackage& package) override;
     int onPackageElement( const ParserContext* context , const ACPIPackageElement& element) override;

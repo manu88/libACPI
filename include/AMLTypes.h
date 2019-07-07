@@ -21,14 +21,11 @@
 #include <stddef.h>
 
 
-
 typedef struct// _AMLName
 {
     const uint8_t*  originalBuf;
     size_t          originalBufSize;
 } AMLName;
-
-
 
 uint8_t AMLNameHasPrefixRoot( const AMLName*name);
 

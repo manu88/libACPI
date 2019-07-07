@@ -121,7 +121,27 @@ typedef struct
     /*
      For compatibility with ACPI versions before ACPI 2.0, the bit width of Integer objects is dependent on the ComplianceRevision. If the ComplianceRevision is less than 2, all integers are restricted to 32 bits. Otherwise, full 64-bit integers are used.
      */
+} ACPIDefinitionBlockOLD;
+
+//17.5.26 DefinitionBlock
+typedef struct
+{
+    char    tableSignature[4]; // 4 chars, NON terminated str
+    ACPIDWord tableLength; // Length of the table in bytes including the block header.
+    uint8_t complianceRevision;
+    uint8_t tableCheckSum; // Byte checksum of the entire table.
+    char    OEMId[6]; // NON terminated str
+    char    tableId[8]; // NON terminated str
+    
+    ACPIDWord OEMRev;
+    
+    ACPIDWord creatorID; //// Vendor ID of the ASL compiler
+    /*
+     For compatibility with ACPI versions before ACPI 2.0, the bit width of Integer objects is dependent on the ComplianceRevision. If the ComplianceRevision is less than 2, all integers are restricted to 32 bits. Otherwise, full 64-bit integers are used.
+     */
 } ACPIDefinitionBlock;
+
+
 
 
 /*
@@ -329,7 +349,7 @@ typedef struct // 6.4.3.4
 {
     uint32_t rangeBaseAddr;
     uint32_t rangeLength;
-    uint8_t writeStatus : 1; // 1 writeable (read/write) / 0 non-writeable (read-only))
+    uint8_t  writeStatus : 1; // 1 writeable (read/write) / 0 non-writeable (read-only))
     
 } MemoryRangeDescriptor32;
 
@@ -344,21 +364,19 @@ typedef struct // 6.4.2.1 IRQ Descriptor
 
 typedef struct
 {
-    /*
-    char name[5]; // 4 chars max + null terminaison
-                //Warning: this is a non-terminated String! ; 00000 denotes an invalid device. invalid devices shall be at the end, ie no gaps in the list
-     */
-    AMLName name;
-    
-    
-}ACPIDevice;
-
+    const uint8_t* pos; // Pointer Position in the original buffer.
+    //size_t size;
+} ACPIObject;
 
 typedef struct
 {
+    ACPIObject obj;
     AMLName name;
-    //const char* name;
+    
 } ACPIScope;
+
+typedef ACPIScope ACPIDevice;
+
 
 typedef struct
 {
@@ -367,8 +385,6 @@ typedef struct
     uint8_t argCount;
     uint8_t syncLevel;
     uint8_t serializeFlag:1;
-    
-    
     
     const uint8_t* bodyDef;
     size_t bodySize;

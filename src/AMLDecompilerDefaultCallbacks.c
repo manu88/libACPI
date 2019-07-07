@@ -20,107 +20,188 @@
 
 static int _Default_startResourceTemplate(AMLDecompiler* decomp, const ParserContext* context , size_t numItems )
 {
+    (void) decomp;
+    (void) context;
+    (void) numItems;
     return 0;
 }
 static int _Default_endResourceTemplate(AMLDecompiler* decomp, const ParserContext* context , size_t numItemsParsed, AMLParserError err)
 {
+    (void) decomp;
+    (void) context;
+    (void) numItemsParsed;
+    (void) err;
     return 0;
 }
 static int _Default_onLargeItem(AMLDecompiler* decomp,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
 {
+    (void) decomp;
+    (void) context;
+    (void) itemType;
+    (void) buffer;
+    (void) bufferSize;
     return 0;
 }
 static int _Default_onSmallItem(AMLDecompiler* decomp,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
 {
+    (void) decomp;
+    (void) context;
+    (void) itemType;
+    (void) buffer;
+    (void) bufferSize;
     return 0;
 }
 static int _Default_onValue(AMLDecompiler* decomp,const ParserContext* context, uint64_t value)
 {
+    (void) decomp;
+    (void) context;
+    (void) value;
     return 0;
 }
 static int _Default_onString(AMLDecompiler* decomp,const ParserContext* context, const char* string)
 {
+    (void) decomp;
+    (void) context;
+    (void) string;
     return 0;
 }
 static int _Default_onDefinitionBlock(AMLDecompiler* decomp,const ParserContext* context, const ACPIDefinitionBlock* block)
 {
+    (void) decomp;
+    (void) context;
+    (void) block;
     return 0;
 }
 static int _Default_onOperationRegion(AMLDecompiler* decomp,const ParserContext* context, const ACPIOperationRegion* reg)
 {
+    (void) decomp;
+    (void) context;
+    (void) reg;
     return 0;
 }
 static int _Default_startField(AMLDecompiler* decomp,const ParserContext* context, const ACPIField* field)
 {
+    (void) decomp;
+    (void) context;
+    (void) field;
     return 0;
 }
 static int _Default_onFieldElement(AMLDecompiler* decomp,const ParserContext* context, const ACPIFieldElement* fieldElement)
 {
+    (void) decomp;
+    (void) context;
+    (void) fieldElement;
     return 0;
 }
 static int _Default_endField(AMLDecompiler* decomp,const ParserContext* context, const ACPIField* field)
 {
+    (void) decomp;
+    (void) context;
+    (void) field;
     return 0;
 }
 
 static int _Default_onCreateField(AMLDecompiler* decomp, const ParserContext* context , const ACPICreateFieldBase *field)
 {
+    (void) decomp;
+    (void) context;
+    (void) field;
     return 0;
 }
 
 static int _Default_onBuffer(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
 {
+    (void) decomp;
+    (void) context;
+    (void) bufferSize;
+    (void) buffer;
     return 0;
 }
-static int _Default_startScope(AMLDecompiler* decomp,const ParserContext* context, const ACPIScope*scpe )
+static int _Default_startScope(AMLDecompiler* decomp,const ParserContext* context, const ACPIScope*scope )
 {
+    (void) decomp;
+    (void) context;
+    (void) scope;
     return 0;
 }
 static int _Default_endScope(AMLDecompiler* decomp,const ParserContext* context, const ACPIScope*scpe)
 {
+    (void) decomp;
+    (void) context;
+    (void) scpe;
     return 0;
 }
 static int _Default_startDevice(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name)
 {
+    (void) decomp;
+    (void) context;
+    (void) name;
     return 0;
 }
 static int _Default_endDevice(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name)
 {
+    (void) decomp;
+    (void) context;
+    (void) name;
     return 0;
 }
 static int _Default_startName(AMLDecompiler* decomp,const ParserContext* context, const char* name)
 {
+    (void) decomp;
+    (void) context;
+    (void) name;
     return 0;
 }
 static int _Default_onMethod(AMLDecompiler* decomp,const ParserContext* context, const ACPIMethod* method)
 {
+    (void) decomp;
+    (void) context;
+    (void) method;
     return 0;
 }
 static int _Default_startPackage(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package)
 {
+    (void) decomp;
+    (void) context;
+    (void) package;
     return 0;
 }
 
 static int _Default_onPackageElement(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackageElement* element)
 {
+    (void) decomp;
+    (void) context;
+    (void) element;
     return 0;
 }
 static int _Default_endPackage(AMLDecompiler* decomp,const ParserContext* context, const ACPIPackage* package)
 {
+    (void) decomp;
+    (void) context;
+    (void) package;
     return 0;
 }
     
 static int _Default_startIndexField(AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexField* field)
 {
+    (void) decomp;
+    (void) context;
+    (void) field;
     return 0;
 }
 static int _Default_onIndexFieldElement(AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexFieldElement* fieldElement)
 {
+    (void) decomp;
+    (void) context;
+    (void) fieldElement;
     return 0;
 }
 
 static int _Default_endIndexField(AMLDecompiler* decomp,const ParserContext* context, const ACPIIndexField* field)
 {
+    (void) decomp;
+    (void) context;
+    (void) field;
     return 0;
 }
 

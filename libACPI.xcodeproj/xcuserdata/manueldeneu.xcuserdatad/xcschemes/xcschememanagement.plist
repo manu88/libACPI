@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>3</integer>
 		</dict>
+		<key>DomTest.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
 		<key>Tests.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -32,6 +37,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>593268202299BD3200BBE79F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>59459A2821DE25C800DD9396</key>
 		<dict>
 			<key>primary</key>

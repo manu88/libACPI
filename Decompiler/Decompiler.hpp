@@ -23,19 +23,16 @@
 
 namespace AML
 {
-
-
-class Decompiler
-{
-public:
-    int process( const uint8_t* buffer , std::size_t bufferSize);
-    
-    
-    std::string getStringResult() const;
-    
-    
-private:
-    std::string result;
-};
+    class Decompiler
+    {
+    public:
+        int process( const uint8_t* buffer , std::size_t bufferSize);
+        
+        std::string getStringResult() const;
+        
+        
+    private:
+        std::string result;
+    };
     
 } // end namespace AML

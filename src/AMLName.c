@@ -205,7 +205,6 @@ char* AMLNameConstructNormalized( const AMLName* name)
 {
     assert(name);
     
-    
     const uint8_t hasRoot = AMLNameHasPrefixRoot(name);
     const uint8_t numParents = AMLNameCountParents(name);
     
@@ -225,9 +224,7 @@ char* AMLNameConstructNormalized( const AMLName* name)
         
         return strndup( (const char*)name->originalBuf, size);
     }
-    
-    
-    
+
     size_t advance = hasRoot +  numParents;
     
     if (numSegs == 2)

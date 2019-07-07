@@ -921,18 +921,13 @@ public:
     void incScope()
     {
         currentScope++;
-        
-        
     }
     
     void decScope()
     {
         currentScope--;
-        
-        
     }
-    
-    
+
     ContentString content;
     
 private:
@@ -965,9 +960,7 @@ int AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
     {
         impl.content << "}" << "\n";
         
-        
         result = impl.content.str();
-        
     }
     else
     {
@@ -975,9 +968,6 @@ int AML::Decompiler::process( const uint8_t* buffer , std::size_t bufferSize)
     }
     return err;// == AMLParserError_None;
 }
-
-
-
 
 static std::string generateHeaderComment()
 {

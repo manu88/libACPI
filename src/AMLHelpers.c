@@ -306,11 +306,13 @@ size_t GetInteger( const uint8_t *object,size_t objectSize, uint64_t *integer)
             return 2;
         case AML_OP_WordPrefix:
             assert(objectSize >=3);
-            *integer = (uint64_t)word[0];
+            memcpy(integer, word, sizeof(uint16_t));
+            //*integer = (uint64_t)word[0];
             return 3;
         case AML_OP_DWordPrefix:
             assert(objectSize >=5);
-            *integer = (uint64_t)dword[0];
+            memcpy(integer, word, sizeof(uint32_t));
+            //*integer = (uint64_t)dword[0];
             return 5;
         case AML_OP_QWordPrefix:
             assert(objectSize >=9);

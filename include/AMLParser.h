@@ -29,6 +29,7 @@ typedef enum
     AMLParserError_InvalidState,
     AMLParserError_UnexpectedValue,
     AMLParserError_UnexpectedOp,
+    AMLParserError_InvalidDefinitionBlock,
     
     
     
