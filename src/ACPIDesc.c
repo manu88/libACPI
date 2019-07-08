@@ -20,88 +20,39 @@
 #include <assert.h>
 #include "ACPIDesc.h"
 #include "AMLParser.h"
+#include <AMLDecompiler.h>
 
 
-
-/*
-int ACPIDescriptionInit(ACPIDescription* desc)
+struct _DecompCtx
 {
-    memset(desc, 0, sizeof(ACPIDescription));
-    return 1;
-}
- 
+    const char*nameToFind;
+    void* datas;
+    uint8_t ready;
+};
 
-int ACPIObjectInit(ACPIObject* obj)
+static int _startName(AMLDecompiler* decomp,const ParserContext* context, const char* name)
 {
-    memset(obj, 0, sizeof(ACPIObject));
+    struct _DecompCtx *opCtx = (struct _DecompCtx *)decomp->userData;
+    assert(opCtx);
     
-    obj->indexParent = -1;
-    obj->indexScope = -1;
-    
-    return 1;
-}
- 
-int ACPIDeviceGetTypeName( const ACPIObject* object , char* bufOut , size_t maxChar)
-{
-    
-    assert(object);
-    assert(object->start);
-    
-    uint8_t* ptr = object->start;
-    int acc=0;
-    
-    while (*ptr != AML_OP_NameChar )
+    if( strcmp(name, opCtx->nameToFind) == 0)
     {
-        bufOut[acc] = *ptr;
-        if( ++acc >=maxChar)
-        {
-            return 0;
-        }
-        
-        ptr++;
+        opCtx->ready = 1;
     }
-    
-    bufOut[acc] = 0;
-    
-    return 1;
+    return 0;
 }
 
-void* ACPIDeviceGetNameAddr(const ACPIObject* object)
+void *ACPIScopeGetName( const ACPIScope* scope , const char*name)
 {
-    assert(object);
-    assert(object->start);
+    AMLDecompiler decomp;
+    AMLDecompilerInit(&decomp);
+    AMLDecompilerUseDefaultCallbacks(&decomp);
     
-    if (object->type != ACPIObject_Type_Name)
-    {
-        return NULL;
-    }
+    decomp.callbacks.startName = _startName;
     
-    int ret = strncmp((const char*)object->start, "_ADR", 4);// strcmp( (const char*)object->start, "Prout");
-
-    if (ret == 0)
-    {
-        const uint8_t* addr = object->start + strlen("_ADR");
-        
-        assert(*addr == AML_OP_DWordPrefix);
-        
-        union DWordVal
-        {
-            int8_t bytes[4];
-            int32_t v;
-        }  val;
-        
-        val.bytes[0] = addr[1];
-        val.bytes[1] = addr[2];
-        val.bytes[2] = addr[3];
-        val.bytes[3] = addr[4];
-        
-        return (void*) val.v;
-        //0xFFFFFFFF
-        //0x100010000
-        //0x00010000
-        //
-    }
-    
+    struct _DecompCtx ctx = {0};
+    ctx.nameToFind = name;
+    decomp.userData = &ctx;
+    AMLDecompilerStart(&decomp, scope->obj.pos, 0);
     return NULL;
 }
-     */

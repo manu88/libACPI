@@ -57,13 +57,22 @@ static size_t ItemClassGetBufferSize(const ItemClass* itemClass,const uint8_t*bu
 
 static const ItemClass items[] =
 {
-    MakeItemClass(0x47 , "IOPort",                     7,    0), // 6.4.2.5     I/O Port Descriptor
-    MakeItemClass(0x79 , "EndTag",                     1,    0), // 6.4.2.8     End Tag
-    MakeItemClass(0x86 , "32BitFixedMemoryRangeDesc" , 9   , 1), // 6.4.3.4     32-Bit Fixed Memory Range Descriptor
-    MakeItemClass(0x87 , "DWordAddressSpace" ,         23  , 1), // 6.4.3.5.2   DWord Address Space Descriptor
-    MakeItemClass(0x88 , "WordAddressSpace" ,          0x0D, 1), // 6.4.3.5.3   Word Address Space Descriptor
-    MakeItemClass(0x8A , "QWordAddressSpace" ,         43  , 1), // 6.4.3.5.1   QWord Address Space Descriptor
-    MakeItemClass(0x22 , "IRQDescriptor" ,             2   , 0), // 6.4.2.1     IRQ Descriptor
+    // Small items
+    
+    MakeItemClass(0x22 , "IRQDescriptor" ,                        2   , 0), // 6.4.2.1     IRQ Descriptor
+    MakeItemClass(0x23 , "IRQDescriptor" ,                        2   , 0), // 6.4.2.1     IRQ Descriptor
+    MakeItemClass(0x2A , "DMADescriptor" ,                        2   , 0), // 6.4.2.2      DMA Descriptor
+  //MakeItemClass(0x22 , "GenericSerialBusConnectionDescriptors" ,9   , 0), // 6.4.3.8.2   GenericSerialBus Connection Descriptors
+    MakeItemClass(0x47 , "IOPort",                                7,    0), // 6.4.2.5     I/O Port Descriptor
+    MakeItemClass(0x79 , "EndTag",                                1,    0), // 6.4.2.8     End Tag
+    
+    // Large items
+    
+    MakeItemClass(0x86 , "32BitFixedMemoryRangeDesc" ,            9   , 1), // 6.4.3.4     32-Bit Fixed Memory Range Descriptor
+    MakeItemClass(0x87 , "DWordAddressSpace" ,                    23  , 1), // 6.4.3.5.2   DWord Address Space Descriptor
+    MakeItemClass(0x88 , "WordAddressSpace" ,                     0x0D, 1), // 6.4.3.5.3   Word Address Space Descriptor
+    MakeItemClass(0x8A , "QWordAddressSpace" ,                    43  , 1), // 6.4.3.5.1   QWord Address Space Descriptor
+    
     
 };
 
@@ -93,14 +102,12 @@ AMLParserError DecodeBufferObject(const uint8_t* buffer , size_t bufferSize, AML
     
     // check if n-1 byte is '6.4.2.8 End Tag'
     
-    
     if ( bufferSize == 0 || buffer[bufferSize-2] != 0x79)
     {
         results->numItems = 0; // this is a plain buffer
         return AMLParserError_None;
     }
 
-    
     const ItemClass* item = getItemClassFromBuffer(buffer, bufferSize);
     
     if (item)

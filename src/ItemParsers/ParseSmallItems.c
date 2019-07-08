@@ -80,3 +80,10 @@ AMLParserError ParseSmall_IRQFormatDescriptor(AMLDecompiler*decomp,const ParserC
     
     return AMLParserError_None;
 }
+
+AMLParserError ParseSmall_DMAFormatDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
+{
+    decomp->callbacks.onSmallItem(decomp , context , SmallResourceItemsType_DMAFormatDescriptor , buffer , bufferSize);
+
+    return AMLParserError_None;
+}

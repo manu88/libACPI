@@ -108,24 +108,6 @@ typedef enum
 //17.5.26 DefinitionBlock
 typedef struct
 {
-    char    tableSignature[5]; // 4 chars
-    ACPIDWord tableLength; // Length of the table in bytes including the block header.
-    uint8_t complianceRevision;
-    uint8_t tableCheckSum; // Byte checksum of the entire table.
-    char    OEMId[7];
-    char    tableId[9]; // 8 + 1 NULL
-    
-    ACPIDWord OEMRev;
-    
-    ACPIDWord creatorID; //// Vendor ID of the ASL compiler
-    /*
-     For compatibility with ACPI versions before ACPI 2.0, the bit width of Integer objects is dependent on the ComplianceRevision. If the ComplianceRevision is less than 2, all integers are restricted to 32 bits. Otherwise, full 64-bit integers are used.
-     */
-} ACPIDefinitionBlockOLD;
-
-//17.5.26 DefinitionBlock
-typedef struct
-{
     char    tableSignature[4]; // 4 chars, NON terminated str
     ACPIDWord tableLength; // Length of the table in bytes including the block header.
     uint8_t complianceRevision;
@@ -361,6 +343,11 @@ typedef struct // 6.4.2.1 IRQ Descriptor
     uint8_t hasInfos:1;
 } IRQDescriptor;
 
+typedef struct
+{
+    uint8_t channelMask;
+    uint8_t attr;
+} DMAFormatDescriptor;
 
 typedef struct
 {
@@ -377,6 +364,8 @@ typedef struct
 
 typedef ACPIScope ACPIDevice;
 
+
+void *ACPIScopeGetName( const ACPIScope* scope , const char*name);
 
 typedef struct
 {
