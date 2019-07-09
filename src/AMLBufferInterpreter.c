@@ -61,11 +61,27 @@ static const ItemClass items[] =
     
     MakeItemClass(0x22 , "IRQDescriptor" ,                        2   , 0), // 6.4.2.1     IRQ Descriptor
     MakeItemClass(0x23 , "IRQDescriptor" ,                        2   , 0), // 6.4.2.1     IRQ Descriptor
-    MakeItemClass(0x2A , "DMADescriptor" ,                        2   , 0), // 6.4.2.2      DMA Descriptor
+    MakeItemClass(0x2A , "DMADescriptor" ,                        2   , 0), // 6.4.2.2     DMA Descriptor
+    
+    MakeItemClass(0x30 , "StartDependentFunctionsDescriptor" ,    0   , 0), // 6.4.2.3     Start Dependent Functions Descriptor
+    MakeItemClass(0x31 , "StartDependentFunctionsDescriptor" ,    0   , 0), // 6.4.2.3     Start Dependent Functions Descriptor
+    MakeItemClass(0x38 , "EndDependentFunctionsDescriptor"   ,    2   , 0), // 6.4.2.4     End Dependent Functions Descriptor
+    
   //MakeItemClass(0x22 , "GenericSerialBusConnectionDescriptors" ,9   , 0), // 6.4.3.8.2   GenericSerialBus Connection Descriptors
     MakeItemClass(0x47 , "IOPort",                                7,    0), // 6.4.2.5     I/O Port Descriptor
-    MakeItemClass(0x79 , "EndTag",                                1,    0), // 6.4.2.8     End Tag
+    MakeItemClass(0x4B , "FixedLocationIOPort",                   3,    0), // 6.4.2.6     Fixed Location I/O Port Descriptor
+    MakeItemClass(0x55 , "FixedDMADescriptor",                    5,    0), // 6.4.2.7     Fixed DMA Descriptor
     
+    MakeItemClass(0x55 , "FixedDMADescriptor",                    5,    0), // 6.4.2.7     Fixed DMA Descriptor
+    
+    MakeItemClass(0x71 , "VendorDefinedDescriptor",               1,    0), // 6.4.2.8     Vendor-Defined Descriptor
+    MakeItemClass(0x72 , "VendorDefinedDescriptor",               1,    0), // 6.4.2.8     Vendor-Defined Descriptor
+    MakeItemClass(0x73 , "VendorDefinedDescriptor",               1,    0), // 6.4.2.8     Vendor-Defined Descriptor
+    MakeItemClass(0x74 , "VendorDefinedDescriptor",               1,    0), // 6.4.2.8     Vendor-Defined Descriptor
+    MakeItemClass(0x75 , "VendorDefinedDescriptor",               1,    0), // 6.4.2.8     Vendor-Defined Descriptor
+    MakeItemClass(0x76 , "VendorDefinedDescriptor",               1,    0), // 6.4.2.8     Vendor-Defined Descriptor
+    MakeItemClass(0x77 , "VendorDefinedDescriptor",               1,    0), // 6.4.2.8     Vendor-Defined Descriptor
+    MakeItemClass(0x79 , "EndTag",                                1,    0), // 6.4.2.8     End Tag
     // Large items
     
     MakeItemClass(0x86 , "32BitFixedMemoryRangeDesc" ,            9   , 1), // 6.4.3.4     32-Bit Fixed Memory Range Descriptor

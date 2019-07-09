@@ -109,8 +109,6 @@ AMLParserError ParseSmall_Reserved(AMLDecompiler*decomp,const ParserContext* con
 }
 
 
-
-
 AMLParserError ParseSmall_StartDependentFunctionsDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
     assert(0);
