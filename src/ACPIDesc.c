@@ -26,8 +26,10 @@
 struct _DecompCtx
 {
     const char*nameToFind;
-    void* datas;
     uint8_t ready;
+    
+    ACPINamedResource* outRes;
+    
 };
 
 static int _startName(AMLDecompiler* decomp,const ParserContext* context, const char* name)
@@ -42,17 +44,76 @@ static int _startName(AMLDecompiler* decomp,const ParserContext* context, const 
     return 0;
 }
 
-void *ACPIScopeGetName( const ACPIScope* scope , const char*name)
+static int _onValue(AMLDecompiler* decomp,const ParserContext* context, uint64_t value)
+{
+    struct _DecompCtx *opCtx = (struct _DecompCtx *)decomp->userData;
+    assert(opCtx);
+    
+    if( opCtx->ready)
+    {
+        opCtx->outRes->type = ACPIObject_Type_NumericValue;
+        opCtx->outRes->data = (void*) value;
+        opCtx->outRes->size = sizeof(uint64_t);
+        
+        return AMLParserError_ValueFound;
+    }
+    return 0;
+}
+
+static int _onString(AMLDecompiler* decomp,const ParserContext* context, const char* string)
+{
+    struct _DecompCtx *opCtx = (struct _DecompCtx *)decomp->userData;
+    assert(opCtx);
+    
+    if( opCtx->ready)
+    {
+        opCtx->outRes->type = ACPIObject_Type_StringValue;
+        opCtx->outRes->data = (void*) string;
+        
+        return AMLParserError_ValueFound;
+        
+    }
+    
+    return 0;
+}
+static int _onBuffer(AMLDecompiler* decomp, const ParserContext* context , size_t bufferSize , const uint8_t* buffer)
+{
+    struct _DecompCtx *opCtx = (struct _DecompCtx *)decomp->userData;
+    assert(opCtx);
+    
+    if( opCtx->ready)
+    {
+        opCtx->outRes->type = ACPIObject_Type_Buffer;
+        opCtx->outRes->data = (void*) buffer;
+        opCtx->outRes->size = bufferSize;
+        
+        return AMLParserError_ValueFound;
+    }
+    
+    return 0;
+}
+
+AMLParserError ACPIScopeGetNamedResource( const ACPIScope* scope , const char*name, ACPINamedResource* outRes)
 {
     AMLDecompiler decomp;
     AMLDecompilerInit(&decomp);
     AMLDecompilerUseDefaultCallbacks(&decomp);
     
     decomp.callbacks.startName = _startName;
+    decomp.callbacks.onValue = _onValue;
+    decomp.callbacks.onBuffer = _onBuffer;
+    decomp.callbacks.onString = _onString;
     
     struct _DecompCtx ctx = {0};
     ctx.nameToFind = name;
+    ctx.outRes = outRes;
+    ctx.outRes->type = ACPIObject_Type_Unknown;
     decomp.userData = &ctx;
-    AMLDecompilerStart(&decomp, scope->obj.pos, 0);
-    return NULL;
+    AMLParserError ret = AMLDecompilerStart(&decomp, scope->obj.pos, scope->obj.size);
+
+    if( ctx.ready == 0)
+    {
+        return AMLParserError_ValueNotFound;
+    }
+    return ret;
 }

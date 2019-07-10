@@ -20,22 +20,7 @@
 #include "ACPIDesc.h"
 //#include "AMLRouter.h"
 
-typedef enum
-{
-    AMLParserError_None             = 0,
-    AMLParserError_BufferTooShort,
-    AMLParserError_UnexpectedToken,
-    AMLParserError_ElementAllocError,
-    AMLParserError_InvalidState,
-    AMLParserError_UnexpectedValue,
-    AMLParserError_UnexpectedOp,
-    AMLParserError_InvalidDefinitionBlock,
-    
-    
-    
-    AMLParserUserAbord, // might be returned from Callbacks
-    
-} AMLParserError;
+
 
 typedef struct _AMLParserState AMLParserState;
 

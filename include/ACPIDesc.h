@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <AMLTypes.h>
-
+#include <AMLError.h>
 typedef int32_t  ACPIDWord;
 
 typedef enum
@@ -352,7 +352,7 @@ typedef struct
 typedef struct
 {
     const uint8_t* pos; // Pointer Position in the original buffer.
-    //size_t size;
+    size_t size;
 } ACPIObject;
 
 typedef struct
@@ -365,7 +365,15 @@ typedef struct
 typedef ACPIScope ACPIDevice;
 
 
-void *ACPIScopeGetName( const ACPIScope* scope , const char*name);
+typedef struct
+{
+    ACPIObject_Type type;
+    size_t size; // no set if type is ACPIObject_Type_StringValue, just strlen() the data field
+    void* data; // if type is ACPIObject_Type_NumericValue, this is an uint64_t
+} ACPINamedResource;
+
+
+AMLParserError ACPIScopeGetNamedResource( const ACPIScope* scope , const char*name , ACPINamedResource* outRes);
 
 typedef struct
 {

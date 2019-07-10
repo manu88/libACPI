@@ -11,7 +11,7 @@
 
 typedef struct
 {
-    
+    ACPIDevice root;
 } ACPIDom;
 
-int ACPIDomParseBuffer( const uint8_t* buffer , size_t bufferSize);
+int ACPIDomParseBuffer( ACPIDom* dom,const uint8_t* buffer , size_t bufferSize);

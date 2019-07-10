@@ -577,11 +577,15 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                 
                 const ssize_t advanced = AMLNameCreateFromBuffer(&scope.name, bufferPos, bufferSize);
                 
-                scope.obj.pos = bufferPos;
+                scope.obj.pos = bufferPos + advanced;
+                scope.obj.size = bufferSize-advanced;
+                err = decomp->callbacks.startScope(decomp ,&ctx , &scope);
                 
-                decomp->callbacks.startScope(decomp ,&ctx , &scope);
-                
-                err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced);
+                if (err != AMLParserError_None)
+                {
+                    break;
+                }
+                err =  AMLParserProcessInternalBuffer(parser, bufferPos + advanced, bufferSize-advanced );
                 if(err != AMLParserError_None)
                 {
                     assert(parser->parserPolicy.assertOnError == 0);
@@ -589,8 +593,10 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
                     break;
                 }
                 
-                decomp->callbacks.endScope(decomp ,&ctx , &scope);
+                
+                err = decomp->callbacks.endScope(decomp ,&ctx , &scope);
 
+                
                 setState(decomp, AMLState_Unknown);
             }
 
@@ -632,12 +638,19 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             //dev.name[4] = 0;
             
             dev.obj.pos =bufferPos + nameSize;
-            decomp->callbacks.startDevice(decomp ,&ctx , &dev);
+            dev.obj.size = bufferSize-nameSize;
+            err = decomp->callbacks.startDevice(decomp ,&ctx , &dev);
+            if (err != AMLParserError_None)
+            {
+                break;
+            }
 
             // advance bufferPos to skip the name
+            
             err =  AMLParserProcessInternalBuffer(parser, bufferPos + nameSize, bufferSize-nameSize);
             if(err == AMLParserError_None)
             {
+                
                 err = decomp->callbacks.endDevice(decomp ,&ctx , &dev);
             }
             
@@ -674,7 +687,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             }
             
 
-            decomp->callbacks.startName(decomp ,&ctx , name);
+            err = decomp->callbacks.startName(decomp ,&ctx , name);
             
             setState(decomp, AMLState_WaitingNameValue);
 
@@ -691,7 +704,7 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             if (exceptState(decomp, AMLState_WaitingNameValue))
             {
               */
-                decomp->callbacks.onValue(decomp,&ctx , w);
+                err = decomp->callbacks.onValue(decomp,&ctx , w);
 
                 setState(decomp, AMLState_Unknown);
             /*
@@ -708,8 +721,9 @@ static int _OnElement(AMLParserState* parser , ACPIObject_Type forObjectType  ,c
             
         case ACPIObject_Type_StringValue:
         {
-            
-            err = decomp->callbacks.onString(decomp, &ctx , (const char*) bufferPos);
+            const char* str= (const char*) bufferPos;
+            assert(strlen(str) == bufferSize);
+            err = decomp->callbacks.onString(decomp, &ctx , str);
         }
             break;
             
@@ -836,7 +850,8 @@ AMLParserError AMLDecompilerStart(AMLDecompiler* decomp,const uint8_t* buffer , 
     
     parser.callbacks.OnElement = _OnElement;
     
-    AMLParserError ret =  AMLParserProcessBuffer(&parser , buffer , bufferSize);
+
+    AMLParserError ret =  AMLParserProcessBuffer(&parser , buffer , bufferSize );
     decomp->errorPos = parser.errorPos;
     
     return ret;

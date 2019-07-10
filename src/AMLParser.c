@@ -24,7 +24,7 @@
 #include "AMLByteCode.h"
 #include "AMLTypes.h"
 
-static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock);
+static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize , int parseDefBlock );
 
 int AMLParserInit(AMLParserState* state)
 {
@@ -116,7 +116,8 @@ AMLOperation AMLParserPeekOp( const uint8_t* buffer , size_t bufSize ,size_t *ad
 
 AMLParserError AMLParserProcessBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
 {
-    return _AMLParserProcessBuffer(state, buffer, bufSize, 1);
+    
+    return _AMLParserProcessBuffer(state, buffer, bufSize, 1 );
 }
 
 AMLParserError AMLParserProcessInternalBuffer(AMLParserState* state, const uint8_t* buffer , size_t bufSize)
@@ -536,7 +537,8 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
         {
             const uint8_t* valPosition = buffer;
             
-            const size_t valSize = strlen( (const char*)valPosition) + 1; // +1 for null byte
+            const size_t valSize = strlen( (const char*)valPosition) ; // +1 for null byte
+            assert(valPosition[valSize] == 0);
             
             AMLParserError err = state->callbacks.OnElement(state, ACPIObject_Type_StringValue , valPosition , valSize);
             if (err != AMLParserError_None)
@@ -545,7 +547,7 @@ static AMLParserError _AMLParserProcessOperation(AMLParserState* state,AMLOperat
                 return err;
             }
             
-            *advancedBy += valSize;
+            *advancedBy += valSize +1; // +1 is for the null byte at the end of the string
 
             
         }
@@ -874,5 +876,7 @@ static AMLParserError _AMLParserProcessBuffer(AMLParserState* state, const uint8
     
     
     
+
+
     return AMLParserError_None;
 }
