@@ -74,9 +74,13 @@ static nlohmann::json serializeQWordAddressSpaceDescriptor(const QWordAddressSpa
 {
     nlohmann::json ret;
     
-    ret["ressourceType"]         = desc.resourceType;
-    ret["generalFlags"]          = desc.generalFlags;
-    ret["typeSpecificFlags"]     = desc.typeSpecificFlags;
+    ret["length"] = desc.length;
+    ret["ressourceType"] = desc.resourceType;
+    ret["maf"] = desc.maf;
+    ret["mif"] = desc.mif;
+    ret["decodeType"] = desc.decodeType;
+    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+    
     ret["addrSpaceGranularity"]  = desc.addrSpaceGranularity;
     ret["addrRangeMin"]          = desc.addrRangeMin;
     ret["addrRangeMax"]          = desc.addrRangeMax;
@@ -90,10 +94,15 @@ static nlohmann::json serializeDWordAddressSpaceDescriptor(const DWordAddressSpa
 {
     nlohmann::json ret;
     
-    
+    ret["length"] = desc.length;
     ret["ressourceType"] = desc.resourceType;
-    ret["generalFlags"] = desc.generalFlags;
+    ret["maf"] = desc.maf;
+    ret["mif"] = desc.mif;
+    ret["decodeType"] = desc.decodeType;
     ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+
+    
+
     ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
     ret["addrRangeMin"] = desc.addrRangeMin;
     ret["addrRangeMax"] = desc.addrRangeMax;
@@ -117,16 +126,23 @@ static nlohmann::json serializeWordAddressSpaceDescriptor(const WordAddressSpace
 {
     nlohmann::json ret;
     
-    
+    ret["length"] = desc.length;
     ret["ressourceType"] = desc.ressourceType;
-    ret["generalFlags"] = desc.generalFlags;
+    ret["maf"] = desc.maf;
+    ret["mif"] = desc.mif;
+    ret["decodeType"] = desc.decodeType;
     ret["typeSpecificFlags"] = desc.typeSpecificFlags;
-    ret["ressourceSourceIndex"] = desc.ressourceSourceIndex;
     ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
     ret["addrRangeMin"] = desc.addrRangeMin;
     ret["addrRangeMax"] = desc.addrRangeMax;
     ret["addrTranslationOffset"] = desc.addrTranslationOffset;
     ret["addrTranslationLength"] = desc.addrTranslationLength;
+    
+    //uint8_t  ressourceSourceIndex;
+    //uint8_t resourceSource[];
+    
+    
+    
     
     return ret;
 }
@@ -161,10 +177,9 @@ static nlohmann::json serializeIRQ( const IRQDescriptor & desc)
     nlohmann::json res;
     res["value"] = desc.maskBits;
     
-    if (desc.hasInfos)
-    {
-        res["infos"] = desc.infos;
-    }
+    
+    //res["infos"] = desc.infos;
+
     
     return res;
 }

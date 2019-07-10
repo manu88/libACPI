@@ -39,12 +39,12 @@ typedef struct _ParserContext
     
     //const char* currentScope;
     
-    
 } ParserContext;
     
 typedef struct _AMLDecompiler AMLDecompiler;
 
 // required callbacks, undefined behaviour if NULL
+// All pointers to data passed in the following callbacks are references to the original buffer, except stated otherwise. So they will stay valid as long as the buffer passed to `AMLDecompilerStart()` remains valid.
 typedef struct _AMLDecompilerCallbacks
 {
     

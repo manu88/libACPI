@@ -22,7 +22,7 @@
 #include <AMLTypes.h>
 #include <AMLError.h>
 
-#define PACKED     __attribute__((packed))
+#define AML_STRUCT     __attribute__((packed))
 
 typedef int32_t  ACPIDWord;
 
@@ -219,26 +219,84 @@ typedef struct
 //6.4.3.5.3 Word Address Space Descriptor
 typedef struct
 {
+    uint16_t length;
     uint8_t ressourceType;
 
-    uint8_t generalFlags;
+    uint8_t reserved:4;
+    
     uint8_t maf:1;
     uint8_t mif:1;
     uint8_t decodeType:1;
-    uint8_t isConsumer:1;
-
+    uint8_t reserved2:1;
 
     uint8_t typeSpecificFlags;
     
-    uint8_t  ressourceSourceIndex;
     uint16_t addrSpaceGranularity;
     uint16_t addrRangeMin;
     uint16_t addrRangeMax;
     uint16_t addrTranslationOffset;
     uint16_t addrTranslationLength;
     
+    uint8_t  ressourceSourceIndex;
+
+    uint8_t resourceSource[];
     
-} WordAddressSpaceDescriptor;
+    
+}AML_STRUCT WordAddressSpaceDescriptor;
+
+//6.4.3.5.2 DWord Address Space Descriptor
+typedef struct
+{
+    uint16_t length;
+    uint8_t  resourceType;
+    
+    uint8_t reserved:4;
+    
+    uint8_t maf:1;
+    uint8_t mif:1;
+    uint8_t decodeType:1;
+    uint8_t reserved2:1;
+    
+    uint8_t typeSpecificFlags;
+    
+    uint32_t addrSpaceGranularity;
+    uint32_t addrRangeMin;
+    uint32_t addrRangeMax;
+    uint32_t addrTranslationOffset;
+    uint32_t addrTranslationLength;
+    
+    uint8_t  ressourceSourceIndex;
+    uint8_t resourceSource[];
+    
+    
+} AML_STRUCT DWordAddressSpaceDescriptor;
+
+//6.4.3.5.1 QWord Address Space Descriptor
+typedef struct
+{
+    uint16_t length;
+    uint8_t  resourceType;
+    
+    uint8_t reserved:4;
+    
+    uint8_t maf:1;
+    uint8_t mif:1;
+    uint8_t decodeType:1;
+    uint8_t reserved2:1;
+    
+    uint8_t typeSpecificFlags;
+    
+    uint64_t addrSpaceGranularity;
+    uint64_t addrRangeMin;
+    uint64_t addrRangeMax;
+    uint64_t addrTranslationOffset;
+    uint64_t addrTranslationLength;
+    
+    uint8_t ressourceSourceIndex;
+    uint8_t resourceSource[];
+    
+    
+} AML_STRUCT QWordAddressSpaceDescriptor;
 
 //6.4.3.5.5 Resource Type Specific Flags
 typedef struct
@@ -269,56 +327,6 @@ typedef struct
 } ResourceType0Flags;
 
 
-//6.4.3.5.2 DWord Address Space Descriptor
-typedef struct
-{
-    uint8_t  resourceType;
-    uint8_t  generalFlags;
-    
-    uint8_t maf:1;
-    uint8_t mif:1;
-    uint8_t decodeType:1;
-    uint8_t isConsumer:1;
-    
-    uint8_t  typeSpecificFlags;
-    
-    uint32_t addrSpaceGranularity;
-    uint32_t addrRangeMin;
-    uint32_t addrRangeMax;
-    uint32_t addrTranslationOffset;
-    uint32_t addrTranslationLength;
-    
-    ResourceType0Flags specificFlags;
-    
-    
-} DWordAddressSpaceDescriptor;
-
-
-
-//6.4.3.5.1 QWord Address Space Descriptor
-typedef struct
-{
-    
-    uint8_t  resourceType;
-    uint8_t  generalFlags;
-    
-    uint8_t maf:1;
-    uint8_t mif:1;
-    uint8_t decodeType:1;
-    uint8_t isConsumer:1;
-    
-    uint8_t  typeSpecificFlags;
-    
-    uint64_t addrSpaceGranularity;
-    uint64_t addrRangeMin;
-    uint64_t addrRangeMax;
-    uint64_t addrTranslationOffset;
-    uint64_t addrTranslationLength;
-    
-    ResourceType0Flags specificFlags;
-    
-    
-} QWordAddressSpaceDescriptor;
 
 
 typedef struct
@@ -329,30 +337,33 @@ typedef struct
     uint8_t baseAlign;
     uint8_t rangeLen;
     
-}PACKED IOPortDescriptor;
+} AML_STRUCT IOPortDescriptor;
 
 
 typedef struct // 6.4.3.4
 {
+    uint8_t reserved:7;
+    uint8_t writeStatus : 1; // 1 writeable (read/write) / 0 non-writeable (read-only))
+    
     uint32_t rangeBaseAddr;
     uint32_t rangeLength;
-    uint8_t  writeStatus : 1; // 1 writeable (read/write) / 0 non-writeable (read-only))
     
-} MemoryRangeDescriptor32;
+    
+} AML_STRUCT MemoryRangeDescriptor32;
 
 
 typedef struct // 6.4.2.1 IRQ Descriptor
 {
     uint16_t maskBits;
-    uint8_t infos;
-    uint8_t hasInfos:1;
-} IRQDescriptor;
+    //uint8_t infos;
+//    uint8_t hasInfos:1;
+} AML_STRUCT IRQDescriptor;
 
 typedef struct
 {
     uint8_t channelMask;
     uint8_t attr;
-} DMAFormatDescriptor;
+} AML_STRUCT DMAFormatDescriptor;
 
 typedef struct
 {

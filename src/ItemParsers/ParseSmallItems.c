@@ -38,8 +38,8 @@ AMLParserError ParseSmall_IOPortDescriptor(AMLDecompiler*decomp,const ParserCont
 AMLParserError ParseSmall_IRQFormatDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
     
-    IRQDescriptor desc = {0};
-    
+    const IRQDescriptor* desc = (const IRQDescriptor*) buffer;
+    /*
     union
     {
         uint8_t b[2];
@@ -50,19 +50,19 @@ AMLParserError ParseSmall_IRQFormatDescriptor(AMLDecompiler*decomp,const ParserC
     c.b[1] = buffer[1];
     
     desc.maskBits = c.v;
-    
-    decomp->callbacks.onSmallItem(decomp , context ,
+    */
+    assert(bufferSize != 3);// To implement :)
+    return decomp->callbacks.onSmallItem(decomp , context ,
                                   SmallResourceItemsType_IRQFormatDescriptor,
-                                  (const uint8_t*) &desc , sizeof(IRQDescriptor)
+                                  (const uint8_t*) desc , sizeof(IRQDescriptor)
                                   );
     
     
-    return AMLParserError_None;
+
 }
 
 AMLParserError ParseSmall_DMAFormatDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
-    decomp->callbacks.onSmallItem(decomp , context , SmallResourceItemsType_DMAFormatDescriptor , buffer , bufferSize);
+    return decomp->callbacks.onSmallItem(decomp , context , SmallResourceItemsType_DMAFormatDescriptor , buffer , bufferSize);
 
-    return AMLParserError_None;
 }

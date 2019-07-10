@@ -415,7 +415,7 @@ int DeviceTreeBuilder::onACPIDefinitionBlock( const ParserContext* context, cons
 
 int DeviceTreeBuilder::startPackage( const ParserContext*context , const ACPIPackage& package)
 {
-    printf("Start package Got %hhu elements \n" , package.numElements);
+    
     
     assert(getCurrentName());
     getCurrentName()->type = ACPI::ValueType::Type_Package;
@@ -474,7 +474,7 @@ int DeviceTreeBuilder::endPackage( const ParserContext*context , const ACPIPacka
     assert(!currentPackage.empty());
     currentPackage.pop();
     assert(getCurrentName()->type == ACPI::Type_Package);
-    printf("End package Got %hhu elements \n" , package.numElements);
+    
     return 0;
 }
 

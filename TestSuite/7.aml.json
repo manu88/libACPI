@@ -8,38 +8,35 @@
     "tableSignature": "DSDT"
   },
   "tree": {
-    "Children": 
-    {
-        "_SB":
-        {
-            "Children": 
-            {
-                "PCI0": 
+    "Children": {
+      "_SB": {
+        "Children": {
+          "PCI0": {
+            "_HID": {
+              "eisaid": true,
+              "type": 0,
+              "value": 51040321
+            },
+            "CRES": {
+              "type": 10,
+              "value": [
                 {
-                  "_HID":
-                  {
-                      "eisaid": true,
-                      "type": 0,
-                      "value": 51040321
-                  },
-                    "CRES": {
-                        "type": 10,
-                        "value": [
-                          {
-                            "type": 13,
-                            "value": {
-                              "addrRangeMax": 255,
-                              "addrRangeMin": 0,
-                              "addrSpaceGranularity": 0,
-                              "addrTranslationLength": 256,
-                              "addrTranslationOffset": 0,
-                              "generalFlags": 12,
-                              "ressourceSourceIndex": 71,
-                              "ressourceType": 2,
-                              "typeSpecificFlags": 0
-                            }
-                          },
-                          {
+                  "type": 13,
+                  "value": {
+                    "addrRangeMax": 255,
+                    "addrRangeMin": 0,
+                    "addrSpaceGranularity": 0,
+                    "addrTranslationLength": 256,
+                    "addrTranslationOffset": 0,
+                    "decodeType": 0,
+                    "length": 13,
+                    "maf": 0,
+                    "mif": 0,
+                    "ressourceType": 2,
+                    "typeSpecificFlags": 0
+                  }
+                },
+                {
                   "type": 14,
                   "value": {
                     "baseAlign": 1,
@@ -57,8 +54,10 @@
                     "addrSpaceGranularity": 0,
                     "addrTranslationLength": 3320,
                     "addrTranslationOffset": 0,
-                    "generalFlags": 12,
-                    "ressourceSourceIndex": 135,
+                    "decodeType": 0,
+                    "length": 13,
+                    "maf": 0,
+                    "mif": 0,
                     "ressourceType": 1,
                     "typeSpecificFlags": 3
                   }
@@ -71,16 +70,19 @@
                     "addrSpaceGranularity": 0,
                     "addrTranslationLength": 515899392,
                     "addrTranslationOffset": 0,
-                    "generalFlags": 12,
+                    "decodeType": 0,
+                    "length": 23,
+                    "maf": 0,
+                    "mif": 0,
                     "ressourceType": 0,
                     "typeSpecificFlags": 1
                   }
                 }
               ]
             }
-                }
-            }    
+          }
         }
+      }
     }
   }
 }

@@ -207,7 +207,7 @@ static AMLParserError _CallbackForItem(AMLDecompiler* decomp, AMLParserState* pa
     {
         LargeResourceItemsType realItemType = entry->isa->itemName - 0x80;
         
-        return largeItemMethods[realItemType](decomp , ctx, entry->bufferPos + 3 , entry->size);
+        return largeItemMethods[realItemType](decomp , ctx, entry->bufferPos + 1 , entry->size);
 //        decomp->callbacks.onLargeItem(decomp,ctx, realItemType, entry->bufferPos , entry->size);
     }
     else // small item

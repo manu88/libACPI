@@ -34,7 +34,10 @@
                     "addrSpaceGranularity": 0,
                     "addrTranslationLength": 549755813888,
                     "addrTranslationOffset": 0,
-                    "generalFlags": 12,
+                    "decodeType": 0,
+                    "length": 43,
+                    "maf": 0,
+                    "mif": 0,
                     "ressourceType": 0,
                     "typeSpecificFlags": 3
                   }
