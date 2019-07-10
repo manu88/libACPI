@@ -127,7 +127,7 @@ static nlohmann::json serializeWordAddressSpaceDescriptor(const WordAddressSpace
     nlohmann::json ret;
     
     ret["length"] = desc.length;
-    ret["ressourceType"] = desc.ressourceType;
+    ret["ressourceType"] = desc.resourceType;
     ret["maf"] = desc.maf;
     ret["mif"] = desc.mif;
     ret["decodeType"] = desc.decodeType;

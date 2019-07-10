@@ -185,7 +185,7 @@ typedef enum // 6.4.2 Small Resource Data Type
 typedef struct
 {
     /*
-     ressource types :
+     resource types :
      0 Memory range
      1 I/O range
      2 Bus number range
@@ -195,14 +195,14 @@ typedef struct
     
     uint8_t resourceType;
     
-    uint8_t typeSpecificFlags;
+    uint8_t  typeSpecificFlags;
     uint64_t addrSpaceGranularity;
     uint64_t addrRangeMin;
     uint64_t addrRangeMax;
     uint64_t addrTranslationOffset;
     uint64_t addrTranslationLength;
-    uint8_t ressourceSourceIndex;
-    uint8_t ressourceSource;
+    uint8_t  resourceSourceIndex;
+    uint8_t  resourceSource;
     
     uint8_t maf:1;
     uint8_t mif:1;
@@ -220,7 +220,7 @@ typedef struct
 typedef struct
 {
     uint16_t length;
-    uint8_t ressourceType;
+    uint8_t resourceType;
 
     uint8_t reserved:4;
     
@@ -237,7 +237,7 @@ typedef struct
     uint16_t addrTranslationOffset;
     uint16_t addrTranslationLength;
     
-    uint8_t  ressourceSourceIndex;
+    uint8_t  resourceSourceIndex;
 
     uint8_t resourceSource[];
     
@@ -265,8 +265,8 @@ typedef struct
     uint32_t addrTranslationOffset;
     uint32_t addrTranslationLength;
     
-    uint8_t  ressourceSourceIndex;
-    uint8_t resourceSource[];
+    uint8_t  resourceSourceIndex;
+    uint8_t  resourceSource[];
     
     
 } AML_STRUCT DWordAddressSpaceDescriptor;
@@ -292,7 +292,7 @@ typedef struct
     uint64_t addrTranslationOffset;
     uint64_t addrTranslationLength;
     
-    uint8_t ressourceSourceIndex;
+    uint8_t resourceSourceIndex;
     uint8_t resourceSource[];
     
     
