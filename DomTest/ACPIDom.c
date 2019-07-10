@@ -7,6 +7,7 @@
 //
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "ACPIDom.h"
 
 static int onDefinitionBlock(AMLDecompiler* decomp,const ParserContext* context, const ACPIDefinitionBlock* block)
@@ -35,15 +36,19 @@ static int startDevice(AMLDecompiler* decomp,const ParserContext* context, const
 static int endDevice(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* device)
 {
     ACPIDom*dom = decomp->userData;
-    if( dom->root.obj.pos == NULL)
+    
+    char* name = AMLNameConstructNormalized(&device->name);
+    
+    
+    if(dom->root.obj.pos == NULL &&  strcmp(name , "COM1") == 0 )
     {
         dom->root = *device;
         
-        char* name = AMLNameConstructNormalized(&device->name);
+        
         printf("Set Root dom to '%s'\n"  , name);
-        free(name);
+        
     }
-    
+    free(name);
     return 0;
 }
 

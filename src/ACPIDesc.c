@@ -36,7 +36,7 @@ static int _startName(AMLDecompiler* decomp,const ParserContext* context, const 
 {
     struct _DecompCtx *opCtx = (struct _DecompCtx *)decomp->userData;
     assert(opCtx);
-    
+
     if( strcmp(name, opCtx->nameToFind) == 0)
     {
         opCtx->ready = 1;
@@ -55,6 +55,7 @@ static int _onValue(AMLDecompiler* decomp,const ParserContext* context, uint64_t
         opCtx->outRes->data = (void*) value;
         opCtx->outRes->size = sizeof(uint64_t);
         
+        opCtx->ready = 0;
         return AMLParserError_ValueFound;
     }
     return 0;
@@ -70,6 +71,7 @@ static int _onString(AMLDecompiler* decomp,const ParserContext* context, const c
         opCtx->outRes->type = ACPIObject_Type_StringValue;
         opCtx->outRes->data = (void*) string;
         
+        opCtx->ready = 0;
         return AMLParserError_ValueFound;
         
     }
@@ -87,6 +89,43 @@ static int _onBuffer(AMLDecompiler* decomp, const ParserContext* context , size_
         opCtx->outRes->data = (void*) buffer;
         opCtx->outRes->size = bufferSize;
         
+        opCtx->ready = 0;
+        return AMLParserError_ValueFound;
+    }
+    
+    return 0;
+}
+
+static int _onLargeItem(AMLDecompiler* decomp,const ParserContext* context, LargeResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
+{
+    struct _DecompCtx *opCtx = (struct _DecompCtx *)decomp->userData;
+    assert(opCtx);
+    
+    if( opCtx->ready)
+    {
+        opCtx->outRes->type = ACPIObject_Type_LargeItem;
+        opCtx->outRes->data = (void*) buffer;
+        opCtx->outRes->size = bufferSize;
+        
+        opCtx->ready = 0;
+        return AMLParserError_ValueFound;
+    }
+    
+    return 0;
+}
+static int _onSmallItem(AMLDecompiler* decomp,const ParserContext* context, SmallResourceItemsType itemType, const uint8_t* buffer , size_t bufferSize)
+{
+    struct _DecompCtx *opCtx = (struct _DecompCtx *)decomp->userData;
+    assert(opCtx);
+    
+
+    if( opCtx->ready)
+    {
+        opCtx->outRes->type = ACPIObject_Type_SmallItem;
+        opCtx->outRes->data = (void*) buffer;
+        opCtx->outRes->size = bufferSize;
+        
+        opCtx->ready = 0;
         return AMLParserError_ValueFound;
     }
     
@@ -103,6 +142,8 @@ AMLParserError ACPIScopeGetNamedResource( const ACPIScope* scope , const char*na
     decomp.callbacks.onValue = _onValue;
     decomp.callbacks.onBuffer = _onBuffer;
     decomp.callbacks.onString = _onString;
+    decomp.callbacks.onSmallItem = _onSmallItem;
+    decomp.callbacks.onLargeItem = _onLargeItem;
     
     struct _DecompCtx ctx = {0};
     ctx.nameToFind = name;

@@ -21,6 +21,9 @@
 #include <stddef.h>
 #include <AMLTypes.h>
 #include <AMLError.h>
+
+#define PACKED     __attribute__((packed))
+
 typedef int32_t  ACPIDWord;
 
 typedef enum
@@ -100,6 +103,9 @@ typedef enum
     ACPIObject_Type_PackageValue,
     ACPIObject_Type_IndexField,
     ACPIObject_Type_CreateField,
+    
+    ACPIObject_Type_SmallItem,
+    ACPIObject_Type_LargeItem,
     
     //ACPIObject_Type_DWord, // should remove this one
     
@@ -317,14 +323,13 @@ typedef struct
 
 typedef struct
 {
-    
-    //uint8_t information;
+    uint8_t isDecoder;
     uint16_t rangeMinBaseAddr;
     uint16_t rangeMaxBaseAddr;
     uint8_t baseAlign;
     uint8_t rangeLen;
-    uint8_t isDecoder:1;
-} IOPortDescriptor;
+    
+}PACKED IOPortDescriptor;
 
 
 typedef struct // 6.4.3.4
@@ -367,12 +372,12 @@ typedef ACPIScope ACPIDevice;
 
 typedef struct
 {
-    ACPIObject_Type type;
-    size_t size; // no set if type is ACPIObject_Type_StringValue, just strlen() the data field
-    void* data; // if type is ACPIObject_Type_NumericValue, this is an uint64_t
+    ACPIObject_Type type; // The attribute's type
+    size_t size;          // no set if type is ACPIObject_Type_StringValue, just strlen() the data field
+    void* data;           // Pointer to the original buffer. If type is ACPIObject_Type_NumericValue, this is an uint64_t
 } ACPINamedResource;
 
-
+// Get a named attribute from a Scope or a Device
 AMLParserError ACPIScopeGetNamedResource( const ACPIScope* scope , const char*name , ACPINamedResource* outRes);
 
 typedef struct

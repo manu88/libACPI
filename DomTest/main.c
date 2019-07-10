@@ -47,11 +47,11 @@ int main(int argc, const char * argv[])
     printf("Root size %zi\n" ,dom.root.obj.size);
     char *rootName = AMLNameConstructNormalized(&dom.root.name);
     assert(rootName);
-    assert(strcmp(rootName, "PCI0") == 0);
+    
     free(rootName);
     
     ACPINamedResource res = {0};
-    AMLParserError err =  ACPIScopeGetNamedResource(&dom.root, "_HID" , &res);
+    AMLParserError err =  ACPIScopeGetNamedResource(&dom.root, "_CRS" , &res);
     
     assert(res.data);
     assert(res.type != ACPIObject_Type_Unknown);
@@ -59,7 +59,18 @@ int main(int argc, const char * argv[])
     {
         printf("Object has name _HID type = %i\n" , res.type);
         
-        if( res.type == ACPIObject_Type_NumericValue)
+        if( res.type == ACPIObject_Type_SmallItem)
+        {
+            assert(res.size == sizeof(IOPortDescriptor));
+            printf("Got a small item\n");
+            const IOPortDescriptor* desc = (const IOPortDescriptor*) res.data;
+            printf(" rangeMinBaseAddr %x\n" , desc->rangeMinBaseAddr);
+            printf(" rangeMaxBaseAddr %x\n" , desc->rangeMaxBaseAddr);
+            printf(" baseAlign %x\n" , desc->baseAlign);
+            printf(" rangeLen %x\n" , desc->rangeLen);
+            printf(" isDecoder %x\n" , desc->isDecoder);
+        }
+        else if( res.type == ACPIObject_Type_NumericValue)
         {
             printf("Num value %x\n" , (uint64_t) res.data );
         }
