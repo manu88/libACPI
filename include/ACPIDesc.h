@@ -26,6 +26,7 @@
 
 typedef int32_t  ACPIDWord;
 
+/*
 typedef enum
 {
     _UnknownDeviceIdentifier = 0,
@@ -62,7 +63,7 @@ typedef enum
     
 } DeviceIdentifiers;
 
-
+*/
 //17.5.44 Field (Declare Field Objects)
 
 typedef enum
@@ -128,22 +129,6 @@ typedef struct
      For compatibility with ACPI versions before ACPI 2.0, the bit width of Integer objects is dependent on the ComplianceRevision. If the ComplianceRevision is less than 2, all integers are restricted to 32 bits. Otherwise, full 64-bit integers are used.
      */
 } ACPIDefinitionBlock;
-
-
-
-
-/*
-typedef struct
-{
-    char id[5]; // 4 bytes + null ; 00000 denotes an empty name. empty names shall be at the end, ie no gaps in the list
-    
-    union
-    {
-        ACPIDWord word;
-    } value;
-    
-} ACPIName;
-*/
 
 typedef enum
 {
@@ -525,25 +510,6 @@ typedef struct
     } type;
     
 } ACPIPackageElement;
-/*
-static inline size_t ACPIDeviceGetNamesCount(const ACPIDevice* dev)
-{
-    size_t n = 0;
-    while (n<ACPIDeviceMaxNames)
-    {
-        if (dev->names[n].id[0] == 0)
-        {
-            break;
-        }
-        n++;
-    }
-    
-    return n;
-}
-*/
-
-
-
 
 /* Extra types */
 
