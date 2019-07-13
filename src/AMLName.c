@@ -22,6 +22,13 @@
 #include "AMLHelpers.h"
 #include "AMLByteCode.h"
 
+
+void AMLNameCopy( const AMLName* src , AMLName* dest)
+{
+    dest->originalBuf = src->originalBuf;
+    dest->originalBufSize = src->originalBufSize;
+}
+
 ssize_t AMLNameCreateFromBuffer( AMLName*name, const uint8_t* buffer , size_t bufferSize )
 {
     

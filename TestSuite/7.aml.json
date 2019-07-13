@@ -30,8 +30,8 @@
                     "addrTranslationOffset": 0,
                     "decodeType": 0,
                     "length": 13,
-                    "maf": 0,
-                    "mif": 0,
+                    "maf": 1,
+                    "mif": 1,
                     "ressourceType": 2,
                     "typeSpecificFlags": 0
                   }
@@ -56,8 +56,8 @@
                     "addrTranslationOffset": 0,
                     "decodeType": 0,
                     "length": 13,
-                    "maf": 0,
-                    "mif": 0,
+                    "maf": 1,
+                    "mif": 1,
                     "ressourceType": 1,
                     "typeSpecificFlags": 3
                   }
@@ -72,8 +72,8 @@
                     "addrTranslationOffset": 0,
                     "decodeType": 0,
                     "length": 23,
-                    "maf": 0,
-                    "mif": 0,
+                    "maf": 1,
+                    "mif": 1,
                     "ressourceType": 0,
                     "typeSpecificFlags": 1
                   }

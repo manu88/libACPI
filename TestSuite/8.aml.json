@@ -36,8 +36,8 @@
                     "addrTranslationOffset": 0,
                     "decodeType": 0,
                     "length": 43,
-                    "maf": 0,
-                    "mif": 0,
+                    "maf": 1,
+                    "mif": 1,
                     "ressourceType": 0,
                     "typeSpecificFlags": 3
                   }

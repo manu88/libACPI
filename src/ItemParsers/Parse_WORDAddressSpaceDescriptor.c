@@ -22,6 +22,8 @@
 AMLParserError Parse_WORDAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
     const WordAddressSpaceDescriptor *desc = (const WordAddressSpaceDescriptor *) buffer;
+    assert(desc->reserved == 0); // says the specs
+    assert(desc->typeSpecificFlags.reserved == 0); // says the specs
     return decomp->callbacks.onLargeItem(decomp,context, LargeResourceItemsType_WORDAddressSpaceDescriptor,(const uint8_t*) desc , sizeof(desc));
     
 }
@@ -29,13 +31,16 @@ AMLParserError Parse_WORDAddressSpaceDescriptor(AMLDecompiler*decomp,const Parse
 AMLParserError Parse_DWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
     const DWordAddressSpaceDescriptor *desc = (const DWordAddressSpaceDescriptor *) buffer;
+    assert(desc->reserved == 0); // says the specs
+    assert(desc->typeSpecificFlags.reserved == 0); // says the specs
     return decomp->callbacks.onLargeItem(decomp,context, LargeResourceItemsType_DWORDAddressSpaceDescriptor,(const uint8_t*) desc , sizeof(desc));
 }
 
 AMLParserError Parse_QWORDAddressSpaceDescriptor(AMLDecompiler*decomp,const ParserContext* context,  const uint8_t* buffer , size_t bufferSize)
 {
     const QWordAddressSpaceDescriptor *desc = (const QWordAddressSpaceDescriptor *) buffer;
-    
+    assert(desc->reserved == 0); // says the specs
+    assert(desc->typeSpecificFlags.reserved == 0); // says the specs
     return decomp->callbacks.onLargeItem(decomp,context, LargeResourceItemsType_QWORDAddressSpaceDescriptor,(const uint8_t*) desc , sizeof(desc));
 }
 

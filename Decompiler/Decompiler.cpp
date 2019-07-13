@@ -78,6 +78,18 @@ static bool isString(const uint8_t* buffer,size_t bufferSize )
     return true;
 }
 
+static std::string StringFromBuffer( const char* b , size_t bLen)
+{
+    std::string r;
+    
+    for( int i=0;i<bLen ;i++)
+    {
+        if(b[i] != 0 )
+            r.push_back(b[i]);
+    }
+    return r;
+}
+
 
 class DecompilerImpl : public AMLDecompilerInterface
 {
@@ -188,10 +200,10 @@ public:
         
         content << "DefinitionBlock ("
                 << "\"\"" << ","
-                << "\"" << desc.tableSignature << "\"" << ","
+                << "\"" << StringFromBuffer(desc.tableSignature , 4) << "\"" << ","
                 << std::to_string( desc.complianceRevision)  << ","
-                << "\"" << desc.OEMId << "\"" << ","
-                << "\"" << desc.tableId << "\"" << ","
+                << "\"" << StringFromBuffer(desc.OEMId,6) << "\"" << ","
+                << "\"" << StringFromBuffer(desc.tableId ,8) << "\"" << ","
                 << desc.OEMRev
                 << ")"
                 << "\n";
@@ -644,16 +656,45 @@ public:
         return 0;
     }
     
+    static std::string memAttrDesc(uint8_t memFlag )
+    {
+        std::string ret;
+        
+        
+        switch (memFlag)
+        {
+                
+            case 0:
+                //The memory is non-cacheable.
+                return "NonCacheable";
+            case 1:
+                //The memory is cacheable.
+                return "Cacheable";
+            case 2:
+                //The memory is cacheable and supports write combining.
+                return "WriteCombining";
+            case 3:
+                //The memory is cacheable and prefetchable.
+                return "Prefetchable";
+            
+                
+            default:
+                assert(false);
+                break;
+        }
+        return ret;
+    }
     int onQWORDAddressSpaceDescriptor( const ParserContext* context , const QWordAddressSpaceDescriptor& desc) override
     {
         indent();content << "QWordMemory(" ;
         
-        content << (desc.isConsumer == 0? " ResourceProducer,":"");
+        //content << (desc.isConsumer == 0? " ResourceProducer,":"");
+        content << "ResourceProducer" << ",";// Default?
         content << (desc.decodeType == 0? " PosDecode,":"");
-        content << (desc.mif? " MinFixed,":"");
-        content << (desc.maf? " MaxFixed,":"");
-        content << (desc.specificFlags.MEM== 2? " Cacheable,":"");
-        content << (desc.specificFlags.RW== 1? " ReadWrite,":"");
+        content << (desc.mif? " MinFixed,":"MinNotFixed");
+        content << (desc.maf? " MaxFixed,":"MaxNotFixed");
+        content << memAttrDesc( desc.typeSpecificFlags.MEM) << ",";
+        content << (desc.typeSpecificFlags.RW== 1? " ReadWrite,":"");
         content << "\n";
         
         indent();writeHexArg(desc.addrSpaceGranularity);  content << "," << "\n";
@@ -664,8 +705,8 @@ public:
 
         indent();
         content << ",,, "; // empty args
-        content << (desc.specificFlags.TTP== 0? " AddressRangeMemory,":"");
-        content << (desc.specificFlags.MTP== 0? " TypeStatic":"");
+        content << (desc.typeSpecificFlags.TTP== 0? " AddressRangeMemory,":"");
+        content << (desc.typeSpecificFlags.MTP== 0? " TypeStatic":"");
         
         content <<  ")" << "\n";
         
@@ -682,13 +723,13 @@ public:
          */
         
         indent(); content << "DWordMemory (";
-        
-        content << (desc.isConsumer?"ResourceConsumer":"ResourceProducer") << ",";
+        content << "ResourceProducer" << ",";// Default?
+        //content << (desc.isConsumer?"ResourceConsumer":"ResourceProducer") << ",";
         content << (desc.decodeType?"SubDecode":"PosDecode") << ",";
-        content << (desc.mif?"MinFixed":"_MinNOTFixed_") << ",";
-        content << (desc.maf?"MaxFixed":"_MaxNOTFixed_") << ",";
-        content << (desc.specificFlags.MEM== 2? " Cacheable,":"NonCacheable,");
-        content << (desc.specificFlags.RW== 1? " ReadWrite,":"");
+        content << (desc.mif?"MinFixed":"MinNotFixed") << ",";
+        content << (desc.maf?"MaxFixed":"MaxNotFixed") << ",";
+        content << memAttrDesc( desc.typeSpecificFlags.MEM) << ",";
+        content << (desc.typeSpecificFlags.RW== 1? " ReadWrite,":"");
         content << "\n";
         
         indent(); writeHexArg(desc.addrSpaceGranularity); content << "," << "\n";
@@ -698,8 +739,8 @@ public:
         indent(); writeHexArg(desc.addrTranslationLength); content << "," << "\n";
         indent();
         content << ",,, "; // empty args
-        content << (desc.specificFlags.TTP== 0? " AddressRangeMemory,":"");
-        content << (desc.specificFlags.MTP== 0? " TypeStatic":"");
+        content << (desc.typeSpecificFlags.TTP== 0? " AddressRangeMemory,":"");
+        content << (desc.typeSpecificFlags.MTP== 0? " TypeStatic":"");
         
         content <<  ")" << "\n";
         
@@ -849,9 +890,10 @@ public:
         
         indent(); content << "WordBusNumber (";
         
-        content << (desc.isConsumer?"ResourceConsumer":"ResourceProducer") << ",";
-        content << (desc.mif?"MinFixed":"_MinNOTFixed_") << ",";
-        content << (desc.maf?"MaxFixed":"_MaxNOTFixed_") << ",";
+        content << "ResourceProducer" << ",";// Default?
+        //(desc.isConsumer?"ResourceConsumer":"ResourceProducer") << ",";
+        content << (desc.mif?"MinFixed":"MinNotFixed") << ",";
+        content << (desc.maf?"MaxFixed":"MaxNotFixed") << ",";
         content << (desc.decodeType?"SubDecode":"PosDecode") << ",";
         content << "\n";
         
@@ -873,7 +915,7 @@ public:
     {
         incScope();
         
-        if (desc.hasInfos == 0)
+        //if (desc.hasInfos == 0)
         {
             indent(); content << "IRQNoFlags(){"; writeHexArg(desc.maskBits/4); content << "}" << "\n";
         }

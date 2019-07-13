@@ -58,6 +58,7 @@
 		595BAC222247AFCD0044D8A3 /* ACPIObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 595BAC202247AFCD0044D8A3 /* ACPIObjects.cpp */; };
 		595BAC2522494B1A0044D8A3 /* DeviceTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 595BAC2322494B1A0044D8A3 /* DeviceTree.cpp */; };
 		59F1015622D59B8600582980 /* AMLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 59F1015522D59B8600582980 /* AMLError.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		59F1015A22D9A3FA00582980 /* StructsTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 59F1015922D9A3FA00582980 /* StructsTest.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -175,6 +176,8 @@
 		595BAC2322494B1A0044D8A3 /* DeviceTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceTree.cpp; sourceTree = "<group>"; };
 		595BAC2422494B1A0044D8A3 /* DeviceTree.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DeviceTree.hpp; sourceTree = "<group>"; };
 		59F1015522D59B8600582980 /* AMLError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMLError.h; sourceTree = "<group>"; };
+		59F1015822D9A3FA00582980 /* StructsTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StructsTest.h; sourceTree = "<group>"; };
+		59F1015922D9A3FA00582980 /* StructsTest.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = StructsTest.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -300,6 +303,8 @@
 				59459A6C21DF4FB400DD9396 /* Decompiler_Tests.h */,
 				59459A6D21DF4FB400DD9396 /* Decompiler_Tests.c */,
 				59459A4B21DE25FC00DD9396 /* main.c */,
+				59F1015822D9A3FA00582980 /* StructsTest.h */,
+				59F1015922D9A3FA00582980 /* StructsTest.c */,
 				595BAC1B223CE1440044D8A3 /* AMLName_Tests.h */,
 				595BAC1C223CE1440044D8A3 /* AMLName_Tests.c */,
 				59459ADE2217419100DD9396 /* BufferTests.h */,
@@ -562,6 +567,7 @@
 				59459A6E21DF4FB400DD9396 /* Decompiler_Tests.c in Sources */,
 				59459A6921DE26B200DD9396 /* AMLParser_Tests.c in Sources */,
 				59459AE02217419100DD9396 /* BufferTests.c in Sources */,
+				59F1015A22D9A3FA00582980 /* StructsTest.c in Sources */,
 				59459AA721F0607D00DD9396 /* DecompilerInvalid_Tests.c in Sources */,
 				59459AD9220F371200DD9396 /* Eisaid_Tests.c in Sources */,
 				595BAC1D223CE1440044D8A3 /* AMLName_Tests.c in Sources */,

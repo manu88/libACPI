@@ -27,6 +27,9 @@ typedef struct// _AMLName
     size_t          originalBufSize;
 } AMLName;
 
+// Creates a copy 
+void AMLNameCopy( const AMLName* src , AMLName* dest);
+
 uint8_t AMLNameHasPrefixRoot( const AMLName*name);
 
 // count the `^`

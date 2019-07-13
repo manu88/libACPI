@@ -79,7 +79,7 @@ static nlohmann::json serializeQWordAddressSpaceDescriptor(const QWordAddressSpa
     ret["maf"] = desc.maf;
     ret["mif"] = desc.mif;
     ret["decodeType"] = desc.decodeType;
-    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+    ret["typeSpecificFlags"] = *reinterpret_cast<const uint8_t*>( &desc.typeSpecificFlags);
     
     ret["addrSpaceGranularity"]  = desc.addrSpaceGranularity;
     ret["addrRangeMin"]          = desc.addrRangeMin;
@@ -99,7 +99,7 @@ static nlohmann::json serializeDWordAddressSpaceDescriptor(const DWordAddressSpa
     ret["maf"] = desc.maf;
     ret["mif"] = desc.mif;
     ret["decodeType"] = desc.decodeType;
-    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+    ret["typeSpecificFlags"] = *reinterpret_cast<const uint8_t*>( &desc.typeSpecificFlags);
 
     
 
@@ -131,7 +131,7 @@ static nlohmann::json serializeWordAddressSpaceDescriptor(const WordAddressSpace
     ret["maf"] = desc.maf;
     ret["mif"] = desc.mif;
     ret["decodeType"] = desc.decodeType;
-    ret["typeSpecificFlags"] = desc.typeSpecificFlags;
+    ret["typeSpecificFlags"] =  *reinterpret_cast<const uint8_t*>( &desc.typeSpecificFlags);
     ret["addrSpaceGranularity"] = desc.addrSpaceGranularity;
     ret["addrRangeMin"] = desc.addrRangeMin;
     ret["addrRangeMax"] = desc.addrRangeMax;

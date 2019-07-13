@@ -26,7 +26,9 @@ extern "C" {
 #include <AMLTypes.h>
 #include <AMLParser.h>
 
-
+#define LIB_ACPI_VERSION_MAJ   0
+#define LIB_ACPI_VERSION_MIN   2
+#define LIB_ACPI_VERSION_PATCH 0
 /*
  This is an intermediate module that helps the AML bytecode interpretation.
  */
@@ -58,6 +60,7 @@ typedef struct _AMLDecompilerCallbacks
     
     // Called when a string value is parsed. string points to the original content passed to `AMLDecompilerStart` so
     // The pointer stays valid until the original buffer is.
+    // string is NULL terminated
     int (*onString)(AMLDecompiler* decomp,const ParserContext* context, const char* string);
     
     // Called when a definition block is parsed. block points to the original content passed to `AMLDecompilerStart` so
@@ -84,6 +87,7 @@ typedef struct _AMLDecompilerCallbacks
     int (*startDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
     int (*endDevice)(AMLDecompiler* decomp,const ParserContext* context, const ACPIDevice* name);
     
+    // name points to a TEMP variable, so make a copy!
     int (*startName)(AMLDecompiler* decomp,const ParserContext* context, const char* name);
     //int (*EndName)(AMLDecompiler* ,const ParserContext* context, const char* name);
     

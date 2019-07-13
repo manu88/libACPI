@@ -33,7 +33,7 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
     *bufSize = ftell(fileptr);             // Get the current byte offset in the file
     rewind(fileptr);                      // Jump back to the beginning of the file
     
-    uint8_t *buffer = (uint8_t *)malloc((*bufSize+1)*sizeof(char)); // Enough memory for file + \0
+    uint8_t *buffer = (uint8_t *)malloc((*bufSize+1)*sizeof(uint8_t)); // Enough memory for file + \0
     fread(buffer, *bufSize, 1, fileptr); // Read in the entire file
     fclose(fileptr); // Close the file
     

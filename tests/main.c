@@ -25,7 +25,7 @@
 #include "BufferTests.h"
 #include "AMLName_Tests.h"
 #include <stdlib.h>
-
+#include "StructsTest.h"
 /*
 static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 {
@@ -45,7 +45,7 @@ static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 
 int main(int argc, const char * argv[])
 {
-
+    doStructTests();
     Eisaid_Tests();
     AMLParserTests();
     Helper_Tests();

@@ -201,20 +201,58 @@ typedef struct
 } AddressSpaceDescriptor;
 
 
+//6.4.3.5.5 Resource Type Specific Flags
+typedef struct
+{
+    
+    
+    
+    
+    
+    
+    
+    /*
+     1 This memory range is read-write.
+     0 This memory range is read-only.
+     */
+    uint8_t RW:1;
+    
+    
+    /*
+     0 The memory is non-cacheable.
+     1 The memory is cacheable.
+     2 The memory is cacheable and supports write combining.
+     3 The memory is cacheable and prefetchable.
+     */
+    uint8_t MEM:2;
+    
+    /*
+     0 AddressRangeMemory
+     1 AddressRangeReserved
+     2 AddressRangeACPI
+     3 AddressRangeNVS
+     */
+    uint8_t MTP:2;
+    
+    uint8_t TTP:1; // 1 TypeTranslation / 0 TypeStatic
+    
+    uint8_t reserved:2;
+} AML_STRUCT ResourceType0Flags;
+
 //6.4.3.5.3 Word Address Space Descriptor
 typedef struct
 {
     uint16_t length;
     uint8_t resourceType;
 
-    uint8_t reserved:4;
     
-    uint8_t maf:1;
-    uint8_t mif:1;
-    uint8_t decodeType:1;
     uint8_t reserved2:1;
-
-    uint8_t typeSpecificFlags;
+    uint8_t decodeType:1;
+    uint8_t mif:1; // 1: min addr fixed / 0 not fixed
+    uint8_t maf:1; // 1: max addr fixed / 0 not fixed
+    
+    uint8_t reserved:4;
+    ResourceType0Flags typeSpecificFlags;
     
     uint16_t addrSpaceGranularity;
     uint16_t addrRangeMin;
@@ -235,14 +273,14 @@ typedef struct
     uint16_t length;
     uint8_t  resourceType;
     
+    uint8_t reserved2:1;
+    uint8_t decodeType:1;
+    uint8_t mif:1; // 1: min addr fixed / 0 not fixed
+    uint8_t maf:1; // 1: max addr fixed / 0 not fixed
+    
     uint8_t reserved:4;
     
-    uint8_t maf:1;
-    uint8_t mif:1;
-    uint8_t decodeType:1;
-    uint8_t reserved2:1;
-    
-    uint8_t typeSpecificFlags;
+    ResourceType0Flags typeSpecificFlags;
     
     uint32_t addrSpaceGranularity;
     uint32_t addrRangeMin;
@@ -262,14 +300,14 @@ typedef struct
     uint16_t length;
     uint8_t  resourceType;
     
+    uint8_t reserved2:1;
+    uint8_t decodeType:1;
+    uint8_t mif:1; // 1: min addr fixed / 0 not fixed
+    uint8_t maf:1; // 1: max addr fixed / 0 not fixed
+    
     uint8_t reserved:4;
     
-    uint8_t maf:1;
-    uint8_t mif:1;
-    uint8_t decodeType:1;
-    uint8_t reserved2:1;
-    
-    uint8_t typeSpecificFlags;
+    ResourceType0Flags typeSpecificFlags;
     
     uint64_t addrSpaceGranularity;
     uint64_t addrRangeMin;
@@ -283,33 +321,7 @@ typedef struct
     
 } AML_STRUCT QWordAddressSpaceDescriptor;
 
-//6.4.3.5.5 Resource Type Specific Flags
-typedef struct
-{
-    uint8_t TTP:1; // 1 TypeTranslation / 0 TypeStatic
-    
-    /*
-     0 AddressRangeMemory
-     1 AddressRangeReserved
-     2 AddressRangeACPI
-     3 AddressRangeNVS
-     */
-    uint8_t MTP:2;
-    
-    /*
-     0 The memory is non-cacheable.
-     1 The memory is cacheable.
-     2 The memory is cacheable and supports write combining.
-     3 The memory is cacheable and prefetchable.
-     */
-    uint8_t MEM:2;
-    
-    /*
-     1 This memory range is read-write.
-     0 This memory range is read-only.
-     */
-    uint8_t RW:1;
-} ResourceType0Flags;
+
 
 
 
@@ -481,7 +493,7 @@ typedef struct
 
 typedef  struct _ACPIPackage
 {
-    const struct _ACPIPackage* packageRef; // the parent package if this package is included inside another package, NULL otherwise
+    const struct _ACPIPackage* packageRef; // the parent package, if this package is included inside another package, NULL otherwise
     
     uint8_t numElements;
     const uint8_t* buffer;
