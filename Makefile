@@ -22,6 +22,13 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 
+install:
+	cp $(EXECUTABLE) /usr/local/lib
+	mkdir -p /usr/local/include/libacpi
+	cp include/*.h /usr/local/include/libacpi/
+	ldconfig
+
+
 clean:
 	rm -f $(OBJECTS)
 
