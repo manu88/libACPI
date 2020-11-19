@@ -1,4 +1,6 @@
 *.DS_Store
+*.o
+libacpi.so
 .DS_Store
 DecompilerTests/*.aml
 DecompilerTests/*.dsl
