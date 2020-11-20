@@ -12,7 +12,7 @@ add_library(libACPI EXCLUDE_FROM_ALL ${deps})
 target_include_directories(libACPI PUBLIC include) 
 
 
-target_link_libraries(libACPI Configuration  sel4 sel4muslcsys)
+target_link_libraries(libACPI sel4 sel4muslcsys)
 
 # warn about everything
 add_compile_options(-Wall -Werror -W -Wextra)
