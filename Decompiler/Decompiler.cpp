@@ -21,6 +21,8 @@
 #include <vector>
 #include <math.h>       /* floor */
 //#include <iostream>
+#include <string.h>
+#include <assert.h>
 #include <sstream>
 #include "Decompiler.hpp"
 #include "AMLDecompilerInterface.hpp"
@@ -50,7 +52,7 @@ struct ContentString
     
     std::stringstream _content;
     
-    bool printOnWrite;
+    bool printOnWrite = false;
 };
 
 
@@ -825,8 +827,6 @@ public:
     
     int startPackage( const ParserContext*context , const ACPIPackage& package) override
     {
-        
-        
         indent(); content << "Package(";
         writeHexArg(package.numElements);
         content << ")" << "\n";
@@ -949,6 +949,35 @@ public:
         
         decScope();
         
+        return 0;
+    }
+
+    int onExtendedIRQDescriptor(const ParserContext* context, const ExtendedInterruptDescriptor &desc)
+    {
+        incScope();
+
+        // Interrupt(ResourceConsumer, Level, ActiveHigh, Exclusive)
+        indent(); content << "Interrupt(";
+        
+        content << (desc.isConsumer? "ResourceConsumer": "ResourceProducer") << ", ";
+        content << (desc.isEdge ? "Edge": "Level") << ", ";
+        content << (desc.isActiveLow ? "ActiveLow": "ActiveHigh") << ", ";
+        content << (desc.isShared ? "Shared": "Exclusive");
+        content << ")\n";
+        indent(); content << "{" << "\n";
+
+        indent();indent();
+        for(int i=0;i<desc.interruptTableLen;i++)
+        {
+            if (i!=0)
+            {
+                content << ", ";
+            }
+            writeHexArg(desc.interruptNumber[i]); 
+        }
+        content << "\n";
+        indent(); content << "}" << "\n";
+        decScope();
         return 0;
     }
     

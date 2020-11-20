@@ -203,14 +203,7 @@ typedef struct
 
 //6.4.3.5.5 Resource Type Specific Flags
 typedef struct
-{
-    
-    
-    
-    
-    
-    
-    
+{    
     /*
      1 This memory range is read-write.
      0 This memory range is read-only.
@@ -355,6 +348,26 @@ typedef struct // 6.4.2.1 IRQ Descriptor
     //uint8_t infos;
 //    uint8_t hasInfos:1;
 } AML_STRUCT IRQDescriptor;
+
+#define ExtendedInterruptDescriptor_MAX_TABLE_LEN 255
+typedef struct // 6.4.3.6 Extended Interrupt Descriptor 
+{
+    uint16_t len;
+
+    uint8_t _vectorFlagsReserved:3;
+
+    uint8_t isWakeCapable:1;
+    uint8_t isShared:1;
+    uint8_t isActiveLow:1; // 1 Low, 0 High
+    uint8_t isEdge:1; // 1 Edge, 0 Level
+    uint8_t isConsumer:1; // 1 Consumer, 0 Producer
+
+    uint8_t interruptTableLen;
+
+
+    uint32_t interruptNumber[ExtendedInterruptDescriptor_MAX_TABLE_LEN];
+
+} AML_STRUCT ExtendedInterruptDescriptor;
 
 typedef struct
 {

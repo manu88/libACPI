@@ -88,6 +88,7 @@ static const ItemClass items[] =
     MakeItemClass(0x87 , "DWordAddressSpace" ,                    23  , 1), // 6.4.3.5.2   DWord Address Space Descriptor
     MakeItemClass(0x88 , "WordAddressSpace" ,                     0x0D, 1), // 6.4.3.5.3   Word Address Space Descriptor
     MakeItemClass(0x8A , "QWordAddressSpace" ,                    43  , 1), // 6.4.3.5.1   QWord Address Space Descriptor
+    MakeItemClass(0x89 , "ExtendedInterruptDescriptor " ,         0x06  , 1),
     
     
 };
@@ -155,7 +156,7 @@ AMLParserError DecodeBufferObject(const uint8_t* buffer , size_t bufferSize, AML
     {
         //assert(0);
         results->numItems = 0; // this is a plain buffer
-        //printf("Type for 0x%x Not found \n" , buffer[0] );
+        printf("Type for 0x%x Not found \n" , buffer[0] );
     }
     
     return AMLParserError_None;

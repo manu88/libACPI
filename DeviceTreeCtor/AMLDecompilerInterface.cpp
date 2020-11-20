@@ -16,6 +16,7 @@
  */
 
 #include <assert.h>
+#include <iostream>
 #include "AMLDecompilerInterface.hpp"
 
 
@@ -220,6 +221,8 @@ int AMLDecompilerInterface::onLargeItem(const ParserContext* context, LargeResou
             
         case LargeResourceItemsType_DWORDAddressSpaceDescriptor:
             return onDWORDAddressSpaceDescriptor(context, reinterpret_cast<const DWordAddressSpaceDescriptor&>(*buffer));
+        case LargeResourceItemsType_ExtendedIRQDescriptor:
+            return onExtendedIRQDescriptor(context, reinterpret_cast<const ExtendedInterruptDescriptor&>(*buffer));
         default:
             assert(0);
             break;
@@ -238,7 +241,8 @@ int AMLDecompilerInterface::onSmallItem(const ParserContext* context, SmallResou
         case SmallResourceItemsType_IRQFormatDescriptor:
             return onIRQFormatDescriptor(context, reinterpret_cast<const IRQDescriptor&>(*buffer));
         default:
-            assert(0);
+            std::cout << "unhandled small item " << itemType << std::endl;
+            //assert(0);
             break;
     }
     return 0;

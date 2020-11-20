@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "Decompiler.hpp"
 
+
 static uint8_t* readAndFillBuffer(const char* fromFile , size_t* bufSize)
 {
     
